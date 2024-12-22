@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+CAUTION: Do not modify this file unless you know what you are doing.
+ Unexpected results may occur if the code is changed deliberately.
+-->
+<dbmodel pgmodeler-ver="1.1.3" use-changelog="false" max-obj-count="9"
+	 last-position="0,0" last-zoom="1" scene-rect="0,0,1570.8,1076.8"
+	 default-schema="public" default-owner="dba"
+	 layers="Default layer"
+	 active-layers="0"
+	 layer-name-colors="#000000"
+	 layer-rect-colors="#b4b4b4"
+	 show-layer-names="false" show-layer-rects="false">
+<role name="dba"
+ createdb="true"
+ login="true"
+ password="zfXS^itzKxnc7J%w%2@`Uk2t7@@Tqs#i42tt&amp;qcH$jDHmhaRu9">
+</role>
+
+<database name="work_scheduler_db" is-template="false" allow-conns="true">
+	<role name="dba"/>
+</database>
+
+<schema name="public" layers="0" fill-color="#e1e1e1" name-color="#000000" sql-disabled="true">
+</schema>
+
+<table name="workers" layers="0" collapse-mode="2" pagination="true" attribs-page="0" ext-attribs-page="0" max-obj-count="13" z-value="0">
+	<schema name="public"/>
+	<role name="dba"/>
+	<position x="40" y="20"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="registration" not-null="true">
+		<type name="varchar" length="50"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="255"/>
+	</column>
+	<column name="sex" not-null="true">
+		<type name="char" length="1"/>
+	</column>
+	<column name="phone" not-null="true">
+		<type name="varchar" length="50"/>
+	</column>
+	<column name="email">
+		<type name="varchar" length="255"/>
+	</column>
+	<column name="birthdate" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="last_service_date">
+		<type name="date" length="0"/>
+	</column>
+	<column name="special_days_off" not-null="true" default-value="0">
+		<type name="smallint" length="0"/>
+	</column>
+	<column name="schedulable" not-null="true" default-value="true">
+		<type name="boolean" length="0"/>
+	</column>
+	<constraint name="workers_pk" type="pk-constr" table="public.workers">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_ranks" index="1"/>
+	</customidxs>
+	<customidxs object-type="constraint">
+		<object name="ranks_fk" index="1"/>
+	</customidxs></table>
+
+<table name="ranks" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="dba"/>
+	<position x="920" y="380"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="special_days_off" not-null="true" default-value="0">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="rank_pk" type="pk-constr" table="public.ranks">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="scheduled_workers" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="dba"/>
+	<position x="60" y="700"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<constraint name="posts_pk" type="pk-constr" table="public.scheduled_workers">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_functions" index="2"/>
+		<object name="id_workers" index="1"/>
+	</customidxs>
+	<customidxs object-type="constraint">
+		<object name="functions_fk" index="2"/>
+		<object name="workers_fk" index="1"/>
+	</customidxs></table>
+
+<table name="vacation" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+	<schema name="public"/>
+	<role name="dba"/>
+	<position x="860" y="20"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="start_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="end_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<constraint name="vacation_pk" type="pk-constr" table="public.vacation">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_workers" index="1"/>
+	</customidxs>
+	<customidxs object-type="constraint">
+		<object name="workers_fk" index="1"/>
+	</customidxs></table>
+
+<table name="no_schedule_days" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="dba"/>
+	<position x="1020" y="620"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="start_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="end_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<constraint name="no_schedule_day_pk" type="pk-constr" table="public.no_schedule_days">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<table name="licenses" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+	<schema name="public"/>
+	<role name="dba"/>
+	<position x="1240" y="240"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="start_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="end_date" not-null="true">
+		<type name="date" length="0"/>
+	</column>
+	<column name="reason" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<constraint name="licenses_pk" type="pk-constr" table="public.licenses">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_workers" index="1"/>
+	</customidxs>
+	<customidxs object-type="constraint">
+		<object name="workers_fk" index="1"/>
+	</customidxs></table>
+
+<relationship name="workers_has_many_posts" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#fe8b57"
+	 src-table="public.workers"
+	 dst-table="public.scheduled_workers"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="-81.4473" y="-18.453"/>
+	</label>
+</relationship>
+
+<relationship name="workers_has_many_licenses" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#4ae91e"
+	 src-table="public.workers"
+	 dst-table="public.licenses"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="219.378" y="-21.7903"/>
+	</label>
+</relationship>
+
+<table name="admins" layers="0" collapse-mode="2" pagination="true" attribs-page="0" ext-attribs-page="0" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="dba"/>
+	<position x="620" y="500"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="pass" not-null="true">
+		<type name="varchar" length="255"/>
+	</column>
+	<constraint name="admins_pk" type="pk-constr" table="public.admins">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+
+	<customidxs object-type="column">
+		<object name="id_workers" index="1"/>
+	</customidxs>
+	<customidxs object-type="constraint">
+		<object name="admins_uq" index="2"/>
+		<object name="workers_fk" index="1"/>
+	</customidxs></table>
+
+<relationship name="admins_has_one_workers" type="rel11" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#5a0e86"
+	 src-table="public.workers"
+	 dst-table="public.admins"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="102.878" y="-14.7467"/>
+	</label>
+</relationship>
+
+<table name="functions" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+	<schema name="public"/>
+	<role name="dba"/>
+	<position x="240" y="420"/>
+	<column name="id" not-null="true">
+		<type name="serial" length="0"/>
+	</column>
+	<column name="name" not-null="true">
+		<type name="varchar" length="100"/>
+	</column>
+	<column name="days_off" not-null="true">
+		<type name="smallint" length="0"/>
+	</column>
+	<constraint name="functions_pk" type="pk-constr" table="public.functions">
+		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+</table>
+
+<relationship name="functions_has_many_posts" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#5a623f"
+	 src-table="public.functions"
+	 dst-table="public.scheduled_workers"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="82.6948" y="-8.05299"/>
+	</label>
+</relationship>
+
+<relationship name="ranks_has_many_workers" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#d89375"
+	 src-table="public.ranks"
+	 dst-table="public.workers"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="172.878" y="5.94403"/>
+	</label>
+</relationship>
+
+<relationship name="workers_has_many_vacation" type="rel1n" layers="0"
+	 src-col-pattern="{sc}_{st}"
+	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
+	 src-fk-pattern="{st}_fk"
+	 custom-color="#4d146f"
+	 src-table="public.workers"
+	 dst-table="public.vacation"
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="-8.12245" y="-63.376"/>
+	</label>
+</relationship>
+
+</dbmodel>
