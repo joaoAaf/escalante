@@ -5,12 +5,10 @@ import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class Absence {
+public class NoScheduleDays {
 
-    private Worker worker;
+    private String name;
     private LocalDate startDate;
     private LocalDate endDate;
-    private String reason;
-    private String description;
 
 }
