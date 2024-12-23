@@ -1,5 +1,10 @@
+server:
+  port: 8081
 spring:
   application:
     name: escalante
-server:
-  port: 8081
+  profiles:
+    active:
+    - test
+  jpa:
+    open-in-view: false
