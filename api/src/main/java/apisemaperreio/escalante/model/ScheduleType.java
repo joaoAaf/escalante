@@ -1,10 +1,14 @@
 package apisemaperreio.escalante.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import lombok.Data;
 
 @Data
@@ -24,5 +28,7 @@ public class ScheduleType {
     private Integer multiplier;
     @Column(length = 255)
     private String description;
+    @OneToMany(mappedBy = "scheduleType")
+    private List<Position> positions = new ArrayList<>();
 
 }
