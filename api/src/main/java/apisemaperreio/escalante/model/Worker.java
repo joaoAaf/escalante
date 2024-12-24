@@ -10,7 +10,7 @@ public class Worker {
     private String registration;
     private String name;
     private Character sex;
-    private Position position;
+    private WorkerPosition position;
     private Integer rank;
     private String phone;
     private String email;

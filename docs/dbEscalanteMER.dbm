@@ -66,15 +66,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_position" index="11"/>
 		<object name="id_schedule_type" index="12"/>
+		<object name="id_worker_position" index="11"/>
 	</customidxs>
 	<customidxs object-type="constraint">
-		<object name="position_fk" index="1"/>
 		<object name="schedule_type_fk" index="2"/>
+		<object name="worker_position_fk" index="1"/>
 	</customidxs></table>
 
-<table name="position" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+<table name="worker_position" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
 	<position x="880" y="240"/>
@@ -84,10 +84,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="name" not-null="true">
 		<type name="varchar" length="100"/>
 	</column>
-	<constraint name="position_pk" type="pk-constr" table="public.&quot;position&quot;">
+	<constraint name="position_pk" type="pk-constr" table="public.worker_position">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
-</table>
+
+	<customidxs object-type="column">
+		<object name="id_schedule_type" index="2"/>
+	</customidxs>
+	<customidxs object-type="constraint">
+		<object name="schedule_type_fk" index="1"/>
+	</customidxs></table>
 
 <table name="scheduled_worker" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
@@ -223,12 +229,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</label>
 </relationship>
 
-<relationship name="position_has_many_worker" type="rel1n" layers="0"
+<relationship name="worker_position_has_many_worker" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
 	 custom-color="#d89375"
-	 src-table="public.&quot;position&quot;"
+	 src-table="public.worker_position"
 	 dst-table="public.worker"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
@@ -295,7 +301,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 src-fk-pattern="{st}_fk"
 	 custom-color="#9699a8"
 	 src-table="public.schedule_type"
-	 dst-table="public.&quot;position&quot;"
+	 dst-table="public.worker_position"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
 		<position x="-5.24598" y="-36.353"/>

@@ -29,6 +29,6 @@ public class ScheduleType {
     @Column(length = 255)
     private String description;
     @OneToMany(mappedBy = "scheduleType")
-    private List<Position> positions = new ArrayList<>();
+    private List<WorkerPosition> positions = new ArrayList<>();
 
 }

@@ -8,25 +8,29 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import apisemaperreio.escalante.model.ScheduleType;
-import apisemaperreio.escalante.service.ScheduleTypeService;
+import apisemaperreio.escalante.model.WorkerPosition;
+import apisemaperreio.escalante.service.WorkerPositionService;
 import lombok.RequiredArgsConstructor;
 
-@RequiredArgsConstructor
-@RequestMapping("/schedule-type")
-@RestController
-public class ScheduleTypeController {
 
-    private final ScheduleTypeService service;
-    
+@RequiredArgsConstructor
+@RequestMapping("/worker-position")
+@RestController
+public class WorkerPositionController {
+
+    private final WorkerPositionService service;
+
     @GetMapping
-    public ResponseEntity<Object> getAllScheduleType() {
+    public ResponseEntity<Object> getAllPosition() {
         try {
-            List<ScheduleType> scheduleType = service.getAll();
-            return new ResponseEntity<>(scheduleType, HttpStatus.OK);
+            List<WorkerPosition> position = service.getAll();
+            return new ResponseEntity<>(position, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
+    
+
+    
 
 }
