@@ -4,7 +4,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
 <dbmodel pgmodeler-ver="1.2.0-alpha1" use-changelog="false" max-obj-count="10"
-	 last-position="0,134" last-zoom="1.25" scene-rect="-20,-20,1590.8,1108.12"
+	 last-position="0,-25" last-zoom="1.25" scene-rect="-20,-20,1616.38,1108.12"
 	 default-schema="public" default-owner="dba"
 	 layers="Default layer"
 	 active-layers="0"
@@ -77,15 +77,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="worker_position" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="1200" y="240"/>
+	<position x="1200" y="180"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
 	<column name="name" not-null="true">
-		<type name="varchar" length="100"/>
+		<type name="varchar" length="50"/>
 	</column>
 	<constraint name="position_pk" type="pk-constr" table="public.worker_position">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="name_worker_position_uq" type="uq-constr" table="public.worker_position">
+		<columns names="name" ref-type="src-columns"/>
 	</constraint>
 
 	<customidxs object-type="column">
@@ -142,7 +145,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="absence" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="660" y="0"/>
+	<position x="780" y="0"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -178,7 +181,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.scheduled_worker"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
-		<position x="-14.8081" y="6.34701"/>
+		<position x="-14.8081" y="26.347"/>
 	</label>
 </relationship>
 
@@ -198,15 +201,18 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="role" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="240" y="440"/>
+	<position x="220" y="440"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
 	<column name="name" not-null="true">
-		<type name="varchar" length="100"/>
+		<type name="varchar" length="50"/>
 	</column>
 	<constraint name="role_pk" type="pk-constr" table="public.role">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="name_role_uq" type="uq-constr" table="public.role">
+		<columns names="name" ref-type="src-columns"/>
 	</constraint>
 
 	<customidxs object-type="column">
@@ -238,14 +244,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.worker"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
-		<position x="54.51" y="-21.8546"/>
+		<position x="-125.49" y="-36.6716"/>
 	</label>
 </relationship>
 
 <table name="schedule_type" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="780" y="400"/>
+	<position x="780" y="420"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -266,6 +272,9 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</column>
 	<constraint name="schedule_type_pk" type="pk-constr" table="public.schedule_type">
 		<columns names="id" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="name_schedule_type_uq" type="uq-constr" table="public.schedule_type">
+		<columns names="name" ref-type="src-columns"/>
 	</constraint>
 </table>
 
@@ -304,7 +313,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.worker_position"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
-		<position x="-120.578" y="-71.8674"/>
+		<position x="-124.234" y="-64.9576"/>
 	</label>
 </relationship>
 

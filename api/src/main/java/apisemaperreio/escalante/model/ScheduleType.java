@@ -18,17 +18,19 @@ public class ScheduleType {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(nullable = false, length = 50)
+    @Column(nullable = false, unique = true, length = 50)
     private String name;
     @Column(nullable = false)
-    private Integer daysWorked;
+    private Short daysWorked;
     @Column(nullable = false)
-    private Integer daysOff;
+    private Short daysOff;
     @Column(nullable = false, columnDefinition = "INT DEFAULT 1")
-    private Integer multiplier;
+    private Short multiplier;
     @Column(length = 255)
     private String description;
     @OneToMany(mappedBy = "scheduleType")
     private List<WorkerPosition> positions = new ArrayList<>();
+    @OneToMany(mappedBy = "scheduleType")
+    private List<Role> roles = new ArrayList<>();
 
 }

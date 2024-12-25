@@ -16,7 +16,7 @@ public class WorkerPosition {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true, length = 50)
     private String name;
     @ManyToOne
     @JoinColumn(name = "id_schedule_type")
