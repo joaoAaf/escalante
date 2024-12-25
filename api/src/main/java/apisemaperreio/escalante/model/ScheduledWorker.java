@@ -9,6 +9,6 @@ public class ScheduledWorker {
 
     private Worker worker;
     private LocalDate dateScheduled;
-    private Role role;
+    private WorkerRole role;
 
 }

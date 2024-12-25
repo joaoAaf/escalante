@@ -4,7 +4,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
 <dbmodel pgmodeler-ver="1.2.0-alpha1" use-changelog="false" max-obj-count="10"
-	 last-position="0,-25" last-zoom="1.25" scene-rect="-20,-20,1616.38,1108.12"
+	 last-position="0,134" last-zoom="1.25" scene-rect="-20,-20,1616.38,1108.12"
 	 default-schema="public" default-owner="dba"
 	 layers="Default layer"
 	 active-layers="0"
@@ -113,12 +113,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_role" index="1"/>
 		<object name="id_worker" index="2"/>
+		<object name="id_worker_role" index="3"/>
 	</customidxs>
 	<customidxs object-type="constraint">
-		<object name="role_fk" index="2"/>
 		<object name="worker_fk" index="1"/>
+		<object name="worker_role_fk" index="2"/>
 	</customidxs></table>
 
 <table name="no_schedule_days" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
@@ -198,20 +198,20 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</label>
 </relationship>
 
-<table name="role" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
+<table name="worker_role" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="220" y="440"/>
+	<position x="200" y="440"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
 	<column name="name" not-null="true">
 		<type name="varchar" length="50"/>
 	</column>
-	<constraint name="role_pk" type="pk-constr" table="public.role">
+	<constraint name="role_pk" type="pk-constr" table="public.worker_role">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
-	<constraint name="name_role_uq" type="uq-constr" table="public.role">
+	<constraint name="name_worker_role_uq" type="uq-constr" table="public.worker_role">
 		<columns names="name" ref-type="src-columns"/>
 	</constraint>
 
@@ -222,16 +222,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<object name="schedule_type_fk" index="1"/>
 	</customidxs></table>
 
-<relationship name="role_has_many_scheduled_worker" type="rel1n" layers="0"
+<relationship name="worker_role_has_many_scheduled_worker" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
 	 custom-color="#5a623f"
-	 src-table="public.role"
+	 src-table="public.worker_role"
 	 dst-table="public.scheduled_worker"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
-		<position x="17.3373" y="-29.353"/>
+		<position x="56.2032" y="-20.653"/>
 	</label>
 </relationship>
 
@@ -251,7 +251,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="schedule_type" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="780" y="420"/>
+	<position x="800" y="420"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -278,16 +278,16 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<relationship name="schedule_type_has_many_role" type="rel1n" layers="0"
+<relationship name="schedule_type_has_many_worker_role" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
 	 custom-color="#12b578"
 	 src-table="public.schedule_type"
-	 dst-table="public.role"
+	 dst-table="public.worker_role"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
-		<position x="-3.74003" y="-60.4548"/>
+		<position x="1.64066" y="-71.9351"/>
 	</label>
 </relationship>
 
@@ -313,14 +313,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.worker_position"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
-		<position x="-124.234" y="-64.9576"/>
+		<position x="-134.226" y="-60.076"/>
 	</label>
 </relationship>
 
 <table name="priorities_roles" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="920" y="680"/>
+	<position x="960" y="720"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -332,22 +332,26 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_role" index="1"/>
 		<object name="id_worker_position" index="2"/>
+		<object name="id_worker_role" index="3"/>
 	</customidxs>
 	<customidxs object-type="constraint">
-		<object name="role_fk" index="1"/>
 		<object name="worker_position_fk" index="2"/>
+		<object name="worker_role_fk" index="1"/>
 	</customidxs></table>
 
-<relationship name="role_has_many_priorities_roles" type="rel1n" layers="0"
+<relationship name="worker_role_has_many_priorities_roles" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
 	 custom-color="#28b594"
-	 src-table="public.role"
+	 src-table="public.worker_role"
 	 dst-table="public.priorities_roles"
-	 src-required="false" dst-required="false"/>
+	 src-required="false" dst-required="false">
+	<label ref-type="name-label">
+		<position x="0" y="0"/>
+	</label>
+</relationship>
 
 <relationship name="worker_position_has_many_priorities_roles" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"

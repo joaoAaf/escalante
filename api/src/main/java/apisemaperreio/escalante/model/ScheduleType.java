@@ -31,6 +31,6 @@ public class ScheduleType {
     @OneToMany(mappedBy = "scheduleType")
     private List<WorkerPosition> positions = new ArrayList<>();
     @OneToMany(mappedBy = "scheduleType")
-    private List<Role> roles = new ArrayList<>();
+    private List<WorkerRole> roles = new ArrayList<>();
 
 }

@@ -8,23 +8,23 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import apisemaperreio.escalante.model.WorkerPosition;
-import apisemaperreio.escalante.service.WorkerPositionService;
+import apisemaperreio.escalante.model.WorkerRole;
+import apisemaperreio.escalante.service.WorkerRoleService;
 import lombok.RequiredArgsConstructor;
 
 
 @RequiredArgsConstructor
-@RequestMapping("/worker-position")
+@RequestMapping("/worker-role")
 @RestController
-public class WorkerPositionController {
+public class WorkerRoleController {
 
-    private final WorkerPositionService service;
+    private final WorkerRoleService service;
 
     @GetMapping
-    public ResponseEntity<Object> getAllPositions() {
+    public ResponseEntity<Object> getAllRoles() {
         try {
-            List<WorkerPosition> positions = service.getAll();
-            return new ResponseEntity<>(positions, HttpStatus.OK);
+            List<WorkerRole> roles = service.getAll();
+            return new ResponseEntity<>(roles, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
