@@ -27,5 +27,7 @@ public class WorkerPosition {
     private ScheduleType scheduleType;
     @OneToMany(mappedBy = "position")
     private List<PrioritiesRoles> priorities = new ArrayList<>();
+    @OneToMany(mappedBy = "position")
+    private List<Worker> workers = new ArrayList<>();
 
 }

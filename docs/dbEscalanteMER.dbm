@@ -4,7 +4,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
 <dbmodel pgmodeler-ver="1.2.0-alpha1" use-changelog="false" max-obj-count="10"
-	 last-position="0,134" last-zoom="1.25" scene-rect="-20,-20,1616.38,1108.12"
+	 last-position="0,-25" last-zoom="1.25" scene-rect="-20,-20,1616.38,1108.12"
 	 default-schema="public" default-owner="dba"
 	 layers="Default layer"
 	 active-layers="0"
@@ -64,10 +64,19 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<constraint name="worker_pk" type="pk-constr" table="public.worker">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
+	<constraint name="registration_worker_uq" type="uq-constr" table="public.worker">
+		<columns names="registration" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="rank_worker_uq" type="uq-constr" table="public.worker">
+		<columns names="rank" ref-type="src-columns"/>
+	</constraint>
+	<constraint name="phone_worker_uq" type="uq-constr" table="public.worker">
+		<columns names="phone" ref-type="src-columns"/>
+	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_schedule_type" index="2"/>
-		<object name="id_worker_position" index="1"/>
+		<object name="id_schedule_type" index="12"/>
+		<object name="id_worker_position" index="11"/>
 	</customidxs>
 	<customidxs object-type="constraint">
 		<object name="schedule_type_fk" index="2"/>
@@ -92,7 +101,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_schedule_type" index="1"/>
+		<object name="id_schedule_type" index="2"/>
 	</customidxs>
 	<customidxs object-type="constraint">
 		<object name="schedule_type_fk" index="1"/>
@@ -101,7 +110,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="scheduled_worker" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="20" y="780"/>
+	<position x="0" y="860"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -124,7 +133,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="no_schedule_days" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="380" y="780"/>
+	<position x="360" y="860"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -142,7 +151,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 </table>
 
-<table name="absence" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
+<table name="worker_absence" layers="0" collapse-mode="2" max-obj-count="7" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
 	<position x="780" y="0"/>
@@ -161,12 +170,12 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="description">
 		<type name="varchar" length="255"/>
 	</column>
-	<constraint name="absence_pk" type="pk-constr" table="public.absence">
+	<constraint name="absence_pk" type="pk-constr" table="public.worker_absence">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_worker" index="1"/>
+		<object name="id_worker" index="5"/>
 	</customidxs>
 	<customidxs object-type="constraint">
 		<object name="worker_fk" index="1"/>
@@ -185,13 +194,13 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</label>
 </relationship>
 
-<relationship name="workers_has_many_absence" type="rel1n" layers="0"
+<relationship name="workers_has_many_worker_absence" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
 	 custom-color="#4ae91e"
 	 src-table="public.worker"
-	 dst-table="public.absence"
+	 dst-table="public.worker_absence"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
 		<position x="3.50997" y="-36.3414"/>
@@ -201,7 +210,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="worker_role" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="200" y="440"/>
+	<position x="200" y="520"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -216,7 +225,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</constraint>
 
 	<customidxs object-type="column">
-		<object name="id_schedule_type" index="1"/>
+		<object name="id_schedule_type" index="2"/>
 	</customidxs>
 	<customidxs object-type="constraint">
 		<object name="schedule_type_fk" index="1"/>
