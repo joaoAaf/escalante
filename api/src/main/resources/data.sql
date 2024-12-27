@@ -17,3 +17,22 @@ INSERT INTO worker_role (name, id_schedule_type) VALUES
     ('auxiliar de linha', 1),
     ('permanente', 1),
     ('motorista', 2);
+
+--  Carga inicial tabela worker_priority
+INSERT INTO worker_priority (id_worker_position, id_worker_role, priority) VALUES
+    (1, 1, 1),
+    (1, 2, 3),
+    (1, 3, 4),
+    (1, 4, 4),
+    (2, 1, 2),
+    (2, 2, 3),
+    (2, 3, 4),
+    (2, 4, 4),
+    (3, 1, 3),
+    (3, 2, 1),
+    (3, 3, 2),
+    (3, 4, 4),
+    (4, 1, 4),
+    (4, 2, 3),
+    (4, 3, 1),
+    (4, 4, 1);
