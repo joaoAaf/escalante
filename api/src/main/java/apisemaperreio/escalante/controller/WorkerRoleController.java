@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @RequiredArgsConstructor
-@RequestMapping("/worker-role")
+@RequestMapping("/worker/role")
 @RestController
 public class WorkerRoleController {
 

@@ -13,7 +13,7 @@ import apisemaperreio.escalante.service.ScheduleTypeService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
-@RequestMapping("/schedule-type")
+@RequestMapping("/schedule/type")
 @RestController
 public class ScheduleTypeController {
 

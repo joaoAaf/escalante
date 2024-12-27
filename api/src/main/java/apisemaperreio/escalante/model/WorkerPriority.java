@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @Entity
-public class PrioritiesRoles {
+public class WorkerPriority {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

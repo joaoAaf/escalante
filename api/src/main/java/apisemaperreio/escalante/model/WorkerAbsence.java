@@ -5,7 +5,7 @@ import java.time.LocalDate;
 import lombok.Data;
 
 @Data
-public class Absence {
+public class WorkerAbsence {
 
     private Worker worker;
     private LocalDate startDate;

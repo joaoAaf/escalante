@@ -26,6 +26,6 @@ public class WorkerRole {
     @JoinColumn(name = "id_schedule_type")
     private ScheduleType scheduleType;
     @OneToMany(mappedBy = "role")
-    private List<PrioritiesRoles> priorities = new ArrayList<>();
+    private List<WorkerPriority> priorities = new ArrayList<>();
 
 }

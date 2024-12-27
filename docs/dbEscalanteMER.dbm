@@ -3,8 +3,8 @@
 CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
-<dbmodel pgmodeler-ver="1.2.0-alpha1" use-changelog="false" max-obj-count="10"
-	 last-position="0,-25" last-zoom="1.25" scene-rect="-20,-20,1616.38,1108.12"
+<dbmodel pgmodeler-ver="1.1.3" use-changelog="false" max-obj-count="10"
+	 last-position="0,-19" last-zoom="0.95" scene-rect="-20,-20,1570.8,1100.12"
 	 default-schema="public" default-owner="dba"
 	 layers="Default layer"
 	 active-layers="0"
@@ -210,7 +210,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 <table name="worker_role" layers="0" collapse-mode="2" max-obj-count="3" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="200" y="520"/>
+	<position x="200" y="500"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -326,7 +326,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</label>
 </relationship>
 
-<table name="priorities_roles" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
+<table name="worker_priority" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
 	<position x="960" y="720"/>
@@ -336,7 +336,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	<column name="priority">
 		<type name="smallint" length="0"/>
 	</column>
-	<constraint name="priorities_roles_pk" type="pk-constr" table="public.priorities_roles">
+	<constraint name="priorities_roles_pk" type="pk-constr" table="public.worker_priority">
 		<columns names="id" ref-type="src-columns"/>
 	</constraint>
 
@@ -349,26 +349,26 @@ CAUTION: Do not modify this file unless you know what you are doing.
 		<object name="worker_role_fk" index="1"/>
 	</customidxs></table>
 
-<relationship name="worker_role_has_many_priorities_roles" type="rel1n" layers="0"
+<relationship name="worker_role_has_many_worker_priority" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
 	 custom-color="#28b594"
 	 src-table="public.worker_role"
-	 dst-table="public.priorities_roles"
+	 dst-table="public.worker_priority"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
 		<position x="0" y="0"/>
 	</label>
 </relationship>
 
-<relationship name="worker_position_has_many_priorities_roles" type="rel1n" layers="0"
+<relationship name="worker_position_has_many_worker_priority" type="rel1n" layers="0"
 	 src-col-pattern="{sc}_{st}"
 	 pk-pattern="{dt}_pk" uq-pattern="{dt}_uq"
 	 src-fk-pattern="{st}_fk"
 	 custom-color="#e86b0a"
 	 src-table="public.worker_position"
-	 dst-table="public.priorities_roles"
+	 dst-table="public.worker_priority"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
 		<position x="59.8429" y="-39.353"/>

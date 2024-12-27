@@ -14,7 +14,7 @@ import lombok.RequiredArgsConstructor;
 
 
 @RequiredArgsConstructor
-@RequestMapping("/worker-position")
+@RequestMapping("/worker/position")
 @RestController
 public class WorkerPositionController {
 
