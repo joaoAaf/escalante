@@ -14,13 +14,13 @@ Automatizar a tarefa de criação de escalas mensais de trabalho para militares 
 
     #### PRIORIDADES PARA ASSUMIR FUNÇÕES
 
-    Funções/ Cargos | Subtenente | Sargento | Cabo | Soldado
-    --- | --- | --- | --- | ---
-    Fiscal | 1º | 2º | 3º | 4º
-    Chefe de Linha | 3º | 2º | 1º | 4º
-    Auxiliar de Linha | 4º | 3º | 1º | 2º
-    Permanente | 4º | 3º | 2º | 1º
-    Motorista | - | - | - | -
+    Funções/ Cargos | Tenente | Subtenente | Sargento | Cabo | Soldado
+    --- | --- | --- | --- | --- | ---
+    Fiscal | 1º | 2º | 3º | 4º | 5º
+    Chefe de Linha | - | 3º | 2º | 1º | 4º
+    Auxiliar de Linha | - | 4º | 3º | 1º | 2º
+    Permanente | - | 4º | 3º | 2º | 1º
+    Motorista | - | - | - | - | -
 
     Obs: Qualquer trabalhador poderá assumir a função de `motorista`, desde que esteja autorizado a exerce-la.
 
@@ -30,6 +30,14 @@ Automatizar a tarefa de criação de escalas mensais de trabalho para militares 
     - 3º Auxiliar de Linha: Os mais modernos serão escolhidos primeiro;
     - 4º Chefe de Linha: Os mais modernos serão escolhidos primeiro;
     - 5º Fiscal: Os mais antigos serão escolhidos primeiro.
+
+1. A antiguidade será definida por um numero que será atribuido a cada trabalhador, os trabalhadores que possirem os menores numeros serão os mais antigos;
+
+1. Não haverão dois trabalhadores com o mesmo numero de antiguidade;
+
+1. O numero que define a antiguidade deve condizer com a hierarquia dos cargos dos trabalhadores, de forma que nunca haverá um trabalhadores em um cargo de nivel hierarquico superior com numero de antiguidade maior que outro em um cargo de nivel hierarquico inferior, abaixo esta definida em ordem hierarquica dos cargos:
+    - `Tenente` > `Subtenente` > `Sargento` > `Cabo` > `Soldado`;
+    - Ex: Se um `Tenente` qualquer possui um numero de antiguidade igual a 5, nenhum outro trabalhador, em outro cargo, terá um numero de antiguidade menor que 5;
 
 1. Além das regras definidas acima, deve-se escalar primeiro os trabalhadores que estiverem a mais tempo fora da escala;
 

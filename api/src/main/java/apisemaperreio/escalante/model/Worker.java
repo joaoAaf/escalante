@@ -25,7 +25,7 @@ public class Worker {
     @Column(nullable = false, length = 1)
     private Character sex;
     @Column(nullable = false, unique = true)
-    private Short rank;
+    private Short seniority;
     @Column(nullable = false, unique = true, length = 50)
     private String phone;
     @Column(length = 100)
