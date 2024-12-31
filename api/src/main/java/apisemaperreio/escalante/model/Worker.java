@@ -32,7 +32,6 @@ public class Worker {
     private String email;
     @Column(nullable = false)
     private LocalDate birthdate;
-    private LocalDate lastDayWorked;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
     private Boolean driver;
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT TRUE")

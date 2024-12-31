@@ -18,6 +18,8 @@ public class WorkerPosition {
     private Integer id;
     @Column(nullable = false, unique = true, length = 50)
     private String name;
+    @Column(nullable = false, unique = true)
+    private Short seniority;
     @ManyToOne
     @JoinColumn(name = "id_schedule_type")
     private ScheduleType scheduleType;
