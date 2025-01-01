@@ -57,6 +57,7 @@ INSERT INTO worker_priority (id_worker_role, id_worker_position, priority) VALUE
     -- Permanente/ Soldado
     (4, 5, 1);
 
+-- Carga inicial da tabela de trabalhadores
 INSERT INTO worker (
     registration, name, sex, seniority, phone, email, birthdate, 
     driver, scheduleable, id_worker_position, id_schedule_type
@@ -99,3 +100,7 @@ VALUES
 ('REG234', 'Aline Monteiro', 'F', 26, '3234567895', 'soldado6@example.com', '1995-09-21', FALSE, TRUE, 5, NULL),
 ('REG348', 'Thiago Gomes', 'M', 27, '3234567896', 'soldado7@example.com', '1996-10-22', FALSE, FALSE, 5, NULL),
 ('REG712', 'Bianca Farias', 'F', 28, '3234567897', 'soldado8@example.com', '1997-11-23', FALSE, TRUE, 5, NULL);
+
+-- Carga inicial de ausencias
+INSERT INTO worker_absence (start_date, end_date, reason, id_worker) VALUES
+    ('2024-09-01', '2024-09-30', 'ferias', 5);

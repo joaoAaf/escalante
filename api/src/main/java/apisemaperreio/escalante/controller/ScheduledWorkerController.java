@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import apisemaperreio.escalante.model.ScheduledWorker;
+import apisemaperreio.escalante.model.Worker;
 import apisemaperreio.escalante.service.ScheduledWorkerService;
 import lombok.RequiredArgsConstructor;
 
@@ -23,7 +23,7 @@ public class ScheduledWorkerController {
     @GetMapping
     public ResponseEntity<Object> getAllPositions() {
         try {
-            List<ScheduledWorker> scheduledWorkers = service.getAll();
+            List<Worker> scheduledWorkers = service.getDriver();
             return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
