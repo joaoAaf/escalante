@@ -1,8 +1,8 @@
 -- Carga inicial tabela shedule_type
-INSERT INTO schedule_type (name, days_worked, days_off, multiplier) VALUES
-    ('escala 1/3', 1, 3, 2),
-    ('escala 1/4', 1, 4, 2),
-    ('escala 1/7', 1, 7, 2);
+INSERT INTO schedule_type (name, days_worked, days_off) VALUES
+    ('escala 2/6', 2, 6),
+    ('escala 2/8', 2, 8),
+    ('escala 2/14', 2, 14);
 
 -- Carga inicial tabela position
 INSERT INTO worker_position (name, seniority) VALUES
@@ -104,3 +104,12 @@ VALUES
 -- Carga inicial de ausencias
 INSERT INTO worker_absence (start_date, end_date, reason, id_worker) VALUES
     ('2024-09-01', '2024-09-30', 'ferias', 5);
+
+-- Carga inicial de trabalhadores escalados
+INSERT INTO scheduled_worker (date, id_worker, id_worker_role) VALUES
+    ('2024-08-30', 22, 5),
+    ('2024-09-02', 22, 5),
+    ('2024-08-01', 8, 5),
+    ('2024-08-01', 10, 5),
+    ('2024-09-04', 10, 5),
+    ('2024-09-03', 8, 5);

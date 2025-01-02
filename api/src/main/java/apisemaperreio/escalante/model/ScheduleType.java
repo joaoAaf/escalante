@@ -20,8 +20,6 @@ public class ScheduleType {
     private Short daysWorked;
     @Column(nullable = false)
     private Short daysOff;
-    @Column(nullable = false, columnDefinition = "INT DEFAULT 1")
-    private Short multiplier;
     @Column(length = 255)
     private String description;
 
