@@ -22,10 +22,20 @@ public class ScheduledWorkerController {
     // Para Testes (Excluir depois)
     LocalDate date = LocalDate.parse("2024-09-09");
 
-    @GetMapping
-    public ResponseEntity<Object> getAllPositions() {
+    @GetMapping("/drivers")
+    public ResponseEntity<Object> getDrivers() {
         try {
             var scheduledWorkers = service.getDrivers(date);
+            return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/test")
+    public ResponseEntity<Object> getTest() {
+        try {
+            var scheduledWorkers = service.selectWorker(date);
             return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
