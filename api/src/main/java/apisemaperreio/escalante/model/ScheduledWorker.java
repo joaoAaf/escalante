@@ -2,6 +2,8 @@ package apisemaperreio.escalante.model;
 
 import java.time.LocalDate;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -22,6 +24,7 @@ public class ScheduledWorker {
     private LocalDate date;
     @ManyToOne
     @JoinColumn(name = "id_worker")
+    @JsonIgnore
     private Worker worker;
     @ManyToOne
     @JoinColumn(name = "id_worker_role")
