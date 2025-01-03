@@ -1,5 +1,7 @@
 package apisemaperreio.escalante.controller;
 
+import java.time.LocalDate;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -16,11 +18,14 @@ import lombok.RequiredArgsConstructor;
 public class ScheduledWorkerController {
 
     private final ScheduledWorkerService service;
+    
+    // Para Testes (Excluir depois)
+    LocalDate date = LocalDate.parse("2024-09-09");
 
     @GetMapping
     public ResponseEntity<Object> getAllPositions() {
         try {
-            var scheduledWorkers = service.getDriver();
+            var scheduledWorkers = service.getDrivers(date);
             return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
