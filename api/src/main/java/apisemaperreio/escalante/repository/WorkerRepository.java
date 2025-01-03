@@ -15,7 +15,7 @@ public interface WorkerRepository extends JpaRepository<Worker, Integer> {
 
     @Query("SELECT w FROM Worker w " +
     "WHERE w.driver = true AND w.scheduleable = true " +
-    "AND MONTH(w.birthdate) <> MONTH(:date) AND DAY(w.birthdate) <> DAY(:date) " +
+    "AND NOT (MONTH(w.birthdate) = MONTH(:date) AND DAY(w.birthdate) = DAY(:date)) " +
     "AND w.id NOT IN (SELECT wa.worker.id FROM WorkerAbsence wa WHERE wa.startDate <= :date AND wa.endDate >= :date) " +
     "ORDER BY (SELECT MAX(sw.date) FROM ScheduledWorker sw WHERE sw.worker = w), w.seniority ASC")
     List<Worker> findAvailableDriver(@Param("date") LocalDate date);

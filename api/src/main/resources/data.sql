@@ -77,7 +77,7 @@ VALUES
 ('REG829', 'Camila Rocha', 'F', 7, '1234567896', 'sargento4@example.com', '1992-07-07', FALSE, TRUE, 3, NULL),
 
 -- Cabos (13 trabalhadores)
-('REG273', 'Roberto Almeida', 'M', 8, '1234567897', 'cabo1@example.com', '1994-08-08', TRUE, TRUE, 4, NULL),
+('REG273', 'Roberto Almeida', 'M', 8, '1234567897', 'cabo1@example.com', '1994-09-10', TRUE, TRUE, 4, NULL),
 ('REG104', 'Fernanda Santos', 'F', 9, '1234567898', 'cabo2@example.com', '1996-09-09', TRUE, TRUE, 4, NULL),
 ('REG672', 'André Carvalho', 'M', 10, '1234567899', 'cabo3@example.com', '1998-10-10', TRUE, TRUE, 4, NULL),
 ('REG835', 'Letícia Pereira', 'F', 11, '2234567890', 'cabo4@example.com', '2000-11-11', FALSE, TRUE, 4, NULL),
