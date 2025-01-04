@@ -16,12 +16,16 @@ public class NoScheduleDays {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @Column(nullable = false, length = 50)
     private String reason;
+
     @Column(length = 50)
     private String description;
+
     @Column(nullable = false)
     private LocalDate startDate;
+    
     @Column(nullable = false)
     private LocalDate endDate;
 

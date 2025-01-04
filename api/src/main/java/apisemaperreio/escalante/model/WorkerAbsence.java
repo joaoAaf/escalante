@@ -20,16 +20,21 @@ public class WorkerAbsence {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @Column(nullable = false)
     private LocalDate startDate;
+
     @Column(nullable = false)
     private LocalDate endDate;
+
     @Column(nullable = false, length = 50)
     private String reason;
+
     @Column(length = 255)
     private String description;
-    @ManyToOne
-    @JoinColumn(name = "id_worker")
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_worker", nullable = false)
     @JsonIgnore
     private Worker worker;
 

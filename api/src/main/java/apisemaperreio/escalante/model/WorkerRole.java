@@ -16,10 +16,12 @@ public class WorkerRole {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @Column(nullable = false, unique = true, length = 50)
     private String name;
-    @ManyToOne
-    @JoinColumn(name = "id_schedule_type")
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_schedule_type", nullable = false)
     private ScheduleType scheduleType;
 
 }

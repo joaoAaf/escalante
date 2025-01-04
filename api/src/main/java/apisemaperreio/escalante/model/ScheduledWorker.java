@@ -20,14 +20,17 @@ public class ScheduledWorker {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @Column(nullable = false)
     private LocalDate date;
-    @ManyToOne
-    @JoinColumn(name = "id_worker")
+
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_worker", nullable = false)
     @JsonIgnore
     private Worker worker;
-    @ManyToOne
-    @JoinColumn(name = "id_worker_role")
+    
+    @ManyToOne(optional = false)
+    @JoinColumn(name = "id_worker_role", nullable = false)
     private WorkerRole role;
 
 }
