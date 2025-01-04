@@ -17,9 +17,9 @@ Automatizar a tarefa de criação de escalas mensais de trabalho para militares 
     Funções/ Cargos | Tenente | Subtenente | Sargento | Cabo | Soldado
     --- | --- | --- | --- | --- | ---
     Fiscal | 1º | 2º | 3º | 4º | 5º
-    Chefe de Linha | - | 3º | 2º | 1º | 4º
-    Auxiliar de Linha | - | 4º | 3º | 1º | 2º
-    Permanente | - | 4º | 3º | 2º | 1º
+    Chefe de Linha | não assume | 3º | 2º | 1º | 4º
+    Auxiliar de Linha | não assume | 4º | 3º | 1º | 2º
+    Permanente | não assume | 4º | 3º | 2º | 1º
     Motorista | - | - | - | - | -
 
     Obs: Qualquer trabalhador poderá assumir a função de `motorista`, desde que esteja autorizado a exerce-la.
@@ -29,7 +29,7 @@ Automatizar a tarefa de criação de escalas mensais de trabalho para militares 
     - 2º Permanente: Os mais modernos serão escolhidos primeiro;
     - 3º Auxiliar de Linha: Os mais modernos serão escolhidos primeiro;
     - 4º Chefe de Linha: Os mais modernos serão escolhidos primeiro;
-    - 5º Fiscal: Os mais antigos serão escolhidos primeiro.
+    - 5º Fiscal: Os mais modernos serão escolhidos primeiro.
 
 1. A antiguidade será definida por um numero que será atribuido a cada trabalhador, os trabalhadores que possirem os menores numeros serão os mais antigos;
 
