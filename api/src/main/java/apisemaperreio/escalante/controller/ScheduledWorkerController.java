@@ -22,6 +22,16 @@ public class ScheduledWorkerController {
     // Para Testes (Excluir depois)
     LocalDate date = LocalDate.parse("2024-09-09");
 
+    @GetMapping
+    public ResponseEntity<Object> getAll() {
+        try {
+            var scheduledWorkers = service.getAll();
+            return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
     @GetMapping("/drivers")
     public ResponseEntity<Object> getDrivers() {
         try {

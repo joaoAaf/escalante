@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 
 import apisemaperreio.escalante.model.ScheduleType;
+import apisemaperreio.escalante.model.ScheduledWorker;
 import apisemaperreio.escalante.model.Worker;
 import apisemaperreio.escalante.repository.ScheduledWorkerRepository;
 import apisemaperreio.escalante.repository.WorkerRepository;
@@ -18,6 +19,10 @@ public class ScheduledWorkerService extends BaseService {
 
     private final WorkerRepository workerRepo;
     private final ScheduledWorkerRepository scheduledRepo;
+    
+    public List<ScheduledWorker> getAll() {
+        return scheduledRepo.findAll();
+    }
     
     public List<Worker> getDrivers(LocalDate date) {
         return workerRepo.findAvailableDriver(date);
