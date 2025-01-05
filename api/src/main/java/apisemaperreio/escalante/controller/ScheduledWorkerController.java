@@ -20,7 +20,7 @@ public class ScheduledWorkerController {
     private final ScheduledWorkerService service;
     
     // Para Testes (Excluir depois)
-    LocalDate date = LocalDate.parse("2024-09-09");
+    LocalDate date = LocalDate.parse("2024-09-12");
 
     @GetMapping
     public ResponseEntity<Object> getAll() {
@@ -46,7 +46,10 @@ public class ScheduledWorkerController {
     public ResponseEntity<Object> getTest() {
         try {
             var scheduledWorkers = service.selectWorker(date);
-            return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
+            if (scheduledWorkers.isEmpty()) {
+                return new ResponseEntity<>("No workers available", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(scheduledWorkers.get(), HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }

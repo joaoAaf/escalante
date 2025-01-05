@@ -1,6 +1,8 @@
 package apisemaperreio.escalante.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -11,6 +13,7 @@ import apisemaperreio.escalante.model.ScheduledWorker;
 import apisemaperreio.escalante.model.Worker;
 import apisemaperreio.escalante.repository.ScheduledWorkerRepository;
 import apisemaperreio.escalante.repository.WorkerRepository;
+import apisemaperreio.escalante.repository.WorkerRoleRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -19,6 +22,7 @@ public class ScheduledWorkerService extends BaseService {
 
     private final WorkerRepository workerRepo;
     private final ScheduledWorkerRepository scheduledRepo;
+    private final WorkerRoleRepository roleRepo;
     
     public List<ScheduledWorker> getAll() {
         return scheduledRepo.findAll();
@@ -43,16 +47,49 @@ public class ScheduledWorkerService extends BaseService {
         return positionScheduleType;
     }
 
-    public Worker selectWorker(LocalDate date) {
-        var workers = workerRepo.findAvailableDriver(date);
-        for (var worker : workers) {
-            var lastScheduled = scheduledRepo.findFirstByWorkerIdOrderByDateDesc(worker.getId());
-            if (lastScheduled.isEmpty()) {
-                return worker;
+    public LocalDate dateLastWorked(Worker worker) {
+        var workedDays = new ArrayList<>(worker.getScheduledWorkers());
+        workedDays.sort(Comparator.comparing(ScheduledWorker::getDate).reversed());
+        return workedDays.get(0).getDate();
+    }
+
+    public Optional<Worker> notScheduledWorker(List<Worker> workers) {
+        var notScheduleds = new ArrayList<Worker>();
+        for (int i = workers.size() - 1; i >= 0; i--) {
+            if (!workers.get(i).getScheduledWorkers().isEmpty()) {
+                break;
             }
-            return lastScheduled.get().getWorker();
+            notScheduleds.add(workers.get(i));
         }
-        return null;
+        if (notScheduleds.isEmpty()) {
+            return Optional.empty();
+        }
+        notScheduleds.sort(Comparator.comparing(Worker::getSeniority));
+        return Optional.of(notScheduleds.get(0));
+    }
+    
+    public Optional<Worker> selectWorker(LocalDate date) {
+        var workers = workerRepo.findAvailableDriver(date);
+        var role = roleRepo.findByName("motorista").get();
+        var notScheduled = notScheduledWorker(workers);
+        if (notScheduled.isPresent()) {    
+            return notScheduled;
+        }   
+        for (var worker : workers) {
+            var scheduleType = checkScheduleType(worker);
+            var dateLastWorked = dateLastWorked(worker);
+            if (scheduleType.isPresent() && (scheduleType.get().getDaysOff() > role.getScheduleType().getDaysOff())) {
+                if (dateLastWorked.plusDays(scheduleType.get().getDaysOff() + 1).isAfter(date)) {
+                    continue;
+                }
+                return Optional.of(worker);
+            }
+            if (dateLastWorked.plusDays(role.getScheduleType().getDaysOff() + 1).isAfter(date)) {
+                continue;
+            }
+            return Optional.of(worker);
+        }
+        return Optional.empty();
     }
     
     // public WorkerDTO scheduler(LocalDate date, WorkerRole role) {
