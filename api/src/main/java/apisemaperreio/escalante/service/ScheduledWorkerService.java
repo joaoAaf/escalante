@@ -13,7 +13,6 @@ import apisemaperreio.escalante.model.ScheduledWorker;
 import apisemaperreio.escalante.model.Worker;
 import apisemaperreio.escalante.repository.ScheduledWorkerRepository;
 import apisemaperreio.escalante.repository.WorkerRepository;
-import apisemaperreio.escalante.repository.WorkerRoleRepository;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -22,14 +21,17 @@ public class ScheduledWorkerService extends BaseService {
 
     private final WorkerRepository workerRepo;
     private final ScheduledWorkerRepository scheduledRepo;
-    private final WorkerRoleRepository roleRepo;
     
     public List<ScheduledWorker> getAll() {
         return scheduledRepo.findAll();
     }
     
-    public List<Worker> getDrivers(LocalDate date) {
-        return workerRepo.findAvailableDriver(date);
+    public List<Worker> getAvailableWorkers(LocalDate date, Integer positionId, Boolean driver) {
+        return workerRepo.findAvailableWorkers(date, positionId, driver);
+    }
+    
+    public List<Worker> getAvailableDrivers(LocalDate date) {
+        return workerRepo.findAvailableDrivers(date);
     }
 
     public Optional<ScheduleType> checkScheduleType(Worker worker) {
@@ -47,10 +49,10 @@ public class ScheduledWorkerService extends BaseService {
         return positionScheduleType;
     }
 
-    public LocalDate dateLastWorked(Worker worker) {
+    public ScheduledWorker dateLastWorked(Worker worker) {
         var workedDays = new ArrayList<>(worker.getScheduledWorkers());
         workedDays.sort(Comparator.comparing(ScheduledWorker::getDate).reversed());
-        return workedDays.get(0).getDate();
+        return workedDays.get(0);
     }
 
     public Optional<Worker> notScheduledWorker(List<Worker> workers) {
@@ -69,8 +71,7 @@ public class ScheduledWorkerService extends BaseService {
     }
     
     public Optional<Worker> selectWorker(LocalDate date) {
-        var workers = workerRepo.findAvailableDriver(date);
-        var role = roleRepo.findByName("motorista").get();
+        var workers = workerRepo.findAvailableDrivers(date);
         var notScheduled = notScheduledWorker(workers);
         if (notScheduled.isPresent()) {    
             return notScheduled;
@@ -78,13 +79,13 @@ public class ScheduledWorkerService extends BaseService {
         for (var worker : workers) {
             var scheduleType = checkScheduleType(worker);
             var dateLastWorked = dateLastWorked(worker);
-            if (scheduleType.isPresent() && (scheduleType.get().getDaysOff() > role.getScheduleType().getDaysOff())) {
-                if (dateLastWorked.plusDays(scheduleType.get().getDaysOff() + 1).isAfter(date)) {
+            if (scheduleType.isPresent() && (scheduleType.get().getDaysOff() > dateLastWorked.getRole().getScheduleType().getDaysOff())) {
+                if (dateLastWorked.getDate().plusDays(scheduleType.get().getDaysOff() + 1).isAfter(date)) {
                     continue;
                 }
                 return Optional.of(worker);
             }
-            if (dateLastWorked.plusDays(role.getScheduleType().getDaysOff() + 1).isAfter(date)) {
+            if (dateLastWorked.getDate().plusDays(dateLastWorked.getRole().getScheduleType().getDaysOff() + 1).isAfter(date)) {
                 continue;
             }
             return Optional.of(worker);

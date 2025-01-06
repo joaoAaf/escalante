@@ -18,7 +18,14 @@ public interface WorkerRepository extends JpaRepository<Worker, Integer> {
     "AND NOT (MONTH(w.birthdate) = MONTH(:date) AND DAY(w.birthdate) = DAY(:date)) " +
     "AND w.id NOT IN (SELECT wa.worker.id FROM WorkerAbsence wa WHERE wa.startDate <= :date AND wa.endDate >= :date) " +
     "ORDER BY (SELECT sw.date FROM ScheduledWorker sw WHERE sw.worker = w ORDER BY sw.date DESC LIMIT 1) DESC, w.seniority ASC")
-    List<Worker> findAvailableDriver(@Param("date") LocalDate date);
+    List<Worker> findAvailableDrivers(@Param("date") LocalDate date);
+
+    @Query("SELECT w FROM Worker w " +
+    "WHERE w.driver = :driver AND w.scheduleable = true AND w.position.id = :positionId " +
+    "AND NOT (MONTH(w.birthdate) = MONTH(:date) AND DAY(w.birthdate) = DAY(:date)) " +
+    "AND w.id NOT IN (SELECT wa.worker.id FROM WorkerAbsence wa WHERE wa.startDate <= :date AND wa.endDate >= :date) " +
+    "ORDER BY (SELECT sw.date FROM ScheduledWorker sw WHERE sw.worker = w ORDER BY sw.date DESC LIMIT 1) DESC, w.seniority DESC")
+    List<Worker> findAvailableWorkers(@Param("date") LocalDate date, @Param("positionId") Integer positionId, @Param("driver") Boolean driver);
 
     // // Consulta que retorna todos os trabalhadores que são motoristas ordenados
     // // pela data do último dia trabalhado e senioridade em ordem crescente

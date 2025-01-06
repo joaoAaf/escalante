@@ -32,11 +32,21 @@ public class ScheduledWorkerController {
         }
     }
     
+    @GetMapping("/workers")
+    public ResponseEntity<Object> getWorkers() {
+        try {
+            var workers = service.getAvailableWorkers(date, 5, false);
+            return new ResponseEntity<>(workers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+    
     @GetMapping("/drivers")
     public ResponseEntity<Object> getDrivers() {
         try {
-            var scheduledWorkers = service.getDrivers(date);
-            return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
+            var drivers = service.getAvailableDrivers(date);
+            return new ResponseEntity<>(drivers, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
