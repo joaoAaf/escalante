@@ -3,6 +3,7 @@ package apisemaperreio.escalante.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Optional;
 
@@ -56,18 +57,14 @@ public class ScheduledWorkerService extends BaseService {
     }
 
     public Optional<Worker> notScheduledWorker(List<Worker> workers) {
-        var notScheduleds = new ArrayList<Worker>();
+        var notScheduleds = new LinkedList<Worker>();
         for (int i = workers.size() - 1; i >= 0; i--) {
             if (!workers.get(i).getScheduledWorkers().isEmpty()) {
                 break;
             }
-            notScheduleds.add(workers.get(i));
+            notScheduleds.addFirst(workers.get(i));
         }
-        if (notScheduleds.isEmpty()) {
-            return Optional.empty();
-        }
-        notScheduleds.sort(Comparator.comparing(Worker::getSeniority));
-        return Optional.of(notScheduleds.get(0));
+        return Optional.ofNullable(notScheduleds.peekFirst());
     }
     
     public Optional<Worker> selectWorker(LocalDate date) {
