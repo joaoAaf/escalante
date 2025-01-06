@@ -13,12 +13,12 @@ INSERT INTO worker_position (name, seniority) VALUES
     ('soldado', 5);
 
 --  Carga inicial tabela worker_role
-INSERT INTO worker_role (name, id_schedule_type) VALUES
-    ('fiscal', 2),
-    ('chefe de linha', 1),
-    ('auxiliar de linha', 1),
-    ('permanente', 1),
-    ('motorista', 2);
+INSERT INTO worker_role (name, priority, id_schedule_type) VALUES
+    ('fiscal', 5, 2),
+    ('chefe de linha', 4, 1),
+    ('auxiliar de linha', 3, 1),
+    ('permanente', 2, 1),
+    ('motorista', 1, 2);
 
 --  Carga inicial tabela worker_priority
 INSERT INTO worker_priority (id_worker_role, id_worker_position, priority) VALUES

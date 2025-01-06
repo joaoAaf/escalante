@@ -20,6 +20,9 @@ public class WorkerRole {
     @Column(nullable = false, unique = true, length = 50)
     private String name;
 
+    @Column(nullable = false, unique = true)
+    private Short priority;
+
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_schedule_type", nullable = false)
     private ScheduleType scheduleType;
