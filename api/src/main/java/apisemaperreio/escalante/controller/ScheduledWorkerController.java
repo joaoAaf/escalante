@@ -55,11 +55,8 @@ public class ScheduledWorkerController {
     @GetMapping("/test")
     public ResponseEntity<Object> getTest() {
         try {
-            var scheduledWorkers = service.selectWorker(date);
-            if (scheduledWorkers.isEmpty()) {
-                return new ResponseEntity<>("No workers available", HttpStatus.NOT_FOUND);
-            }
-            return new ResponseEntity<>(scheduledWorkers.get(), HttpStatus.OK);
+            var scheduledWorkers = service.scheduler(date, date);
+            return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
