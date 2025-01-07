@@ -1,5 +1,6 @@
 package apisemaperreio.escalante.controller;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -24,6 +25,16 @@ public class WorkerController {
     public ResponseEntity<Object> getAllPositions() {
         try {
             List<Worker> workers = service.getAll();
+            return new ResponseEntity<>(workers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/drivers")
+    public ResponseEntity<Object> getAvailableDrivers() {
+        try {
+            List<Worker> workers = service.getAvailableDrivers(LocalDate.parse("2024-09-14"));
             return new ResponseEntity<>(workers, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);

@@ -1,5 +1,6 @@
 package apisemaperreio.escalante.service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -16,6 +17,10 @@ public class WorkerService {
 
     public List<Worker> getAll() {
         return repo.findAll();
+    }
+
+    public List<Worker> getAvailableDrivers(LocalDate date) {
+        return repo.findAvailableDrivers(date);
     }
 
 }

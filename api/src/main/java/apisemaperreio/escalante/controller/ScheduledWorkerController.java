@@ -20,45 +20,28 @@ public class ScheduledWorkerController {
     private final ScheduledWorkerService service;
     
     // Para Testes (Excluir depois)
-    LocalDate date = LocalDate.parse("2024-09-12");
+    LocalDate date = LocalDate.parse("2024-09-01");
 
     @GetMapping
-    public ResponseEntity<Object> getAll() {
+    public ResponseEntity<Object> getAllScheduledWorkers() {
         try {
-            var scheduledWorkers = service.getAll();
+            var scheduledWorkers = service.getAllScheduledWorkers();
+            if (scheduledWorkers.isEmpty()) {
+                return new ResponseEntity<>("No scheduled workers found", HttpStatus.NOT_FOUND);
+            }
             return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    
-    @GetMapping("/workers")
-    public ResponseEntity<Object> getWorkers() {
-        try {
-            var workers = service.getAvailableWorkers(date, 5, false);
-            return new ResponseEntity<>(workers, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-    
-    @GetMapping("/drivers")
-    public ResponseEntity<Object> getDrivers() {
-        try {
-            var drivers = service.getAvailableDrivers(date);
-            return new ResponseEntity<>(drivers, HttpStatus.OK);
-        } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
     @GetMapping("/test")
     public ResponseEntity<Object> getTest() {
         try {
-            var scheduledWorkers = service.scheduler(date, date);
+            var scheduledWorkers = service.scheduler(date, LocalDate.parse("2024-10-02"), 2);
             return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

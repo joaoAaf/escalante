@@ -106,13 +106,13 @@ INSERT INTO worker_absence (start_date, end_date, reason, id_worker) VALUES
     ('2024-09-01', '2024-09-30', 'ferias', 5);
 
 -- Carga inicial de trabalhadores escalados
-INSERT INTO scheduled_worker (date, id_worker, id_worker_role) VALUES
-    ('2024-08-30', 22, 5),
-    ('2024-09-02', 22, 5),
-    ('2024-08-01', 8, 5),
-    ('2024-08-01', 10, 5),
-    ('2024-09-04', 10, 5),
-    ('2024-09-03', 8, 5),
-    ('2024-09-08', 4, 5),
-    ('2024-09-10', 9, 5),
-    ('2024-09-07', 21, 5);
+-- INSERT INTO scheduled_worker (date, id_worker, id_worker_role) VALUES
+--     ('2024-08-30', 22, 5),
+--     ('2024-09-02', 22, 5),
+--     ('2024-08-01', 8, 5),
+--     ('2024-08-01', 9, 5),
+--     ('2024-08-30', 9, 5),
+--     ('2024-09-03', 8, 5),
+--     ('2024-09-04', 8, 5),
+--     ('2024-09-01', 4, 5),
+--     ('2024-09-02', 4, 5);
