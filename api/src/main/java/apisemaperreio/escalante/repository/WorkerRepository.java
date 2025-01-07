@@ -17,14 +17,14 @@ public interface WorkerRepository extends JpaRepository<Worker, Integer> {
     "WHERE w.driver = true AND w.scheduleable = true " +
     "AND NOT (MONTH(w.birthdate) = MONTH(:date) AND DAY(w.birthdate) = DAY(:date)) " +
     "AND w.id NOT IN (SELECT wa.worker.id FROM WorkerAbsence wa WHERE wa.startDate <= :date AND wa.endDate >= :date) " +
-    "ORDER BY (SELECT sw.date FROM ScheduledWorker sw WHERE sw.worker = w ORDER BY sw.date DESC LIMIT 1) DESC, w.seniority ASC")
+    "ORDER BY (SELECT MAX(sw.date) FROM ScheduledWorker sw WHERE sw.worker = w) ASC, w.seniority ASC")
     List<Worker> findAvailableDrivers(@Param("date") LocalDate date);
 
     @Query("SELECT w FROM Worker w " +
     "WHERE w.driver = :driver AND w.scheduleable = true AND w.position.id = :positionId " +
     "AND NOT (MONTH(w.birthdate) = MONTH(:date) AND DAY(w.birthdate) = DAY(:date)) " +
     "AND w.id NOT IN (SELECT wa.worker.id FROM WorkerAbsence wa WHERE wa.startDate <= :date AND wa.endDate >= :date) " +
-    "ORDER BY (SELECT sw.date FROM ScheduledWorker sw WHERE sw.worker = w ORDER BY sw.date DESC LIMIT 1) DESC, w.seniority DESC")
+    "ORDER BY (SELECT MAX(sw.date) FROM ScheduledWorker sw WHERE sw.worker = w) ASC, w.seniority DESC")
     List<Worker> findAvailableWorkers(@Param("date") LocalDate date, @Param("positionId") Integer positionId, @Param("driver") Boolean driver);
 
     // // Consulta que retorna todos os trabalhadores que são motoristas ordenados
