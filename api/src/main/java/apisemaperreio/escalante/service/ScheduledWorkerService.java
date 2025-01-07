@@ -14,6 +14,7 @@ import apisemaperreio.escalante.model.ScheduledWorker;
 import apisemaperreio.escalante.model.Worker;
 import apisemaperreio.escalante.model.WorkerRole;
 import apisemaperreio.escalante.repository.ScheduledWorkerRepository;
+import apisemaperreio.escalante.repository.WorkerPriorityRepository;
 import apisemaperreio.escalante.repository.WorkerRepository;
 import apisemaperreio.escalante.repository.WorkerRoleRepository;
 import lombok.RequiredArgsConstructor;
@@ -24,8 +25,8 @@ public class ScheduledWorkerService extends BaseService {
 
     private final WorkerRepository workerRepo;
     private final ScheduledWorkerRepository scheduledRepo;
-    // private final WorkerPositionRepository positionRepo;
     private final WorkerRoleRepository roleRepo;
+    private final WorkerPriorityRepository priorityRepo;
 
     private Optional<ScheduleType> checkScheduleType(Worker worker) {
         var workerScheduleType = Optional.ofNullable(worker.getScheduleType());
@@ -84,15 +85,23 @@ public class ScheduledWorkerService extends BaseService {
             scheduledWorkersDay.add(scheduledWorker);
             if (i > 1 && i % 2 == 0) {
                 if (role.getPriority() == 2) {
-                    scheduledWorkersDay.getLast().setRole(roles.get(3));
-                } else if (role.getPriority() == 3) {
                     scheduledWorkersDay.getLast().setRole(roles.get(2));
+                } else if (role.getPriority() == 3) {
+                    scheduledWorkersDay.getLast().setRole(roles.get(1));
                 }
 
             }
             newDate = newDate.plusDays(1);
         }
         return scheduledWorkersDay;
+    }
+
+    private Optional<Worker> selectNoDriver(LocalDate date, Integer positionId) {
+        var worker = selectWorker(date, workerRepo.findAvailableWorkers(date, positionId, false));
+        if (worker.isEmpty()) {
+            worker = selectWorker(date, workerRepo.findAvailableWorkers(date, positionId, true));
+        }
+        return worker;
     }
 
     public List<ScheduledWorkerDTO> scheduler(LocalDate startDate, LocalDate endDate, Integer daysWork) {
@@ -108,7 +117,36 @@ public class ScheduledWorkerService extends BaseService {
                     scheduledRepo.saveAll(scheduledWorkersDay);
                     continue;
                 }
-                
+                Optional<Worker> worker = Optional.empty();
+                var priorities = priorityRepo.findByRoleOrderByPriorityAsc(role);
+                for (var priority : priorities) {
+                    if (role.getPriority() == 5) {
+                        LocalDate finalDate = startDate.plusDays(0);
+                        var scheduledDriver = scheduledWorkers
+                                .stream()
+                                .filter(sw -> sw.getRole().getPriority() == 1 && sw.getDate().equals(finalDate))
+                                .findFirst();
+                        var scheduledLinha = scheduledWorkers
+                                .stream()
+                                .filter(sw -> sw.getRole().getPriority() == 4 && sw.getDate().equals(finalDate))
+                                .findFirst();
+                        if (scheduledDriver.get().getWorker().getSeniority() < scheduledLinha.get().getWorker()
+                                .getSeniority()) {
+                            worker = Optional.ofNullable(scheduledDriver.get().getWorker());
+                            var priorityLinha = priorities.get(3);
+                            var workerLinha = selectNoDriver(startDate, priorityLinha.getPosition().getId());
+                            var scheduledWorkersDay = scheduledWorkersDay(workerLinha, startDate, roles, roles.get(3), daysWork);
+                            scheduledWorkers.addAll(scheduledWorkersDay);
+                            scheduledRepo.saveAll(scheduledWorkersDay);
+                            break;
+                        }
+                    }
+                    worker = selectNoDriver(startDate, priority.getPosition().getId());
+                    if (worker.isPresent()) break;
+                }
+                var scheduledWorkersDay = scheduledWorkersDay(worker, startDate, roles, role, daysWork);
+                scheduledWorkers.addAll(scheduledWorkersDay);
+                scheduledRepo.saveAll(scheduledWorkersDay);
             }
             startDate = startDate.plusDays(daysWork);
         }
