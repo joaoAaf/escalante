@@ -101,28 +101,14 @@ public class ScheduledWorkerService extends BaseService {
         roles.sort(Comparator.comparing(WorkerRole::getPriority));
         while (startDate.compareTo(endDate) <= 0) {
             for (var role : roles) {
-                switch (role.getPriority()) {
-                    case 1:
-                        var worker = selectWorker(startDate, workerRepo.findAvailableDrivers(startDate));
-                        var scheduledWorkersDay = scheduledWorkersDay(worker, startDate, roles, role, daysWork);
-                        scheduledWorkers.addAll(scheduledWorkersDay);
-                        scheduledRepo.saveAll(scheduledWorkersDay);
-                        break;
-                    case 2:
-                        // TODO: Código para escolher o permanente
-                        break;
-                    case 3:
-                        // TODO: Código para escolher o aux. de linha
-                        break;
-                    case 4:
-                        // TODO: Código para escolher o chefe de linha
-                        break;
-                    case 5:
-                        // TODO: Código para escolher o fiscal
-                        break;
-                    default:
-                        break;
+                if (role.getPriority() == 1) {
+                    var worker = selectWorker(startDate, workerRepo.findAvailableDrivers(startDate));
+                    var scheduledWorkersDay = scheduledWorkersDay(worker, startDate, roles, role, daysWork);
+                    scheduledWorkers.addAll(scheduledWorkersDay);
+                    scheduledRepo.saveAll(scheduledWorkersDay);
+                    continue;
                 }
+                
             }
             startDate = startDate.plusDays(daysWork);
         }
