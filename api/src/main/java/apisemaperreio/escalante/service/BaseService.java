@@ -8,7 +8,7 @@ import apisemaperreio.escalante.model.Worker;
 
 public class BaseService {
 
-    protected WorkerDTO WorkerToDto(Worker worker) {
+    protected WorkerDTO toDto(Worker worker) {
         return WorkerDTO.builder()
                 .registration(worker.getRegistration())
                 .name(worker.getName())
@@ -23,7 +23,7 @@ public class BaseService {
                 .build();
     }
 
-    protected SimpleWorkerDTO WorkerToSimpleDto(Worker worker) {
+    protected SimpleWorkerDTO toSimpleDto(Worker worker) {
         return SimpleWorkerDTO.builder()
                 .registration(worker.getRegistration())
                 .name(worker.getName())
@@ -32,12 +32,12 @@ public class BaseService {
                 .build();
     }
 
-    protected ScheduledWorkerDTO scheduledWorkertoDto(ScheduledWorker scheduledWorker) {
+    protected ScheduledWorkerDTO toDto(ScheduledWorker scheduledWorker) {
         return ScheduledWorkerDTO.builder()
                 .workDate(scheduledWorker.getDate())
                 .workerRole(scheduledWorker.getRole().getName())
                 .scheduleType(scheduledWorker.getRole().getScheduleType().getName())
-                .worker(WorkerToSimpleDto(scheduledWorker.getWorker()))
+                .worker(toSimpleDto(scheduledWorker.getWorker()))
                 .build();
     }
 

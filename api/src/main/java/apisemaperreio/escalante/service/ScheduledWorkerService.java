@@ -126,13 +126,13 @@ public class ScheduledWorkerService extends BaseService {
             }
             startDate = startDate.plusDays(daysWork);
         }
-        return scheduledWorkers.stream().map(this::scheduledWorkertoDto).toList();
+        return scheduledWorkers.stream().map(this::toDto).toList();
     }
 
     public List<ScheduledWorkerDTO> getAllScheduledWorkers() {
         var scheduledWorkers = scheduledRepo.findAll();
         scheduledWorkers.sort(Comparator.comparing(ScheduledWorker::getDate).reversed());
-        return scheduledWorkers.stream().map(this::scheduledWorkertoDto).toList();
+        return scheduledWorkers.stream().map(this::toDto).toList();
     }
 
 }
