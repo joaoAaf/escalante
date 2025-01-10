@@ -1,11 +1,10 @@
 package apisemaperreio.escalante.model;
 
 import java.time.LocalDate;
-import java.util.List;
+import java.util.Set;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -57,10 +56,10 @@ public class Worker {
     @JoinColumn(name = "id_schedule_type")
     private ScheduleType scheduleType;
 
-    @OneToMany(mappedBy = "worker", orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<ScheduledWorker> scheduledWorkers;
+    @OneToMany(mappedBy = "worker", orphanRemoval = true)
+    private Set<ScheduledWorker> scheduledWorkers;
 
-    @OneToMany(mappedBy = "worker", orphanRemoval = true, fetch = FetchType.EAGER)
-    private List<WorkerAbsence> workerAbsences;
+    @OneToMany(mappedBy = "worker", orphanRemoval = true)
+    private Set<WorkerAbsence> workerAbsences;
     
 }

@@ -24,10 +24,10 @@ public class WorkerController {
     @GetMapping
     public ResponseEntity<Object> getAllPositions() {
         try {
-            List<Worker> workers = service.getAll();
+            var workers = service.getAll();
             return new ResponseEntity<>(workers, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -37,7 +37,17 @@ public class WorkerController {
             List<Worker> workers = service.getAvailableDrivers(LocalDate.parse("2024-09-14"));
             return new ResponseEntity<>(workers, HttpStatus.OK);
         } catch (Exception e) {
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @GetMapping("/available")
+    public ResponseEntity<Object> getAvailableWorkers() {
+        try {
+            List<Worker> workers = service.getAvailableWorkers(LocalDate.parse("2024-09-14"), 5,false);
+            return new ResponseEntity<>(workers, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
