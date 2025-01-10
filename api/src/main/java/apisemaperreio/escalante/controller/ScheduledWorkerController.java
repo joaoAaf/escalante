@@ -38,7 +38,7 @@ public class ScheduledWorkerController {
     @GetMapping("/test")
     public ResponseEntity<Object> getTest() {
         try {
-            var scheduledWorkers = service.scheduler(date, LocalDate.parse("2024-10-02"), 2);
+            var scheduledWorkers = service.scheduler(date, LocalDate.parse("2024-09-30"), 2);
             return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);

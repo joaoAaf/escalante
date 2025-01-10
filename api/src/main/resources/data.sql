@@ -103,6 +103,8 @@ VALUES
 
 -- Carga inicial de ausencias
 INSERT INTO worker_absence (start_date, end_date, reason, id_worker) VALUES
+    ('2024-09-01', '2024-09-30', 'ferias', 26),
+    ('2024-09-01', '2024-09-30', 'ferias', 18),
     ('2024-09-01', '2024-09-30', 'ferias', 5);
 
 -- Carga inicial de trabalhadores escalados
