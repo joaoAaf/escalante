@@ -15,6 +15,7 @@ public record WorkerDTO(
         String email,
         LocalDate birthdate,
         Boolean driver,
-        Boolean scheduleable) {
+        Boolean scheduleable,
+        SimpleScheduleTypeDTO scheduleType) {
 
 }

@@ -1,7 +1,9 @@
 package apisemaperreio.escalante.service;
 
-import apisemaperreio.escalante.dto.SimpleScheduleTypeDTO;
+import java.util.Optional;
+
 import apisemaperreio.escalante.dto.ScheduledWorkerDTO;
+import apisemaperreio.escalante.dto.SimpleScheduleTypeDTO;
 import apisemaperreio.escalante.dto.SimpleWorkerDTO;
 import apisemaperreio.escalante.dto.WorkerDTO;
 import apisemaperreio.escalante.model.ScheduleType;
@@ -22,6 +24,7 @@ public class BaseService {
                 .birthdate(worker.getBirthdate())
                 .driver(worker.getDriver())
                 .scheduleable(worker.getScheduleable())
+                .scheduleType(toSimpleDto(worker.getScheduleType()))
                 .build();
     }
 
@@ -33,7 +36,7 @@ public class BaseService {
                 .worker(toSimpleDto(scheduledWorker.getWorker()))
                 .build();
     }
-    
+
     protected SimpleWorkerDTO toSimpleDto(Worker worker) {
         return SimpleWorkerDTO.builder()
                 .registration(worker.getRegistration())
@@ -45,10 +48,11 @@ public class BaseService {
     }
 
     protected SimpleScheduleTypeDTO toSimpleDto(ScheduleType scheduleType) {
-        return SimpleScheduleTypeDTO.builder()
+        var scheduleTypeOpt = Optional.ofNullable(scheduleType);
+        return scheduleTypeOpt.isPresent() ? SimpleScheduleTypeDTO.builder()
                 .name(scheduleType.getName())
                 .daysOff(scheduleType.getDaysOff())
-                .build();
+                .build() : null;
     }
 
 }

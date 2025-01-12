@@ -24,11 +24,14 @@ import lombok.var;
 @Service
 public class ScheduledWorkerService extends BaseService {
 
-    private final WorkerRepository workerRepo;
-    private final ScheduledWorkerRepository scheduledRepo;
-    private final WorkerRoleRepository roleRepo;
-    private final WorkerPriorityRepository priorityRepo;
+    private final WorkerRepository workerRepository;
+    private final ScheduledWorkerRepository scheduledRepository;
+    private final WorkerRoleRepository roleRepository;
+    private final WorkerPriorityRepository priorityRepository;
 
+    // Metodo para checar se existe um tipo de escala de trabalho especifica
+    // (ScheduleType) para um certo trabalhador ou cargo,
+    // se houver retorna este tipo de escala, se não, retorna um Optional vazio
     private Optional<ScheduleType> checkScheduleType(Worker worker) {
         var workerScheduleType = Optional.ofNullable(worker.getScheduleType());
         var positionScheduleType = Optional.ofNullable(worker.getPosition().getScheduleType());
@@ -36,14 +39,10 @@ public class ScheduledWorkerService extends BaseService {
             return Optional.empty();
         }
         if (workerScheduleType.isPresent() && positionScheduleType.isPresent()) {
-            if (workerScheduleType.get().getDaysOff() >= positionScheduleType.get().getDaysOff()) {
-                return workerScheduleType;
-            }
+            return workerScheduleType.get().getDaysOff() >= positionScheduleType.get().getDaysOff() ? workerScheduleType
+                    : positionScheduleType;
         }
-        if (workerScheduleType.isPresent()) {
-            return workerScheduleType;
-        }
-        return positionScheduleType;
+        return workerScheduleType.isPresent() ? workerScheduleType : positionScheduleType;
     }
 
     private ScheduledWorker lastWork(Worker worker) {
@@ -120,10 +119,10 @@ public class ScheduledWorkerService extends BaseService {
     }
 
     private Optional<Worker> selectNoDriver(LocalDate date, WorkerRole role) {
-        var priorities = priorityRepo.findByRoleOrderByPriorityAsc(role);
+        var priorities = priorityRepository.findByRoleOrderByPriorityAsc(role);
         for (var priority : priorities) {
             var worker = selectWorker(date,
-                    workerRepo.findAvailableWorkers(date, priority.getPosition().getId(), false));
+                    workerRepository.findAvailableWorkers(date, priority.getPosition().getId(), false));
             if (worker.isEmpty()) {
                 continue;
             }
@@ -131,7 +130,7 @@ public class ScheduledWorkerService extends BaseService {
         }
         for (var priority : priorities) {
             var worker = selectWorker(date,
-                    workerRepo.findAvailableWorkers(date, priority.getPosition().getId(), true));
+                    workerRepository.findAvailableWorkers(date, priority.getPosition().getId(), true));
             if (worker.isEmpty()) {
                 continue;
             }
@@ -145,19 +144,19 @@ public class ScheduledWorkerService extends BaseService {
         if (worker.isPresent()) {
             var scheduledWorkersDay = scheduledWorkersDay(worker, date, roles, role, daysWork);
             scheduledWorkers.addAll(scheduledWorkersDay);
-            scheduledRepo.saveAll(scheduledWorkersDay);
+            scheduledRepository.saveAll(scheduledWorkersDay);
         }
     }
 
     public List<ScheduledWorkerDTO> scheduler(LocalDate startDate, LocalDate endDate, Integer daysWork) {
         var scheduledWorkers = new ArrayList<ScheduledWorker>();
-        var roles = roleRepo.findAll();
+        var roles = roleRepository.findAll();
         roles.sort(Comparator.comparing(WorkerRole::getPriority));
         while (startDate.compareTo(endDate) <= 0) {
             for (var role : roles) {
                 Optional<Worker> worker = Optional.empty();
                 if (role.getPriority() == 1) {
-                    worker = selectWorker(startDate, workerRepo.findAvailableDrivers(startDate));
+                    worker = selectWorker(startDate, workerRepository.findAvailableDrivers(startDate));
                     saveScheduledWorkers(worker, startDate, roles, role, daysWork, scheduledWorkers);
                     continue;
                 }
@@ -190,7 +189,7 @@ public class ScheduledWorkerService extends BaseService {
     }
 
     public List<ScheduledWorkerDTO> getAllScheduledWorkers() {
-        var scheduledWorkers = scheduledRepo.findAll();
+        var scheduledWorkers = scheduledRepository.findAll();
         scheduledWorkers.sort(Comparator.comparing(ScheduledWorker::getDate).reversed());
         return scheduledWorkers.stream().map(this::toDto).toList();
     }
