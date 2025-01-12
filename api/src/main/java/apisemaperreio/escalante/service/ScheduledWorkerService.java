@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import apisemaperreio.escalante.dto.ScheduledWorkerDTO;
 import apisemaperreio.escalante.model.ScheduleType;
@@ -179,10 +180,10 @@ public class ScheduledWorkerService extends BaseService {
     // 1 - Caso a função seja de motorista;
     // 2 - Caso do função de fiscal;
     // 3 - Caso de qualquer outra função.
+    @Transactional
     public List<ScheduledWorkerDTO> scheduler(LocalDate startDate, LocalDate endDate, Integer daysWork) {
         var scheduledWorkers = new ArrayList<ScheduledWorker>();
-        var roles = roleRepository.findAll();
-        roles.sort(Comparator.comparing(WorkerRole::getPriority));
+        var roles = roleRepository.findAllByOrderByPriorityAsc();
         while (startDate.compareTo(endDate) <= 0) {
             for (var role : roles) {
                 Optional<Worker> worker = Optional.empty();
@@ -216,6 +217,7 @@ public class ScheduledWorkerService extends BaseService {
             }
             startDate = startDate.plusDays(daysWork);
         }
+        scheduledWorkers.sort(Comparator.comparing(ScheduledWorker::getDate).reversed());
         return scheduledWorkers.stream().map(this::toDto).toList();
     }
 
