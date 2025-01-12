@@ -31,7 +31,7 @@ public class ScheduledWorkerService extends BaseService {
 
     // Metodo para checar se existe um tipo de escala de trabalho especifica
     // (ScheduleType) para um certo trabalhador ou cargo,
-    // se houver retorna este tipo de escala, se não, retorna um Optional vazio
+    // se houver retorna este tipo de escala, se não, retorna um Optional vazio.
     private Optional<ScheduleType> checkScheduleType(Worker worker) {
         var workerScheduleType = Optional.ofNullable(worker.getScheduleType());
         var positionScheduleType = Optional.ofNullable(worker.getPosition().getScheduleType());
@@ -45,12 +45,16 @@ public class ScheduledWorkerService extends BaseService {
         return workerScheduleType.isPresent() ? workerScheduleType : positionScheduleType;
     }
 
+    // Metodo para retornar o ultimo dia que o trabalhador foi escalado.
     private ScheduledWorker lastWork(Worker worker) {
         var workedDays = new ArrayList<>(worker.getScheduledWorkers());
         workedDays.sort(Comparator.comparing(ScheduledWorker::getDate).reversed());
         return workedDays.getFirst();
     }
 
+    // Metodo para retornar um Optional com um trabalhador,
+    // se ele estiver disponível para trabalhar em certa data,
+    // ou um Optinal vazio caso não haja trabalhadores disponíveis.
     private Optional<Worker> selectWorker(LocalDate date, List<Worker> workers) {
         for (var worker : workers) {
             if (worker.getScheduledWorkers().isEmpty()) {
@@ -74,6 +78,11 @@ public class ScheduledWorkerService extends BaseService {
         return Optional.empty();
     }
 
+    // Metodo para retornar os dias trabalhados por certo trabalhador,
+    // em certa função, de acordo com a quantidade de dias determinada
+    // pelo parametro daysWork, se a função do trabalhador for 'permanente'
+    // ou 'auxiliar de linha', as funções serão alternadas entre si,
+    // quando os dias de trabalho forem superiores a 1 dia.
     private List<ScheduledWorker> scheduledWorkersDay(Optional<Worker> worker, LocalDate date, List<WorkerRole> roles,
             WorkerRole role, Integer daysWork) {
         var scheduledWorkersDay = new ArrayList<ScheduledWorker>();
@@ -98,6 +107,12 @@ public class ScheduledWorkerService extends BaseService {
         return scheduledWorkersDay;
     }
 
+    // Metodo para verificar se o motorista tambem pode ser o fiscal,
+    // para isto ele deve recuperar da lista de trabalhadores escalados
+    // o motorista e o chefe de linha que trabalharão em certa data,
+    // verificar se algum deles existe, se o motorista não existir ou
+    // o chefe de linha for mais antigo que o motorista,
+    // será retornado um Optional vazio, caso contrario o motorista será retornado.
     private Optional<Worker> driverEqualsFiscal(LocalDate date, List<ScheduledWorker> scheduledWorkers) {
         var scheduledDriver = scheduledWorkers
                 .stream()
@@ -118,6 +133,12 @@ public class ScheduledWorkerService extends BaseService {
                 : Optional.empty();
     }
 
+    // Retorna um trabalhador para as funções diferentes da função de motorista,
+    // de acordo com a ordem de prioridade da função recebida por parametro.
+    // a busca é realizada em duas etapas, primeiro buscando um trabalhador
+    // que não pode exercer a função de motorista, caso não haja,
+    // será buscado os podem exerce-la, se ainda assim não houver,
+    // será retornado um Optional vazio.
     private Optional<Worker> selectNoDriver(LocalDate date, WorkerRole role) {
         var priorities = priorityRepository.findByRoleOrderByPriorityAsc(role);
         for (var priority : priorities) {
@@ -139,6 +160,8 @@ public class ScheduledWorkerService extends BaseService {
         return Optional.empty();
     }
 
+    // Metodo para salvar os trabalhadores escalados em uma lista, e no banco de
+    // dados. Caso não haja trabalhador o metodo não fará nada.
     private void saveScheduledWorkers(Optional<Worker> worker, LocalDate date, List<WorkerRole> roles,
             WorkerRole role, Integer daysWork, List<ScheduledWorker> scheduledWorkers) {
         if (worker.isPresent()) {
@@ -148,6 +171,14 @@ public class ScheduledWorkerService extends BaseService {
         }
     }
 
+    // Metodo responsável por escalar os trabalhadores, conforme as funções
+    // recuperadas do banco de dados, ordenadas por prioridade, para certo
+    // periodo de tempo e quantidade de dias trabalhados passados por parâmetro.
+    // Há três lógicas diferentes para escalar os trabalhadores,
+    // dependendo da função que estão sendo escalados:
+    // 1 - Caso a função seja de motorista;
+    // 2 - Caso do função de fiscal;
+    // 3 - Caso de qualquer outra função.
     public List<ScheduledWorkerDTO> scheduler(LocalDate startDate, LocalDate endDate, Integer daysWork) {
         var scheduledWorkers = new ArrayList<ScheduledWorker>();
         var roles = roleRepository.findAll();
