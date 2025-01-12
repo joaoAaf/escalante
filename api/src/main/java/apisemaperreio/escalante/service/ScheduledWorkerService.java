@@ -221,9 +221,15 @@ public class ScheduledWorkerService extends BaseService {
         return scheduledWorkers.stream().map(this::toDto).toList();
     }
 
-    public List<ScheduledWorkerDTO> getAllScheduledWorkers() {
-        var scheduledWorkers = scheduledRepository.findAll();
-        scheduledWorkers.sort(Comparator.comparing(ScheduledWorker::getDate).reversed());
+    // Metodo para retornar os trabalhadores escalados em um certo dia.
+    public List<ScheduledWorkerDTO> getScheduledWorkerByDate(LocalDate date) {
+        var scheduledWorkers = scheduledRepository.findByDate(date);
+        return scheduledWorkers.stream().map(this::toDto).toList();
+    }
+    
+    // Metodo para retornar os trabalhadores escalados em um certo periodo de tempo.
+    public List<ScheduledWorkerDTO> getRangeScheduledWorkers(LocalDate startDate, LocalDate endDate) {
+        var scheduledWorkers = scheduledRepository.findByRangeDatesAsc(startDate, endDate);
         return scheduledWorkers.stream().map(this::toDto).toList();
     }
 
