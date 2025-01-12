@@ -1,8 +1,10 @@
 package apisemaperreio.escalante.service;
 
+import apisemaperreio.escalante.dto.SimpleScheduleTypeDTO;
 import apisemaperreio.escalante.dto.ScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.SimpleWorkerDTO;
 import apisemaperreio.escalante.dto.WorkerDTO;
+import apisemaperreio.escalante.model.ScheduleType;
 import apisemaperreio.escalante.model.ScheduledWorker;
 import apisemaperreio.escalante.model.Worker;
 
@@ -23,21 +25,29 @@ public class BaseService {
                 .build();
     }
 
+    protected ScheduledWorkerDTO toDto(ScheduledWorker scheduledWorker) {
+        return ScheduledWorkerDTO.builder()
+                .workDate(scheduledWorker.getDate())
+                .workerRole(scheduledWorker.getRole().getName())
+                .scheduleType(toSimpleDto(scheduledWorker.getRole().getScheduleType()))
+                .worker(toSimpleDto(scheduledWorker.getWorker()))
+                .build();
+    }
+    
     protected SimpleWorkerDTO toSimpleDto(Worker worker) {
         return SimpleWorkerDTO.builder()
                 .registration(worker.getRegistration())
                 .name(worker.getName())
                 .seniority(worker.getSeniority())
                 .position(worker.getPosition().getName())
+                .driver(worker.getDriver())
                 .build();
     }
 
-    protected ScheduledWorkerDTO toDto(ScheduledWorker scheduledWorker) {
-        return ScheduledWorkerDTO.builder()
-                .workDate(scheduledWorker.getDate())
-                .workerRole(scheduledWorker.getRole().getName())
-                .scheduleType(scheduledWorker.getRole().getScheduleType().getName())
-                .worker(toSimpleDto(scheduledWorker.getWorker()))
+    protected SimpleScheduleTypeDTO toSimpleDto(ScheduleType scheduleType) {
+        return SimpleScheduleTypeDTO.builder()
+                .name(scheduleType.getName())
+                .daysOff(scheduleType.getDaysOff())
                 .build();
     }
 

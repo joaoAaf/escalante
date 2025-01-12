@@ -1,8 +1,8 @@
 -- Carga inicial tabela shedule_type
-INSERT INTO schedule_type (name, days_worked, days_off) VALUES
-    ('escala 2/6', 2, 6),
-    ('escala 2/8', 2, 8),
-    ('escala 2/14', 2, 14);
+INSERT INTO schedule_type (name, days_off) VALUES
+    ('normal', 6),
+    ('motorista e fiscal', 8),
+    ('especial', 14);
 
 -- Carga inicial tabela position
 INSERT INTO worker_position (name, seniority) VALUES

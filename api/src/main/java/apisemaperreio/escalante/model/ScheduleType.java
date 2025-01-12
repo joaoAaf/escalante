@@ -19,9 +19,6 @@ public class ScheduleType {
     private String name;
 
     @Column(nullable = false)
-    private Short daysWorked;
-
-    @Column(nullable = false)
     private Short daysOff;
     
     @Column(length = 255)

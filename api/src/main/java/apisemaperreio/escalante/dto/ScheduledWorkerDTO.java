@@ -8,6 +8,6 @@ import lombok.Builder;
 public record ScheduledWorkerDTO(
         LocalDate workDate,
         String workerRole,
-        String scheduleType,
+        SimpleScheduleTypeDTO scheduleType,
         SimpleWorkerDTO worker) {
 }

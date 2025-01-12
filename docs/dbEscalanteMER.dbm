@@ -4,7 +4,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
  Unexpected results may occur if the code is changed deliberately.
 -->
 <dbmodel pgmodeler-ver="1.2.0-alpha1" use-changelog="false" max-obj-count="10"
-	 last-position="0,133" last-zoom="1.3" scene-rect="-20,-20,1578.11,1108.12"
+	 last-position="0,179" last-zoom="1.3" scene-rect="-20,-20,1578.11,1108.12"
 	 default-schema="public" default-owner="dba"
 	 layers="Default layer"
 	 active-layers="0"
@@ -269,18 +269,15 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	</label>
 </relationship>
 
-<table name="schedule_type" layers="0" collapse-mode="2" max-obj-count="6" z-value="0">
+<table name="schedule_type" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="800" y="460"/>
+	<position x="820" y="440"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
 	<column name="name" not-null="true">
 		<type name="varchar" length="50"/>
-	</column>
-	<column name="days_worked" not-null="true">
-		<type name="smallint" length="0"/>
 	</column>
 	<column name="days_off" not-null="true">
 		<type name="smallint" length="0"/>
@@ -331,14 +328,14 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.worker_position"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
-		<position x="-134.226" y="-60.076"/>
+		<position x="-158.475" y="-63.253"/>
 	</label>
 </relationship>
 
 <table name="worker_priority" layers="0" collapse-mode="2" max-obj-count="4" z-value="0">
 	<schema name="public"/>
 	<role name="dba"/>
-	<position x="960" y="720"/>
+	<position x="980" y="740"/>
 	<column name="id" not-null="true">
 		<type name="serial" length="0"/>
 	</column>
@@ -380,7 +377,7 @@ CAUTION: Do not modify this file unless you know what you are doing.
 	 dst-table="public.worker_priority"
 	 src-required="false" dst-required="false">
 	<label ref-type="name-label">
-		<position x="59.8429" y="-39.353"/>
+		<position x="92.7481" y="-83.253"/>
 	</label>
 </relationship>
 
