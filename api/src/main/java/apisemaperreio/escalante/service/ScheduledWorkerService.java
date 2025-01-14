@@ -233,4 +233,9 @@ public class ScheduledWorkerService extends BaseService {
         return scheduledWorkers.stream().map(this::toDto).toList();
     }
 
+    // Metodo para retornar inconsistencias na escala de trabalho.
+    public List<ScheduledWorkerDTO> getInconsistencies(LocalDate startDate, LocalDate endDate) {
+        var scheduledWorkers = scheduledRepository.findInconsistencies(startDate, endDate);
+        return scheduledWorkers.stream().map(this::toDto).toList();
+    }
 }
