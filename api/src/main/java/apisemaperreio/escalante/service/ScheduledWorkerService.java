@@ -168,7 +168,7 @@ public class ScheduledWorkerService extends BaseService {
         if (worker.isPresent()) {
             var scheduledWorkersDay = scheduledWorkersDay(worker, date, roles, role, daysWork);
             scheduledWorkers.addAll(scheduledWorkersDay);
-            scheduledRepository.saveAll(scheduledWorkersDay);
+            worker.get().getScheduledWorkers().addAll(scheduledWorkersDay);
         }
     }
 
@@ -229,8 +229,13 @@ public class ScheduledWorkerService extends BaseService {
     
     // Metodo para retornar os trabalhadores escalados em um certo periodo de tempo.
     public List<ScheduledWorkerDTO> getRangeScheduledWorkers(LocalDate startDate, LocalDate endDate) {
-        var scheduledWorkers = scheduledRepository.findByRangeDatesAsc(startDate, endDate);
+        var scheduledWorkers = scheduledRepository.findByRangeDates(startDate, endDate);
         return scheduledWorkers.stream().map(this::toDto).toList();
     }
 
+    // Metodo para retornar inconsistencias na escala de trabalho.
+    public List<ScheduledWorkerDTO> getInconsistencies(LocalDate startDate, LocalDate endDate) {
+        var scheduledWorkers = scheduledRepository.findInconsistencies(startDate, endDate);
+        return scheduledWorkers.stream().map(this::toDto).toList();
+    }
 }

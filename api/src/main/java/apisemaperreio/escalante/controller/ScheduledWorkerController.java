@@ -56,6 +56,23 @@ public class ScheduledWorkerController {
         }
     }
 
+    @GetMapping("/inconsistencies")
+    public ResponseEntity<Object> getInconsistencies(@RequestParam(value = "start") String startDate,
+            @RequestParam(value = "end") String endDate) {
+        try {
+            var scheduledWorkers = service.getInconsistencies(LocalDate.parse(startDate),
+                    LocalDate.parse(endDate));
+            if (scheduledWorkers.isEmpty()) {
+                return new ResponseEntity<>("No inconsistencies found", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
+        } catch (DateTimeParseException e) {
+            return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
     @PostMapping("/new")
     public ResponseEntity<Object> scheduler(@RequestParam(value = "start") String startDate,
             @RequestParam(value = "end") String endDate, @RequestParam(value = "days") @Max(3) @Positive Integer days) {
