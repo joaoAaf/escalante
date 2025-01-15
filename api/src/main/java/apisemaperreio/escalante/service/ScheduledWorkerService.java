@@ -238,4 +238,12 @@ public class ScheduledWorkerService extends BaseService {
         var scheduledWorkers = scheduledRepository.findInconsistencies(startDate, endDate);
         return scheduledWorkers.stream().map(this::toDto).toList();
     }
+
+    // Metodo para retornar os dias que certo trabalhador trabalhou
+    // em um certo intervalo de tempo
+    public List<ScheduledWorkerDTO> getScheduledWorkerRangeDate(String workerRegistration, LocalDate startDate,
+            LocalDate endDate) {
+        var scheduledWorkers = scheduledRepository.findScheduledWorkerRangeDate(workerRegistration, startDate, endDate);
+        return scheduledWorkers.stream().map(this::toDto).toList();
+    }
 }

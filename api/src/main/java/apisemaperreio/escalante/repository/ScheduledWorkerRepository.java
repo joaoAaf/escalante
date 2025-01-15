@@ -20,6 +20,15 @@ public interface ScheduledWorkerRepository extends JpaRepository<ScheduledWorker
         List<ScheduledWorker> findByRangeDates(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
+        // Consulta que retorna os dias que certo trabalhador trabalhou
+        // em um certo intervalo de tempo
+        @Query("SELECT s FROM ScheduledWorker s WHERE s.worker.registration = :workerRegistration " +
+                        "AND s.date BETWEEN :startDate AND :endDate ORDER BY s.date DESC")
+        List<ScheduledWorker> findScheduledWorkerRangeDate(@Param("workerRegistration") String workerRegistration,
+                        @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+        // Consulta que retorna os dias que possuem menos de 5 trabalhadores escalados
+        // mesmo que haja um trabalhador exercendo mais de uma função
         @Query("SELECT s FROM ScheduledWorker s WHERE s.date IN " +
                         "(SELECT sw.date FROM ScheduledWorker sw " +
                         "GROUP BY sw.date HAVING COUNT(sw) < 5 OR " +

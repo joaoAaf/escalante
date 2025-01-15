@@ -24,6 +24,23 @@ public class ScheduledWorkerController {
 
     private final ScheduledWorkerService service;
 
+    @GetMapping
+    public ResponseEntity<Object> getRangeScheduledWorkers(@RequestParam(value = "start") String startDate,
+            @RequestParam(value = "end") String endDate) {
+        try {
+            var scheduledWorkers = service.getRangeScheduledWorkers(LocalDate.parse(startDate),
+                    LocalDate.parse(endDate));
+            if (scheduledWorkers.isEmpty()) {
+                return new ResponseEntity<>("No scheduled workers found", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
+        } catch (DateTimeParseException e) {
+            return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
     @GetMapping("{date}")
     public ResponseEntity<Object> getScheduledWorkerByDate(@PathVariable String date) {
         try {
@@ -39,11 +56,11 @@ public class ScheduledWorkerController {
         }
     }
 
-    @GetMapping
-    public ResponseEntity<Object> getRangeScheduledWorkers(@RequestParam(value = "start") String startDate,
-            @RequestParam(value = "end") String endDate) {
+    @GetMapping("/worker/{workerRegistration}")
+    public ResponseEntity<Object> getScheduledWorkerRangeDate(@PathVariable String workerRegistration,
+            @RequestParam(value = "start") String startDate, @RequestParam(value = "end") String endDate) {
         try {
-            var scheduledWorkers = service.getRangeScheduledWorkers(LocalDate.parse(startDate),
+            var scheduledWorkers = service.getScheduledWorkerRangeDate(workerRegistration, LocalDate.parse(startDate),
                     LocalDate.parse(endDate));
             if (scheduledWorkers.isEmpty()) {
                 return new ResponseEntity<>("No scheduled workers found", HttpStatus.NOT_FOUND);
