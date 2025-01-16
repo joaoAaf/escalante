@@ -1,5 +1,8 @@
 package apisemaperreio.escalante.dto;
 
-public record CountScheduledWorkerDTO(SimpleWorkerDTO worker, Short count) {
+import lombok.Builder;
+
+@Builder
+public record CountScheduledWorkerDTO(SimpleWorkerDTO worker, Long count) {
 
 }

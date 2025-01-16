@@ -24,12 +24,10 @@ public class ScheduledWorkerController {
 
     private final ScheduledWorkerService service;
 
-    @GetMapping
-    public ResponseEntity<Object> getRangeScheduledWorkers(@RequestParam(value = "start") String startDate,
-            @RequestParam(value = "end") String endDate) {
+    @GetMapping("{date}")
+    public ResponseEntity<Object> getScheduledWorkerByDate(@PathVariable String date) {
         try {
-            var scheduledWorkers = service.getRangeScheduledWorkers(LocalDate.parse(startDate),
-                    LocalDate.parse(endDate));
+            var scheduledWorkers = service.getScheduledWorkerByDate(LocalDate.parse(date));
             if (scheduledWorkers.isEmpty()) {
                 return new ResponseEntity<>("No scheduled workers found", HttpStatus.NOT_FOUND);
             }
@@ -41,10 +39,12 @@ public class ScheduledWorkerController {
         }
     }
 
-    @GetMapping("{date}")
-    public ResponseEntity<Object> getScheduledWorkerByDate(@PathVariable String date) {
+    @GetMapping
+    public ResponseEntity<Object> getAllScheduledWorkersRangeDate(@RequestParam(value = "start") String startDate,
+            @RequestParam(value = "end") String endDate) {
         try {
-            var scheduledWorkers = service.getScheduledWorkerByDate(LocalDate.parse(date));
+            var scheduledWorkers = service.getAllScheduledWorkersRangeDate(LocalDate.parse(startDate),
+                    LocalDate.parse(endDate));
             if (scheduledWorkers.isEmpty()) {
                 return new ResponseEntity<>("No scheduled workers found", HttpStatus.NOT_FOUND);
             }
@@ -73,6 +73,40 @@ public class ScheduledWorkerController {
         }
     }
 
+    @GetMapping("/count/{workerRegistration}")
+    public ResponseEntity<Object> getWorkerCountDays(@PathVariable String workerRegistration,
+    @RequestParam(value = "start") String startDate, @RequestParam(value = "end") String endDate) {
+        try {
+            var scheduledWorkers = service.getWorkerCountDays(workerRegistration, LocalDate.parse(startDate),
+            LocalDate.parse(endDate));
+            if (scheduledWorkers.isEmpty()) {
+                return new ResponseEntity<>("No worker found", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
+        } catch (DateTimeParseException e) {
+            return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Object> getAllWorkersCountDays(@RequestParam(value = "start") String startDate,
+            @RequestParam(value = "end") String endDate) {
+        try {
+            var scheduledWorkers = service.getAllWorkersCountDays(LocalDate.parse(startDate),
+                    LocalDate.parse(endDate));
+            if (scheduledWorkers.isEmpty()) {
+                return new ResponseEntity<>("No workers found", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
+        } catch (DateTimeParseException e) {
+            return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
+        } catch (Exception e) {
+            return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
     @GetMapping("/inconsistencies")
     public ResponseEntity<Object> getInconsistencies(@RequestParam(value = "start") String startDate,
             @RequestParam(value = "end") String endDate) {
@@ -92,7 +126,7 @@ public class ScheduledWorkerController {
 
     @PostMapping("/new")
     public ResponseEntity<Object> scheduler(@RequestParam(value = "start") String startDate,
-            @RequestParam(value = "end") String endDate, @RequestParam(value = "days") @Max(3) @Positive Integer days) {
+            @RequestParam(value = "end") String endDate, @RequestParam(value = "days") @Max(5) @Positive Integer days) {
         try {
             var scheduledWorkers = service.scheduler(LocalDate.parse(startDate), LocalDate.parse(endDate), days);
             return new ResponseEntity<>(scheduledWorkers, HttpStatus.CREATED);

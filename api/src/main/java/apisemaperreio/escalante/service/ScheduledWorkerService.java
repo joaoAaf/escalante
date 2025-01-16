@@ -9,6 +9,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import apisemaperreio.escalante.dto.CountScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.ScheduledWorkerDTO;
 import apisemaperreio.escalante.model.ScheduleType;
 import apisemaperreio.escalante.model.ScheduledWorker;
@@ -226,16 +227,10 @@ public class ScheduledWorkerService extends BaseService {
         var scheduledWorkers = scheduledRepository.findByDate(date);
         return scheduledWorkers.stream().map(this::toDto).toList();
     }
-    
-    // Metodo para retornar os trabalhadores escalados em um certo periodo de tempo.
-    public List<ScheduledWorkerDTO> getRangeScheduledWorkers(LocalDate startDate, LocalDate endDate) {
-        var scheduledWorkers = scheduledRepository.findByRangeDates(startDate, endDate);
-        return scheduledWorkers.stream().map(this::toDto).toList();
-    }
 
-    // Metodo para retornar inconsistencias na escala de trabalho.
-    public List<ScheduledWorkerDTO> getInconsistencies(LocalDate startDate, LocalDate endDate) {
-        var scheduledWorkers = scheduledRepository.findInconsistencies(startDate, endDate);
+    // Metodo para retornar os trabalhadores escalados em um certo periodo de tempo.
+    public List<ScheduledWorkerDTO> getAllScheduledWorkersRangeDate(LocalDate startDate, LocalDate endDate) {
+        var scheduledWorkers = scheduledRepository.findByRangeDates(startDate, endDate);
         return scheduledWorkers.stream().map(this::toDto).toList();
     }
 
@@ -244,6 +239,39 @@ public class ScheduledWorkerService extends BaseService {
     public List<ScheduledWorkerDTO> getScheduledWorkerRangeDate(String workerRegistration, LocalDate startDate,
             LocalDate endDate) {
         var scheduledWorkers = scheduledRepository.findScheduledWorkerRangeDate(workerRegistration, startDate, endDate);
+        return scheduledWorkers.stream().map(this::toDto).toList();
+    }
+
+    // Metodo para retornar quantos dias todos os trabalhadores trabalharam em um
+    // certo periodo de tempo.
+    public List<CountScheduledWorkerDTO> getAllWorkersCountDays(LocalDate startDate, LocalDate endDate) {
+        var workersDays = workerRepository.findAllWorkersCountDays(startDate, endDate);
+        if (workersDays.isEmpty()) {
+            return List.of();
+        }
+        return workersDays.stream().map(w -> CountScheduledWorkerDTO.builder()
+                .worker(toSimpleDto((Worker) w[0]))
+                .count((Long) w[1])
+                .build()).toList();
+    }
+
+    // Metodo para retornar quantos dias um trabalhador trabalhou em um certo
+    // periodo de tempo.
+    public Optional<CountScheduledWorkerDTO> getWorkerCountDays(String workerRegistration, LocalDate startDate,
+            LocalDate endDate) {
+        var workerDays = workerRepository.findWorkerCountDays(workerRegistration, startDate, endDate);
+        if (workerDays.isEmpty()) {
+            return Optional.empty();
+        }
+        return Optional.of(CountScheduledWorkerDTO.builder()
+                .worker(toSimpleDto((Worker) workerDays.getFirst()[0]))
+                .count((Long) workerDays.getFirst()[1])
+                .build());
+    }
+
+    // Metodo para retornar inconsistencias na escala de trabalho.
+    public List<ScheduledWorkerDTO> getInconsistencies(LocalDate startDate, LocalDate endDate) {
+        var scheduledWorkers = scheduledRepository.findInconsistencies(startDate, endDate);
         return scheduledWorkers.stream().map(this::toDto).toList();
     }
 }
