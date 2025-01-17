@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import apisemaperreio.escalante.dto.CountScheduledWorkerDTO;
+import apisemaperreio.escalante.dto.SaveScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.ScheduledWorkerDTO;
 import apisemaperreio.escalante.model.ScheduleType;
 import apisemaperreio.escalante.model.ScheduledWorker;
@@ -273,5 +274,14 @@ public class ScheduledWorkerService extends BaseService {
     public List<ScheduledWorkerDTO> getInconsistencies(LocalDate startDate, LocalDate endDate) {
         var scheduledWorkers = scheduledRepository.findInconsistencies(startDate, endDate);
         return scheduledWorkers.stream().map(this::toDto).toList();
+    }
+
+    public ScheduledWorkerDTO saveScheduledWorker(SaveScheduledWorkerDTO saveScheduledWorkerDto) {
+        var scheduledWorker = ScheduledWorker.builder()
+                .date(LocalDate.parse(saveScheduledWorkerDto.workDate()))
+                .worker(workerRepository.findByRegistration(saveScheduledWorkerDto.workerRegistration()).orElseThrow())
+                .role(roleRepository.findByName(saveScheduledWorkerDto.workerRoleName()).orElseThrow())
+                .build();
+        return toDto(scheduledRepository.save(scheduledWorker));
     }
 }
