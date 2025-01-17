@@ -16,10 +16,13 @@ import org.springframework.web.bind.annotation.RestController;
 
 import apisemaperreio.escalante.dto.SaveScheduledWorkerDTO;
 import apisemaperreio.escalante.service.ScheduledWorkerService;
+import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @RequiredArgsConstructor
 @RequestMapping("/schedule")
 @RestController
@@ -38,6 +41,7 @@ public class ScheduledWorkerController {
         } catch (DateTimeParseException e) {
             return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
             return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
@@ -55,6 +59,7 @@ public class ScheduledWorkerController {
         } catch (DateTimeParseException e) {
             return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
             return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
@@ -72,6 +77,7 @@ public class ScheduledWorkerController {
         } catch (DateTimeParseException e) {
             return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
             return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
@@ -89,6 +95,7 @@ public class ScheduledWorkerController {
         } catch (DateTimeParseException e) {
             return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
             return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
@@ -106,6 +113,7 @@ public class ScheduledWorkerController {
         } catch (DateTimeParseException e) {
             return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
             return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
@@ -123,6 +131,7 @@ public class ScheduledWorkerController {
         } catch (DateTimeParseException e) {
             return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
             return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
@@ -136,12 +145,13 @@ public class ScheduledWorkerController {
         } catch (DateTimeParseException e) {
             return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
             return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
 
     @PostMapping("/new")
-    public ResponseEntity<Object> saveScheduledWorker(@RequestBody SaveScheduledWorkerDTO saveScheduledWorkerDTO) {
+    public ResponseEntity<Object> saveScheduledWorker(@RequestBody @Valid SaveScheduledWorkerDTO saveScheduledWorkerDTO) {
         try {
             var scheduledWorker = service.saveScheduledWorker(saveScheduledWorkerDTO);
             return new ResponseEntity<>(scheduledWorker, HttpStatus.CREATED);
@@ -150,6 +160,7 @@ public class ScheduledWorkerController {
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>("No worker or role found", HttpStatus.NOT_FOUND);
         } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
             return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
         }
     }
