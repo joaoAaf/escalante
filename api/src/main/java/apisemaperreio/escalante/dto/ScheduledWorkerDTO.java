@@ -6,8 +6,9 @@ import lombok.Builder;
 
 @Builder
 public record ScheduledWorkerDTO(
-        LocalDate workDate,
-        String workerRole,
-        SimpleScheduleTypeDTO scheduleType,
-        SimpleWorkerDTO worker) {
+                Integer  id, 
+                LocalDate workDate,
+                String workerRole,
+                SimpleScheduleTypeDTO scheduleType,
+                SimpleWorkerDTO worker) {
 }
