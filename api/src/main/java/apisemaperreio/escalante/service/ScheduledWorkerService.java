@@ -4,6 +4,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import apisemaperreio.escalante.dto.CountScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.SaveScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.ScheduledWorkerDTO;
+import apisemaperreio.escalante.dto.UpdateScheduledWorkerDTO;
 import apisemaperreio.escalante.model.ScheduleType;
 import apisemaperreio.escalante.model.ScheduledWorker;
 import apisemaperreio.escalante.model.Worker;
@@ -276,12 +278,38 @@ public class ScheduledWorkerService extends BaseService {
         return scheduledWorkers.stream().map(this::toDto).toList();
     }
 
+    // Metodo para adicionar um trabalhador a escala de trabalho manualmente.
     public ScheduledWorkerDTO saveScheduledWorker(SaveScheduledWorkerDTO saveScheduledWorkerDto) {
         var scheduledWorker = ScheduledWorker.builder()
                 .date(LocalDate.parse(saveScheduledWorkerDto.workDate()))
-                .worker(workerRepository.findByRegistration(saveScheduledWorkerDto.workerRegistration()).orElseThrow())
-                .role(roleRepository.findByName(saveScheduledWorkerDto.workerRoleName()).orElseThrow())
+                .worker(workerRepository.findByRegistration(saveScheduledWorkerDto.workerRegistration())
+                        .orElseThrow(() -> new NoSuchElementException("No worker found")))
+                .role(roleRepository.findByName(saveScheduledWorkerDto.workerRoleName())
+                        .orElseThrow(() -> new NoSuchElementException("No role found")))
                 .build();
         return toDto(scheduledRepository.save(scheduledWorker));
+    }
+
+    private boolean validadeUpdate(String attOld, String attNew) {
+        return Optional.ofNullable(attNew).isPresent() && !attNew.isBlank() && !attOld.equals(attNew);
+    }
+
+    // Metodo para alterar um registro da escala de trabalho.
+    public void updateScheduledWorker(Integer id, UpdateScheduledWorkerDTO updateScheduledWorkerDto) {
+        var scheduledWorker = scheduledRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("No scheduled worker found"));
+        if (validadeUpdate(scheduledWorker.getDate().toString(), updateScheduledWorkerDto.workDate())) {
+            scheduledWorker.setDate(LocalDate.parse(updateScheduledWorkerDto.workDate()));
+        }
+        if (validadeUpdate(scheduledWorker.getWorker().getRegistration(),
+                updateScheduledWorkerDto.workerRegistration())) {
+            scheduledWorker.setWorker(workerRepository.findByRegistration(updateScheduledWorkerDto.workerRegistration())
+                    .orElseThrow(() -> new NoSuchElementException("No worker found")));
+        }
+        if (validadeUpdate(scheduledWorker.getRole().getName(), updateScheduledWorkerDto.workerRoleName())) {
+            scheduledWorker.setRole(roleRepository.findByName(updateScheduledWorkerDto.workerRoleName())
+                    .orElseThrow(() -> new NoSuchElementException("No role found")));
+        }
+        scheduledRepository.save(scheduledWorker);
     }
 }

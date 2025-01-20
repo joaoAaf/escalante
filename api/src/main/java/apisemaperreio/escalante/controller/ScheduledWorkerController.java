@@ -9,12 +9,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import apisemaperreio.escalante.dto.SaveScheduledWorkerDTO;
+import apisemaperreio.escalante.dto.UpdateScheduledWorkerDTO;
 import apisemaperreio.escalante.service.ScheduledWorkerService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
@@ -84,10 +86,10 @@ public class ScheduledWorkerController {
 
     @GetMapping("/count/{workerRegistration}")
     public ResponseEntity<Object> getWorkerCountDays(@PathVariable String workerRegistration,
-    @RequestParam(value = "start") String startDate, @RequestParam(value = "end") String endDate) {
+            @RequestParam(value = "start") String startDate, @RequestParam(value = "end") String endDate) {
         try {
             var scheduledWorkers = service.getWorkerCountDays(workerRegistration, LocalDate.parse(startDate),
-            LocalDate.parse(endDate));
+                    LocalDate.parse(endDate));
             if (scheduledWorkers.isEmpty()) {
                 return new ResponseEntity<>("No worker found", HttpStatus.NOT_FOUND);
             }
@@ -151,14 +153,31 @@ public class ScheduledWorkerController {
     }
 
     @PostMapping("/new")
-    public ResponseEntity<Object> saveScheduledWorker(@RequestBody @Valid SaveScheduledWorkerDTO saveScheduledWorkerDTO) {
+    public ResponseEntity<Object> saveScheduledWorker(
+            @RequestBody @Valid SaveScheduledWorkerDTO saveScheduledWorkerDTO) {
         try {
             var scheduledWorker = service.saveScheduledWorker(saveScheduledWorkerDTO);
             return new ResponseEntity<>(scheduledWorker, HttpStatus.CREATED);
         } catch (DateTimeParseException e) {
             return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
         } catch (NoSuchElementException e) {
-            return new ResponseEntity<>("No worker or role found", HttpStatus.NOT_FOUND);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Object> updateScheduledWorker(@PathVariable Integer id,
+            @RequestBody UpdateScheduledWorkerDTO updateScheduledWorkerDto) {
+        try {
+            service.updateScheduledWorker(id, updateScheduledWorkerDto);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (DateTimeParseException e) {
+            return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
             log.error("Error: " + e.getMessage());
             return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
