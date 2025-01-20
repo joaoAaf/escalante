@@ -185,7 +185,7 @@ public class ScheduledWorkerService extends BaseService {
     // 2 - Caso do função de fiscal;
     // 3 - Caso de qualquer outra função.
     @Transactional
-    public List<ScheduledWorkerDTO> scheduler(LocalDate startDate, LocalDate endDate, Integer daysWork) {
+    public void scheduler(LocalDate startDate, LocalDate endDate, Integer daysWork) {
         var scheduledWorkers = new ArrayList<ScheduledWorker>();
         var roles = roleRepository.findAllByOrderByPriorityAsc();
         while (startDate.compareTo(endDate) <= 0) {
@@ -221,8 +221,6 @@ public class ScheduledWorkerService extends BaseService {
             }
             startDate = startDate.plusDays(daysWork);
         }
-        scheduledWorkers.sort(Comparator.comparing(ScheduledWorker::getDate).reversed());
-        return scheduledWorkers.stream().map(this::toDto).toList();
     }
 
     // Metodo para retornar os trabalhadores escalados em um certo dia.
