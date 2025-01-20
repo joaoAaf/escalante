@@ -2,6 +2,7 @@ package apisemaperreio.escalante.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -309,5 +310,17 @@ public class ScheduledWorkerService extends BaseService {
                     .orElseThrow(() -> new NoSuchElementException("No role found")));
         }
         scheduledRepository.save(scheduledWorker);
+    }
+
+    // Metodo para permutar dois trabalhadores na escala de trabalho.
+    public void swapTwoScheduledWorkers(Integer id1, Integer id2) {
+        var scheduledWorker1 = scheduledRepository.findById(id1).orElseThrow(() -> new NoSuchElementException(String
+                .format("No scheduled worker found with id %d", id1)));
+        var scheduledWorker2 = scheduledRepository.findById(id2).orElseThrow(() -> new NoSuchElementException(String
+                .format("No scheduled worker found with id %d", id2)));
+        var aux = scheduledWorker1.getWorker();
+        scheduledWorker1.setWorker(scheduledWorker2.getWorker());
+        scheduledWorker2.setWorker(aux);
+        scheduledRepository.saveAll(Arrays.asList(scheduledWorker1, scheduledWorker2));
     }
 }

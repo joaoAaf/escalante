@@ -171,10 +171,26 @@ public class ScheduledWorkerController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Object> updateScheduledWorker(@PathVariable Integer id,
+    public ResponseEntity<Object> updateScheduledWorker(@PathVariable @Positive Integer id,
             @RequestBody UpdateScheduledWorkerDTO updateScheduledWorkerDto) {
         try {
             service.updateScheduledWorker(id, updateScheduledWorkerDto);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (DateTimeParseException e) {
+            return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<Object> swapTwoScheduledWorkers(@RequestParam(value = "id1") @Positive Integer id1,
+            @RequestParam(value = "id2") @Positive Integer id2) {
+        try {
+            service.swapTwoScheduledWorkers(id1, id2);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (DateTimeParseException e) {
             return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
