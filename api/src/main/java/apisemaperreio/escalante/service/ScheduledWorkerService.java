@@ -119,15 +119,9 @@ public class ScheduledWorkerService extends BaseService {
     // verificar se algum deles existe, se o motorista não existir ou
     // o chefe de linha for mais antigo que o motorista,
     // será retornado um Optional vazio, caso contrario o motorista será retornado.
-    private Optional<Worker> driverEqualsFiscal(LocalDate date, List<ScheduledWorker> scheduledWorkers) {
-        var scheduledDriver = scheduledWorkers
-                .stream()
-                .filter(sw -> sw.getRole().getPriority() == 1 && sw.getDate().equals(date))
-                .findFirst();
-        var scheduledChefeLinha = scheduledWorkers
-                .stream()
-                .filter(sw -> sw.getRole().getPriority() == 4 && sw.getDate().equals(date))
-                .findFirst();
+    private Optional<Worker> driverEqualsFiscal(LocalDate date) {
+        var scheduledDriver = workerRepository.findScheduledWorkerByRoleNameAndDate(date, 1);
+        var scheduledChefeLinha = workerRepository.findScheduledWorkerByRoleNameAndDate(date, 4);
         if (scheduledDriver.isEmpty()) {
             return Optional.empty();
         }
@@ -169,10 +163,9 @@ public class ScheduledWorkerService extends BaseService {
     // Metodo para salvar os trabalhadores escalados em uma lista, e no banco de
     // dados. Caso não haja trabalhador o metodo não fará nada.
     private void saveScheduledWorkers(Optional<Worker> worker, LocalDate date, List<WorkerRole> roles,
-            WorkerRole role, Integer daysWork, List<ScheduledWorker> scheduledWorkers) {
+            WorkerRole role, Integer daysWork) {
         if (worker.isPresent()) {
             var scheduledWorkersDay = scheduledWorkersDay(worker, date, roles, role, daysWork);
-            scheduledWorkers.addAll(scheduledWorkersDay);
             worker.get().getScheduledWorkers().addAll(scheduledWorkersDay);
         }
     }
@@ -187,38 +180,36 @@ public class ScheduledWorkerService extends BaseService {
     // 3 - Caso de qualquer outra função.
     @Transactional
     public void scheduler(LocalDate startDate, LocalDate endDate, Integer daysWork) {
-        var scheduledWorkers = new ArrayList<ScheduledWorker>();
         var roles = roleRepository.findAllByOrderByPriorityAsc();
         while (startDate.compareTo(endDate) <= 0) {
             for (var role : roles) {
                 Optional<Worker> worker = Optional.empty();
                 if (role.getPriority() == 1) {
                     worker = selectWorker(startDate, workerRepository.findAvailableDrivers(startDate));
-                    saveScheduledWorkers(worker, startDate, roles, role, daysWork, scheduledWorkers);
+                    saveScheduledWorkers(worker, startDate, roles, role, daysWork);
                     continue;
                 }
                 if (role.getPriority() == 5) {
-                    var driverEqualsFiscal = driverEqualsFiscal(startDate, scheduledWorkers);
+                    var driverEqualsFiscal = driverEqualsFiscal(startDate);
                     if (driverEqualsFiscal.isPresent()) {
                         var newChefeLinha = selectNoDriver(startDate, roles.get(3));
                         if (newChefeLinha.isPresent()
                                 && driverEqualsFiscal.get().getSeniority() < newChefeLinha.get().getSeniority()) {
                             worker = driverEqualsFiscal;
-                            saveScheduledWorkers(newChefeLinha, startDate, roles, roles.get(3), daysWork,
-                                    scheduledWorkers);
-                            saveScheduledWorkers(worker, startDate, roles, role, daysWork, scheduledWorkers);
+                            saveScheduledWorkers(newChefeLinha, startDate, roles, roles.get(3), daysWork);
+                            saveScheduledWorkers(worker, startDate, roles, role, daysWork);
                             break;
                         }
                         worker = selectNoDriver(startDate, role);
                         if (worker.isEmpty()) {
                             worker = driverEqualsFiscal;
                         }
-                        saveScheduledWorkers(worker, startDate, roles, role, daysWork, scheduledWorkers);
+                        saveScheduledWorkers(worker, startDate, roles, role, daysWork);
                         break;
                     }
                 }
                 worker = selectNoDriver(startDate, role);
-                saveScheduledWorkers(worker, startDate, roles, role, daysWork, scheduledWorkers);
+                saveScheduledWorkers(worker, startDate, roles, role, daysWork);
             }
             startDate = startDate.plusDays(daysWork);
         }
@@ -287,11 +278,7 @@ public class ScheduledWorkerService extends BaseService {
                         .orElseThrow(() -> new NoSuchElementException("No role found")))
                 .build();
         return toDto(scheduledRepository.save(scheduledWorker));
-    }
-
-    private boolean validadeUpdate(String attOld, String attNew) {
-        return Optional.ofNullable(attNew).isPresent() && !attNew.isBlank() && !attOld.equals(attNew);
-    }
+    } 
 
     // Metodo para alterar um registro da escala de trabalho.
     public void updateScheduledWorker(Integer id, UpdateScheduledWorkerDTO updateScheduledWorkerDto) {
