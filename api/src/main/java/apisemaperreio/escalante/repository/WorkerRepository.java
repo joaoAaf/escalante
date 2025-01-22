@@ -9,7 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-import apisemaperreio.escalante.model.ScheduledWorker;
 import apisemaperreio.escalante.model.Worker;
 
 @Repository
@@ -44,19 +43,20 @@ public interface WorkerRepository extends JpaRepository<Worker, Integer> {
         @Query("SELECT w, COUNT(DISTINCT sw.date) FROM Worker w LEFT JOIN w.scheduledWorkers sw " +
                         "WHERE w.registration = :workerRegistration AND (sw.date BETWEEN :startDate AND :endDate) " +
                         "GROUP BY w.id")
-        List<Object[]> findWorkerCountDays(@Param("workerRegistration") String workerRegistration,
+        List<Object[]> findByWorkerCountWorkedDays(@Param("workerRegistration") String workerRegistration,
                         @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
         // Consulta que retorna quantos dias cada trabalhador trabalhou em um certo
         // período de tempo
         @Query("SELECT w, COUNT(DISTINCT sw.date) FROM Worker w LEFT JOIN w.scheduledWorkers sw " +
                         "WHERE sw.date BETWEEN :startDate AND :endDate GROUP BY w.id ORDER BY w.seniority ASC")
-        List<Object[]> findAllWorkersCountDays(LocalDate startDate, LocalDate endDate);
+        List<Object[]> findAllWorkersCountWorkedDays(LocalDate startDate, LocalDate endDate);
 
-        // Consulta retorna um registro da escala referente a determinado dia e função
-        @Query("SELECT sw FROM Worker w LEFT JOIN w.scheduledWorkers sw " +
-                        "WHERE sw.date = :date AND sw.role.priority = :rolePriority")
-        Optional<ScheduledWorker> findScheduledWorkerByRoleNameAndDate(@Param("date") LocalDate date,
+        // Consulta retorna um trabalhador que trabalhou em determinado dia e função
+        @Query("SELECT w FROM Worker w LEFT JOIN w.scheduledWorkers sw " +
+                        "WHERE sw.date = :date AND sw.role.priority = :rolePriority " +
+                        "ORDER BY w.seniority DESC LIMIT 1")
+        Optional<Worker> findByWorkedDateAndRolePriority(@Param("date") LocalDate date,
                         @Param("rolePriority") Integer rolePriority);
 
 }

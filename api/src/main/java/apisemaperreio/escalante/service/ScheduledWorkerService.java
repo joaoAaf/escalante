@@ -92,7 +92,7 @@ public class ScheduledWorkerService extends BaseService {
     private List<ScheduledWorker> scheduledWorkersDay(Optional<Worker> worker, LocalDate date, List<WorkerRole> roles,
             WorkerRole role, Integer daysWork) {
         var scheduledWorkersDay = new ArrayList<ScheduledWorker>();
-        LocalDate newDate = date.plusDays(0);
+        var newDate = date;
         for (int i = 1; i <= daysWork; i++) {
             var scheduledWorker = ScheduledWorker.builder()
                     .date(newDate)
@@ -120,16 +120,16 @@ public class ScheduledWorkerService extends BaseService {
     // o chefe de linha for mais antigo que o motorista,
     // será retornado um Optional vazio, caso contrario o motorista será retornado.
     private Optional<Worker> driverEqualsFiscal(LocalDate date) {
-        var scheduledDriver = workerRepository.findScheduledWorkerByRoleNameAndDate(date, 1);
-        var scheduledChefeLinha = workerRepository.findScheduledWorkerByRoleNameAndDate(date, 4);
+        var scheduledDriver = workerRepository.findByWorkedDateAndRolePriority(date, 1);
+        var scheduledChefeLinha = workerRepository.findByWorkedDateAndRolePriority(date, 4);
         if (scheduledDriver.isEmpty()) {
             return Optional.empty();
         }
         if (scheduledChefeLinha.isEmpty()) {
-            return Optional.ofNullable(scheduledDriver.get().getWorker());
+            return scheduledDriver;
         }
-        return scheduledDriver.get().getWorker().getSeniority() < scheduledChefeLinha.get().getWorker().getSeniority()
-                ? Optional.ofNullable(scheduledDriver.get().getWorker())
+        return scheduledDriver.get().getSeniority() < scheduledChefeLinha.get().getSeniority()
+                ? scheduledDriver
                 : Optional.empty();
     }
 
@@ -179,40 +179,42 @@ public class ScheduledWorkerService extends BaseService {
     // 2 - Caso do função de fiscal;
     // 3 - Caso de qualquer outra função.
     @Transactional
-    public void scheduler(LocalDate startDate, LocalDate endDate, Integer daysWork) {
+    public List<ScheduledWorkerDTO> scheduler(LocalDate startDate, LocalDate endDate, Integer daysWork) {
         var roles = roleRepository.findAllByOrderByPriorityAsc();
-        while (startDate.compareTo(endDate) <= 0) {
+        var currentDate = startDate;
+        while (currentDate.compareTo(endDate) <= 0) {
             for (var role : roles) {
                 Optional<Worker> worker = Optional.empty();
                 if (role.getPriority() == 1) {
-                    worker = selectWorker(startDate, workerRepository.findAvailableDrivers(startDate));
-                    saveScheduledWorkers(worker, startDate, roles, role, daysWork);
+                    worker = selectWorker(currentDate, workerRepository.findAvailableDrivers(currentDate));
+                    saveScheduledWorkers(worker, currentDate, roles, role, daysWork);
                     continue;
                 }
                 if (role.getPriority() == 5) {
-                    var driverEqualsFiscal = driverEqualsFiscal(startDate);
+                    var driverEqualsFiscal = driverEqualsFiscal(currentDate);
                     if (driverEqualsFiscal.isPresent()) {
-                        var newChefeLinha = selectNoDriver(startDate, roles.get(3));
+                        var newChefeLinha = selectNoDriver(currentDate, roles.get(3));
                         if (newChefeLinha.isPresent()
                                 && driverEqualsFiscal.get().getSeniority() < newChefeLinha.get().getSeniority()) {
                             worker = driverEqualsFiscal;
-                            saveScheduledWorkers(newChefeLinha, startDate, roles, roles.get(3), daysWork);
-                            saveScheduledWorkers(worker, startDate, roles, role, daysWork);
+                            saveScheduledWorkers(newChefeLinha, currentDate, roles, roles.get(3), daysWork);
+                            saveScheduledWorkers(worker, currentDate, roles, role, daysWork);
                             break;
                         }
-                        worker = selectNoDriver(startDate, role);
+                        worker = selectNoDriver(currentDate, role);
                         if (worker.isEmpty()) {
                             worker = driverEqualsFiscal;
                         }
-                        saveScheduledWorkers(worker, startDate, roles, role, daysWork);
+                        saveScheduledWorkers(worker, currentDate, roles, role, daysWork);
                         break;
                     }
                 }
-                worker = selectNoDriver(startDate, role);
-                saveScheduledWorkers(worker, startDate, roles, role, daysWork);
+                worker = selectNoDriver(currentDate, role);
+                saveScheduledWorkers(worker, currentDate, roles, role, daysWork);
             }
-            startDate = startDate.plusDays(daysWork);
+            currentDate = currentDate.plusDays(daysWork);
         }
+        return getAllScheduledWorkersRangeDate(startDate, endDate);
     }
 
     // Metodo para retornar os trabalhadores escalados em um certo dia.
@@ -238,7 +240,7 @@ public class ScheduledWorkerService extends BaseService {
     // Metodo para retornar quantos dias todos os trabalhadores trabalharam em um
     // certo periodo de tempo.
     public List<CountScheduledWorkerDTO> getAllWorkersCountDays(LocalDate startDate, LocalDate endDate) {
-        var workersDays = workerRepository.findAllWorkersCountDays(startDate, endDate);
+        var workersDays = workerRepository.findAllWorkersCountWorkedDays(startDate, endDate);
         if (workersDays.isEmpty()) {
             return List.of();
         }
@@ -252,7 +254,7 @@ public class ScheduledWorkerService extends BaseService {
     // periodo de tempo.
     public Optional<CountScheduledWorkerDTO> getWorkerCountDays(String workerRegistration, LocalDate startDate,
             LocalDate endDate) {
-        var workerDays = workerRepository.findWorkerCountDays(workerRegistration, startDate, endDate);
+        var workerDays = workerRepository.findByWorkerCountWorkedDays(workerRegistration, startDate, endDate);
         if (workerDays.isEmpty()) {
             return Optional.empty();
         }
@@ -278,7 +280,7 @@ public class ScheduledWorkerService extends BaseService {
                         .orElseThrow(() -> new NoSuchElementException("No role found")))
                 .build();
         return toDto(scheduledRepository.save(scheduledWorker));
-    } 
+    }
 
     // Metodo para alterar um registro da escala de trabalho.
     public void updateScheduledWorker(Integer id, UpdateScheduledWorkerDTO updateScheduledWorkerDto) {
