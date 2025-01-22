@@ -57,4 +57,8 @@ public class BaseService {
                 .build() : null;
     }
 
+    protected boolean validadeUpdate(String attOld, String attNew) {
+        return Optional.ofNullable(attNew).isPresent() && !attNew.isBlank() && !attOld.equals(attNew);
+    }
+
 }
