@@ -2,6 +2,7 @@ package apisemaperreio.escalante.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -23,7 +24,7 @@ public class WorkerRole {
     @Column(nullable = false, unique = true)
     private Short priority;
 
-    @ManyToOne(optional = false)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
     @JoinColumn(name = "id_schedule_type", nullable = false)
     private ScheduleType scheduleType;
 

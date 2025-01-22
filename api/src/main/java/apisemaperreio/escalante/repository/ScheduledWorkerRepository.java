@@ -15,14 +15,18 @@ public interface ScheduledWorkerRepository extends JpaRepository<ScheduledWorker
 
         List<ScheduledWorker> findByDate(LocalDate date);
 
-        @Query("SELECT s FROM ScheduledWorker s WHERE s.date BETWEEN :startDate AND :endDate " +
-                        "ORDER BY s.date DESC, s.role.priority ASC")
+        // Consulta que retorna a escala de trabalho de um certo intervalo de tempo
+        @Query("SELECT s FROM ScheduledWorker s " +
+                        "LEFT JOIN FETCH s.worker w LEFT JOIN FETCH s.role r LEFT JOIN FETCH r.scheduleType " +
+                        "WHERE s.date BETWEEN :startDate AND :endDate ORDER BY s.date DESC, s.role.priority ASC")
         List<ScheduledWorker> findByRangeDates(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
         // Consulta que retorna os dias que certo trabalhador trabalhou
         // em um certo intervalo de tempo
-        @Query("SELECT s FROM ScheduledWorker s WHERE s.worker.registration = :workerRegistration " +
+        @Query("SELECT s FROM ScheduledWorker s " +
+                        "LEFT JOIN FETCH s.worker w LEFT JOIN FETCH s.role r LEFT JOIN FETCH r.scheduleType " +
+                        "WHERE s.worker.registration = :workerRegistration " +
                         "AND s.date BETWEEN :startDate AND :endDate ORDER BY s.date DESC")
         List<ScheduledWorker> findScheduledWorkerRangeDate(@Param("workerRegistration") String workerRegistration,
                         @Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
