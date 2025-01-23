@@ -143,9 +143,15 @@ public class ScheduledWorkerController {
             @RequestParam(value = "end") String endDate, @RequestParam(value = "days") @Max(5) @Positive Integer days) {
         try {
             var scheduledWorkers = service.scheduler(LocalDate.parse(startDate), LocalDate.parse(endDate), days);
+            if (scheduledWorkers.isEmpty())
+                return new ResponseEntity<>(
+                        "No workers scheduled: Check if there are workers registered or if there is a schedule for later dates",
+                        HttpStatus.BAD_REQUEST);
             return new ResponseEntity<>(scheduledWorkers, HttpStatus.CREATED);
         } catch (DateTimeParseException e) {
             return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
+        } catch (IllegalArgumentException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception e) {
             log.error("Error: " + e.getMessage());
             return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);

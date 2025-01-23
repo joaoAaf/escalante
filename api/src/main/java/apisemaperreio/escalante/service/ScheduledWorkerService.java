@@ -180,6 +180,8 @@ public class ScheduledWorkerService extends BaseService {
     // 3 - Caso de qualquer outra função.
     @Transactional
     public List<ScheduledWorkerDTO> scheduler(LocalDate startDate, LocalDate endDate, Integer daysWork) {
+        if (scheduledRepository.existsInRangeDates(startDate, endDate))
+            throw new IllegalArgumentException("There are workers scheduled on the dates provided");
         var roles = roleRepository.findAllByOrderByPriorityAsc();
         var currentDate = startDate;
         while (currentDate.compareTo(endDate) <= 0) {
@@ -202,9 +204,8 @@ public class ScheduledWorkerService extends BaseService {
                             break;
                         }
                         worker = selectNoDriver(currentDate, role);
-                        if (worker.isEmpty()) {
+                        if (worker.isEmpty())
                             worker = driverEqualsFiscal;
-                        }
                         saveScheduledWorkers(worker, currentDate, roles, role, daysWork);
                         break;
                     }

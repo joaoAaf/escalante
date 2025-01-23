@@ -42,4 +42,10 @@ public interface ScheduledWorkerRepository extends JpaRepository<ScheduledWorker
         List<ScheduledWorker> findInconsistencies(@Param("startDate") LocalDate startDate,
                         @Param("endDate") LocalDate endDate);
 
+        // Consulta para verificar se existem trabalhadores escalados em um determinado
+        // intervalo de tempo
+        @Query("SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END FROM ScheduledWorker s " +
+                        "WHERE s.date BETWEEN :startDate AND :endDate")
+        Boolean existsInRangeDates(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
 }
