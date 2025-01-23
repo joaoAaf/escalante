@@ -41,13 +41,12 @@ public class ScheduledWorkerService extends BaseService {
     private Optional<ScheduleType> checkScheduleType(Worker worker) {
         var workerScheduleType = Optional.ofNullable(worker.getScheduleType());
         var positionScheduleType = Optional.ofNullable(worker.getPosition().getScheduleType());
-        if (workerScheduleType.isEmpty() && positionScheduleType.isEmpty()) {
+        if (workerScheduleType.isEmpty() && positionScheduleType.isEmpty())
             return Optional.empty();
-        }
-        if (workerScheduleType.isPresent() && positionScheduleType.isPresent()) {
-            return workerScheduleType.get().getDaysOff() >= positionScheduleType.get().getDaysOff() ? workerScheduleType
+        if (workerScheduleType.isPresent() && positionScheduleType.isPresent())
+            return workerScheduleType.get().getDaysOff() >= positionScheduleType.get().getDaysOff()
+                    ? workerScheduleType
                     : positionScheduleType;
-        }
         return workerScheduleType.isPresent() ? workerScheduleType : positionScheduleType;
     }
 
@@ -63,22 +62,18 @@ public class ScheduledWorkerService extends BaseService {
     // ou um Optinal vazio caso não haja trabalhadores disponíveis.
     private Optional<Worker> selectWorker(LocalDate date, List<Worker> workers) {
         for (var worker : workers) {
-            if (worker.getScheduledWorkers().isEmpty()) {
+            if (worker.getScheduledWorkers().isEmpty())
                 return Optional.of(worker);
-            }
             var scheduleType = checkScheduleType(worker);
             var lastWork = lastWork(worker);
             if (scheduleType.isPresent()
                     && (scheduleType.get().getDaysOff() > lastWork.getRole().getScheduleType().getDaysOff())) {
-                if (lastWork.getDate().plusDays(scheduleType.get().getDaysOff() + 1).isAfter(date)) {
+                if (lastWork.getDate().plusDays(scheduleType.get().getDaysOff() + 1).isAfter(date))
                     continue;
-                }
                 return Optional.of(worker);
             }
-            if (lastWork.getDate().plusDays(lastWork.getRole().getScheduleType().getDaysOff() + 1)
-                    .isAfter(date)) {
+            if (lastWork.getDate().plusDays(lastWork.getRole().getScheduleType().getDaysOff() + 1).isAfter(date))
                 continue;
-            }
             return Optional.of(worker);
         }
         return Optional.empty();
@@ -101,12 +96,10 @@ public class ScheduledWorkerService extends BaseService {
                     .build();
             scheduledWorkersDay.add(scheduledWorker);
             if (i > 1 && i % 2 == 0) {
-                if (role.getPriority() == 2) {
+                if (role.getPriority() == 2)
                     scheduledWorkersDay.getLast().setRole(roles.get(2));
-                } else if (role.getPriority() == 3) {
+                else if (role.getPriority() == 3)
                     scheduledWorkersDay.getLast().setRole(roles.get(1));
-                }
-
             }
             newDate = newDate.plusDays(1);
         }
@@ -122,12 +115,10 @@ public class ScheduledWorkerService extends BaseService {
     private Optional<Worker> driverEqualsFiscal(LocalDate date) {
         var scheduledDriver = workerRepository.findByWorkedDateAndRolePriority(date, 1);
         var scheduledChefeLinha = workerRepository.findByWorkedDateAndRolePriority(date, 4);
-        if (scheduledDriver.isEmpty()) {
+        if (scheduledDriver.isEmpty())
             return Optional.empty();
-        }
-        if (scheduledChefeLinha.isEmpty()) {
+        if (scheduledChefeLinha.isEmpty())
             return scheduledDriver;
-        }
         return scheduledDriver.get().getSeniority() < scheduledChefeLinha.get().getSeniority()
                 ? scheduledDriver
                 : Optional.empty();
@@ -144,30 +135,26 @@ public class ScheduledWorkerService extends BaseService {
         for (var priority : priorities) {
             var worker = selectWorker(date,
                     workerRepository.findAvailableWorkers(date, priority.getPosition().getId(), false));
-            if (worker.isEmpty()) {
+            if (worker.isEmpty())
                 continue;
-            }
             return worker;
         }
         for (var priority : priorities) {
             var worker = selectWorker(date,
                     workerRepository.findAvailableWorkers(date, priority.getPosition().getId(), true));
-            if (worker.isEmpty()) {
+            if (worker.isEmpty())
                 continue;
-            }
             return worker;
         }
         return Optional.empty();
     }
 
-    // Metodo para salvar os trabalhadores escalados em uma lista, e no banco de
-    // dados. Caso não haja trabalhador o metodo não fará nada.
+    // Metodo para salvar os trabalhadores escalados no banco de dados
+    // Caso não haja trabalhador o metodo não fará nada.
     private void saveScheduledWorkers(Optional<Worker> worker, LocalDate date, List<WorkerRole> roles,
             WorkerRole role, Integer daysWork) {
-        if (worker.isPresent()) {
-            var scheduledWorkersDay = scheduledWorkersDay(worker, date, roles, role, daysWork);
-            worker.get().getScheduledWorkers().addAll(scheduledWorkersDay);
-        }
+        if (worker.isPresent())
+            worker.get().getScheduledWorkers().addAll(scheduledWorkersDay(worker, date, roles, role, daysWork));
     }
 
     // Metodo responsável por escalar os trabalhadores, conforme as funções
@@ -242,9 +229,8 @@ public class ScheduledWorkerService extends BaseService {
     // certo periodo de tempo.
     public List<CountScheduledWorkerDTO> getAllWorkersCountDays(LocalDate startDate, LocalDate endDate) {
         var workersDays = workerRepository.findAllWorkersCountWorkedDays(startDate, endDate);
-        if (workersDays.isEmpty()) {
+        if (workersDays.isEmpty())
             return List.of();
-        }
         return workersDays.stream().map(w -> CountScheduledWorkerDTO.builder()
                 .worker(toSimpleDto((Worker) w[0]))
                 .count((Long) w[1])
@@ -256,9 +242,8 @@ public class ScheduledWorkerService extends BaseService {
     public Optional<CountScheduledWorkerDTO> getWorkerCountDays(String workerRegistration, LocalDate startDate,
             LocalDate endDate) {
         var workerDays = workerRepository.findByWorkerCountWorkedDays(workerRegistration, startDate, endDate);
-        if (workerDays.isEmpty()) {
+        if (workerDays.isEmpty())
             return Optional.empty();
-        }
         return Optional.of(CountScheduledWorkerDTO.builder()
                 .worker(toSimpleDto((Worker) workerDays.getFirst()[0]))
                 .count((Long) workerDays.getFirst()[1])
