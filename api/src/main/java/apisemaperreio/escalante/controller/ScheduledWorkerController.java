@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import apisemaperreio.escalante.dto.DeleteScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.SaveScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.UpdateScheduledWorkerDTO;
-import apisemaperreio.escalante.service.ScheduledWorkerService;
+import apisemaperreio.escalante.interfaces.ScheduledWorkerServiceInterface;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Positive;
@@ -32,7 +32,7 @@ import lombok.extern.log4j.Log4j2;
 @RestController
 public class ScheduledWorkerController {
 
-    private final ScheduledWorkerService service;
+    private final ScheduledWorkerServiceInterface service;
 
     @GetMapping("/id/{id}")
     public ResponseEntity<Object> getScheduledWorkerById(@PathVariable @Positive Integer id) {

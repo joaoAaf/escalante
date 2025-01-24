@@ -16,6 +16,7 @@ import apisemaperreio.escalante.dto.DeleteScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.SaveScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.ScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.UpdateScheduledWorkerDTO;
+import apisemaperreio.escalante.interfaces.ScheduledWorkerServiceInterface;
 import apisemaperreio.escalante.model.ScheduleType;
 import apisemaperreio.escalante.model.ScheduledWorker;
 import apisemaperreio.escalante.model.Worker;
@@ -29,7 +30,7 @@ import lombok.var;
 
 @RequiredArgsConstructor
 @Service
-public class ScheduledWorkerService extends BaseService {
+public class ScheduledWorkerService extends BaseService implements ScheduledWorkerServiceInterface {
 
     private final WorkerRepository workerRepository;
     private final ScheduledWorkerRepository scheduledRepository;
@@ -261,6 +262,7 @@ public class ScheduledWorkerService extends BaseService {
     }
 
     // Metodo para adicionar um trabalhador a escala de trabalho manualmente.
+    @Transactional
     public ScheduledWorkerDTO saveScheduledWorker(SaveScheduledWorkerDTO saveScheduledWorkerDto) {
         var scheduledWorker = ScheduledWorker.builder()
                 .date(LocalDate.parse(saveScheduledWorkerDto.workDate()))
