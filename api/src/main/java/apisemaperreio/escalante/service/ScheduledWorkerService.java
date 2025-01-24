@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import apisemaperreio.escalante.dto.CountScheduledWorkerDTO;
+import apisemaperreio.escalante.dto.DeleteScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.SaveScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.ScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.UpdateScheduledWorkerDTO;
@@ -205,16 +206,19 @@ public class ScheduledWorkerService extends BaseService {
         return getAllScheduledWorkersRangeDate(startDate, endDate);
     }
 
+    // Metodo para retornar um registro da escala de trabalho por Id.
+    public Optional<ScheduledWorkerDTO> getScheduledWorkerById(Integer id) {
+        return scheduledRepository.findById(id).map(this::toDto);
+    }
+
     // Metodo para retornar os trabalhadores escalados em um certo dia.
     public List<ScheduledWorkerDTO> getScheduledWorkerByDate(LocalDate date) {
-        var scheduledWorkers = scheduledRepository.findByDate(date);
-        return scheduledWorkers.stream().map(this::toDto).toList();
+        return scheduledRepository.findByDate(date).stream().map(this::toDto).toList();
     }
 
     // Metodo para retornar os trabalhadores escalados em um certo periodo de tempo.
     public List<ScheduledWorkerDTO> getAllScheduledWorkersRangeDate(LocalDate startDate, LocalDate endDate) {
-        var scheduledWorkers = scheduledRepository.findByRangeDates(startDate, endDate);
-        return scheduledWorkers.stream().map(this::toDto).toList();
+        return scheduledRepository.findByRangeDates(startDate, endDate).stream().map(this::toDto).toList();
     }
 
     // Metodo para retornar os dias que certo trabalhador trabalhou
@@ -297,5 +301,16 @@ public class ScheduledWorkerService extends BaseService {
         scheduledWorker1.setWorker(scheduledWorker2.getWorker());
         scheduledWorker2.setWorker(aux);
         scheduledRepository.saveAll(Arrays.asList(scheduledWorker1, scheduledWorker2));
+    }
+
+    // Metodo para deletar registros da escala de trabalho por id.
+    public void deleteScheduledWorker(DeleteScheduledWorkerDTO deleteScheduledWorkerDTO) {
+        var ids = deleteScheduledWorkerDTO.ids();
+        var existingIds = scheduledRepository.findExistingIds(ids);
+        if (!existingIds.containsAll(ids)) {
+            var notFoundIds = ids.stream().filter(id -> !existingIds.contains(id)).toList();
+            throw new NoSuchElementException("No scheduled workers found with ids: " + notFoundIds);
+        }
+        scheduledRepository.deleteAllByIdInBatch(ids);
     }
 }

@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import apisemaperreio.escalante.dto.DeleteScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.SaveScheduledWorkerDTO;
 import apisemaperreio.escalante.dto.UpdateScheduledWorkerDTO;
 import apisemaperreio.escalante.service.ScheduledWorkerService;
@@ -32,7 +34,21 @@ public class ScheduledWorkerController {
 
     private final ScheduledWorkerService service;
 
-    @GetMapping("{date}")
+    @GetMapping("/id/{id}")
+    public ResponseEntity<Object> getScheduledWorkerById(@PathVariable @Positive Integer id) {
+        try {
+            var scheduledWorkers = service.getScheduledWorkerById(id);
+            if (scheduledWorkers.isEmpty()) {
+                return new ResponseEntity<>("No scheduled worker found", HttpStatus.NOT_FOUND);
+            }
+            return new ResponseEntity<>(scheduledWorkers, HttpStatus.OK);
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+    
+    @GetMapping("/date/{date}")
     public ResponseEntity<Object> getScheduledWorkerByDate(@PathVariable String date) {
         try {
             var scheduledWorkers = service.getScheduledWorkerByDate(LocalDate.parse(date));
@@ -198,6 +214,19 @@ public class ScheduledWorkerController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (DateTimeParseException e) {
             return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
+    @DeleteMapping("/id")
+    public ResponseEntity<Object> deleteScheduledWorker(@RequestBody @Valid DeleteScheduledWorkerDTO deleteScheduledWorkerDTO) {
+        try {
+            service.deleteScheduledWorker(deleteScheduledWorkerDTO);
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (NoSuchElementException e) {
             return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception e) {
