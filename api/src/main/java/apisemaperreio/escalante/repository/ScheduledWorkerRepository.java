@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -61,8 +62,23 @@ public interface ScheduledWorkerRepository extends JpaRepository<ScheduledWorker
                         "WHERE s.date BETWEEN :startDate AND :endDate")
         Boolean existsInRangeDates(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
 
+        // Consulta para verificar se existem trabalhadores escalados em um determinado dia
+        @Query("SELECT CASE WHEN COUNT(s) > 0 THEN true ELSE false END FROM ScheduledWorker s WHERE s.date = :date")
+        Boolean existsInDate(@Param("date") LocalDate date);
+
         // Consulta para verificar se os ids dos trabalhadores escalados não existem
         @Query("SELECT s.id FROM ScheduledWorker s WHERE s.id IN :ids")
         List<Integer> findExistingIds(@Param("ids") List<Integer> ids);
+
+        // Consulta para deletar os trabalhadores escalados em um determinado intervalo
+        // de tempo
+        @Modifying
+        @Query("DELETE FROM ScheduledWorker s WHERE s.date BETWEEN :startDate AND :endDate")
+        void deleteByRangeDates(@Param("startDate") LocalDate startDate, @Param("endDate") LocalDate endDate);
+
+        // Consulta para deletar os trabalhadores escalados em um determinado dia
+        @Modifying
+        @Query("DELETE FROM ScheduledWorker s WHERE s.date = :date")
+        void deleteByDate(LocalDate date);
 
 }

@@ -313,4 +313,21 @@ public class ScheduledWorkerService extends BaseService {
         }
         scheduledRepository.deleteAllByIdInBatch(ids);
     }
+
+    // Metodo para deletar os trabalhadores escalados em um determinado intervalo de
+    // tempo.
+    @Transactional
+    public void deleteScheduledWorkersRangeDate(LocalDate startDate, LocalDate endDate) {
+        if (!scheduledRepository.existsInRangeDates(startDate, endDate))
+            throw new NoSuchElementException("No scheduled workers found in the dates provided");
+        scheduledRepository.deleteByRangeDates(startDate, endDate);
+    }
+
+    // Metodo para deletar trabalhadores escalados em um determinado dia.
+    @Transactional
+    public void deleteScheduledWorkersByDate(LocalDate date) {
+        if (!scheduledRepository.existsInDate(date))
+            throw new NoSuchElementException("No scheduled workers found in the date provided");
+        scheduledRepository.deleteByDate(date);
+    }
 }

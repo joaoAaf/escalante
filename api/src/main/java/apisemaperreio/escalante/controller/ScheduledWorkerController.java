@@ -235,4 +235,35 @@ public class ScheduledWorkerController {
         }
     }
 
+    @DeleteMapping("/date")
+    public ResponseEntity<Object> deleteScheduledWorkersRangeDate(@RequestParam(value = "start") String startDate,
+    @RequestParam(value = "end") String endDate) {
+        try {
+            service.deleteScheduledWorkersRangeDate(LocalDate.parse(startDate), LocalDate.parse(endDate));
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (DateTimeParseException e) {
+            return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
+    @DeleteMapping("/date/{date}")
+    public ResponseEntity<Object> deleteScheduledWorkersByDate(@PathVariable String date) {
+        try {
+            service.deleteScheduledWorkersByDate(LocalDate.parse(date));
+            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        } catch (DateTimeParseException e) {
+            return new ResponseEntity<>("Invalid date format: yyyy-MM-dd", HttpStatus.BAD_REQUEST);
+        } catch (NoSuchElementException e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.NOT_FOUND);
+        } catch (Exception e) {
+            log.error("Error: " + e.getMessage());
+            return new ResponseEntity<>("Service unavailable", HttpStatus.SERVICE_UNAVAILABLE);
+        }
+    }
+
 }
