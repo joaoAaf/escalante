@@ -14,6 +14,7 @@ public class BaseService {
 
     protected WorkerDTO toDto(Worker worker) {
         return WorkerDTO.builder()
+                .id(worker.getId())
                 .registration(worker.getRegistration())
                 .name(worker.getName())
                 .sex(worker.getSex())
@@ -30,6 +31,7 @@ public class BaseService {
 
     protected ScheduledWorkerDTO toDto(ScheduledWorker scheduledWorker) {
         return ScheduledWorkerDTO.builder()
+                .id(scheduledWorker.getId())
                 .workDate(scheduledWorker.getDate())
                 .workerRole(scheduledWorker.getRole().getName())
                 .scheduleType(toSimpleDto(scheduledWorker.getRole().getScheduleType()))
@@ -53,6 +55,10 @@ public class BaseService {
                 .name(scheduleType.getName())
                 .daysOff(scheduleType.getDaysOff())
                 .build() : null;
+    }
+
+    protected boolean validadeUpdate(String attOld, String attNew) {
+        return Optional.ofNullable(attNew).isPresent() && !attNew.isBlank() && !attOld.equals(attNew);
     }
 
 }
