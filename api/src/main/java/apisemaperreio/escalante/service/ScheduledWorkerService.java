@@ -208,22 +208,26 @@ public class ScheduledWorkerService extends BaseService implements ScheduledWork
     }
 
     // Metodo para retornar um registro da escala de trabalho por Id.
+    @Transactional(readOnly = true)
     public Optional<ScheduledWorkerDTO> getScheduledWorkerById(Integer id) {
         return scheduledRepository.findById(id).map(this::toDto);
     }
 
     // Metodo para retornar os trabalhadores escalados em um certo dia.
+    @Transactional(readOnly = true)
     public List<ScheduledWorkerDTO> getScheduledWorkerByDate(LocalDate date) {
         return scheduledRepository.findByDate(date).stream().map(this::toDto).toList();
     }
 
     // Metodo para retornar os trabalhadores escalados em um certo periodo de tempo.
+    @Transactional(readOnly = true)
     public List<ScheduledWorkerDTO> getAllScheduledWorkersRangeDate(LocalDate startDate, LocalDate endDate) {
         return scheduledRepository.findByRangeDates(startDate, endDate).stream().map(this::toDto).toList();
     }
 
     // Metodo para retornar os dias que certo trabalhador trabalhou
     // em um certo intervalo de tempo
+    @Transactional(readOnly = true)
     public List<ScheduledWorkerDTO> getScheduledWorkerRangeDate(String workerRegistration, LocalDate startDate,
             LocalDate endDate) {
         var scheduledWorkers = scheduledRepository.findScheduledWorkerRangeDate(workerRegistration, startDate, endDate);
@@ -232,6 +236,7 @@ public class ScheduledWorkerService extends BaseService implements ScheduledWork
 
     // Metodo para retornar quantos dias todos os trabalhadores trabalharam em um
     // certo periodo de tempo.
+    @Transactional(readOnly = true)
     public List<CountScheduledWorkerDTO> getAllWorkersCountDays(LocalDate startDate, LocalDate endDate) {
         var workersDays = workerRepository.findAllWorkersCountWorkedDays(startDate, endDate);
         if (workersDays.isEmpty())
@@ -244,6 +249,7 @@ public class ScheduledWorkerService extends BaseService implements ScheduledWork
 
     // Metodo para retornar quantos dias um trabalhador trabalhou em um certo
     // periodo de tempo.
+    @Transactional(readOnly = true)
     public Optional<CountScheduledWorkerDTO> getWorkerCountDays(String workerRegistration, LocalDate startDate,
             LocalDate endDate) {
         var workerDays = workerRepository.findByWorkerCountWorkedDays(workerRegistration, startDate, endDate);
@@ -256,6 +262,7 @@ public class ScheduledWorkerService extends BaseService implements ScheduledWork
     }
 
     // Metodo para retornar inconsistencias na escala de trabalho.
+    @Transactional(readOnly = true)
     public List<ScheduledWorkerDTO> getInconsistencies(LocalDate startDate, LocalDate endDate) {
         var scheduledWorkers = scheduledRepository.findInconsistencies(startDate, endDate);
         return scheduledWorkers.stream().map(this::toDto).toList();
@@ -275,6 +282,7 @@ public class ScheduledWorkerService extends BaseService implements ScheduledWork
     }
 
     // Metodo para alterar um registro da escala de trabalho.
+    @Transactional
     public void updateScheduledWorker(Integer id, UpdateScheduledWorkerDTO updateScheduledWorkerDto) {
         var scheduledWorker = scheduledRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("No scheduled worker found"));
@@ -294,6 +302,7 @@ public class ScheduledWorkerService extends BaseService implements ScheduledWork
     }
 
     // Metodo para permutar dois trabalhadores na escala de trabalho.
+    @Transactional
     public void swapTwoScheduledWorkers(Integer id1, Integer id2) {
         var scheduledWorker1 = scheduledRepository.findById(id1).orElseThrow(() -> new NoSuchElementException(String
                 .format("No scheduled worker found with id %d", id1)));
@@ -306,6 +315,7 @@ public class ScheduledWorkerService extends BaseService implements ScheduledWork
     }
 
     // Metodo para deletar registros da escala de trabalho por id.
+    @Transactional
     public void deleteScheduledWorker(DeleteScheduledWorkerDTO deleteScheduledWorkerDTO) {
         var ids = deleteScheduledWorkerDTO.ids();
         var existingIds = scheduledRepository.findExistingIds(ids);
