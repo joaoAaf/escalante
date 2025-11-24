@@ -15,7 +15,7 @@ export default class MilitarClient {
         }
     }
 
-    static async listarMilitaresEscalaveis(arquivo, signal) {
+    static async importarMilitaresXLSX(arquivo, signal) {
         const formData = new FormData()
         formData.append('militares', arquivo)
         try {

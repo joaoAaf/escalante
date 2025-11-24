@@ -73,7 +73,7 @@ export default function Militares() {
                 <label htmlFor="input_upload" className={Styles.label_upload}>Importe a Planilha dos Militares</label>
                 <InputUpload
                     funcaoDownload={(signal) => MilitarClient.obterPlanilhaModeloMilitares(signal)}
-                    funcaoUpload={(arquivo, signal) => MilitarClient.listarMilitaresEscalaveis(arquivo, signal)}
+                    funcaoUpload={(arquivo, signal) => MilitarClient.importarMilitaresXLSX(arquivo, signal)}
                     nomeModelo="modelo_militares.xlsx"
                     setDados={setMilitares}
                 />
