@@ -30,9 +30,9 @@ export default function AcoesEscala() {
     const exportarEscalaXLSX = escala => {
         if (!escala || escala.length === 0)
             return setFeedback({ type: 'info', mensagem: 'Não há escala disponível para exportação.' })
-        
+
         const controller = criarAbortController()
-        
+
         setExportandoEscala(true)
         EscalaClient.exportarEscalaXLSX(escala, controller.signal)
             .then(arrayBuffer => {
@@ -61,13 +61,16 @@ export default function AcoesEscala() {
 
     return (
         <div className={Styles.acoesEscala}>
-            <button onClick={() => setStatusModal(true)}>Adicionar Serviço</button>
-            <button
-                onClick={() => exportarEscalaXLSX(escala)}
-                disabled={exportandoEscala}
-            >
-                {exportandoEscala ? "Exportando..." : "Exportar Escala"}
-            </button>
+            <h3>Ações para Escala Criada</h3>
+            <div>
+                <button onClick={() => setStatusModal(true)}>Adicionar Serviço</button>
+                <button
+                    onClick={() => exportarEscalaXLSX(escala)}
+                    disabled={exportandoEscala}
+                >
+                    {exportandoEscala ? "Exportando..." : "Exportar Escala"}
+                </button>
+            </div>
         </div>
     )
 }

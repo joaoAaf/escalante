@@ -3,14 +3,14 @@ import { GlobalContext } from '../../context/GlobalContext'
 import MilitarClient from '../../clients/MilitarClient'
 import Styles from './styles.module.css'
 
-export default function InputUpload() {
+export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, setDados }) {
 
-    const { setMilitares, setFeedback } = useContext(GlobalContext)
+    const { setFeedback } = useContext(GlobalContext)
     
     const [nomeArquivo, setNomeArquivo] = useState("Nenhuma seleção.")
     const [arquivo, setArquivo] = useState(null)
-    const [carregandoPlanilha, setCarregandoPlanilha] = useState(false)
-    const [baixandoModelo, setBaixandoModelo] = useState(false)
+    const [carregando, setCarregando] = useState(false)
+    const [baixando, setBaixando] = useState(false)
 
     const abortControllerRef = useRef(null)
 
@@ -40,10 +40,10 @@ export default function InputUpload() {
 
             const controller = criarAbortController()
 
-            setCarregandoPlanilha(true)
-            MilitarClient.listarMilitaresEscalaveis(arquivo, controller.signal)
+            setCarregando(true)
+            funcaoUpload(arquivo, controller.signal)
                 .then(dados => {
-                    setMilitares(dados || [])
+                    setDados(dados || [])
                     setFeedback({ type: 'success', mensagem: 'Militares importados com sucesso.' })
                 })
                 .catch(error => {
@@ -51,7 +51,7 @@ export default function InputUpload() {
                     setFeedback({ type: 'error', mensagem: error.message })
                 })
                 .finally(() => {
-                    setCarregandoPlanilha(false)
+                    setCarregando(false)
                     if (abortControllerRef.current === controller)
                         abortControllerRef.current = null
                 })
@@ -63,8 +63,8 @@ export default function InputUpload() {
 
         const controller = criarAbortController()
 
-        setBaixandoModelo(true)
-        MilitarClient.obterPlanilhaModeloMilitares(controller.signal)
+        setBaixando(true)
+        funcaoDownload(controller.signal)
             .then(arrayBuffer => {
                 if (arrayBuffer) {
                     const blob = new Blob([arrayBuffer],
@@ -72,7 +72,7 @@ export default function InputUpload() {
                     const url = URL.createObjectURL(blob)
                     const link = document.createElement('a')
                     link.href = url
-                    link.download = 'modelo_militares.xlsx'
+                    link.download = nomeModelo || 'modelo.xlsx'
                     link.click()
                     URL.revokeObjectURL(url)
                 }
@@ -83,7 +83,7 @@ export default function InputUpload() {
                 setFeedback({ type: 'error', mensagem: error.message })
             })
             .finally(() => {
-                setBaixandoModelo(false)
+                setBaixando(false)
                 if (abortControllerRef.current === controller)
                     abortControllerRef.current = null
             })
@@ -94,9 +94,9 @@ export default function InputUpload() {
             <button
                 className={Styles.modelo_btn}
                 onClick={baixarModelo}
-                disabled={baixandoModelo}
+                disabled={baixando}
             >
-                {baixandoModelo ? "Baixando..." : "Modelo"}
+                {baixando ? "Baixando..." : "Modelo"}
             </button>
 
             <input
@@ -114,9 +114,9 @@ export default function InputUpload() {
             <button
                 className={Styles.upload_btn}
                 onClick={enviarArquivo}
-                disabled={carregandoPlanilha}
+                disabled={carregando}
             >
-                {carregandoPlanilha ? "Carregando..." : "Enviar/Processar"}
+                {carregando ? "Carregando..." : "Enviar/Processar"}
             </button>
         </div>
     )

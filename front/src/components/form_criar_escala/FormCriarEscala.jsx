@@ -1,11 +1,10 @@
 import { useState, useContext, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { GlobalContext } from '../../context/GlobalContext'
 import Styles from './styles.module.css'
 import EscalaClient from '../../clients/EscalaClient'
 import { inserirIds } from '../../utils/geradorIds'
 
-export default function FormCriarEscala() {
+export default function FormCriarEscala({ servicosAnteriores }) {
 
     const { militares, setEscala, setFeedback } = useContext(GlobalContext)
 
@@ -13,8 +12,6 @@ export default function FormCriarEscala() {
     const [dataFim, setDataFim] = useState('')
     const [diasServico, setDiasServico] = useState(2)
     const [carregandoEscala, setCarregandoEscala] = useState(false)
-    
-    const navegar = useNavigate()
 
     const abortControllerRef = useRef(null)
 
@@ -56,7 +53,8 @@ export default function FormCriarEscala() {
             dataInicio,
             dataFim,
             diasServico,
-            militares
+            militares,
+            servicosAnteriores: servicosAnteriores || []
         }
 
         EscalaClient.criarEscalaAutomatica(dadosEscala, controller.signal)
@@ -65,7 +63,6 @@ export default function FormCriarEscala() {
                 const escalaComIds = inserirIds(escalaResponse)
                 setEscala(escalaComIds)
                 setFeedback({ type: 'success', mensagem: 'Escala criada com sucesso.' })
-                navegar('/escala')
             })
             .catch(error => {
                 
@@ -82,6 +79,11 @@ export default function FormCriarEscala() {
     return (
         <div className={Styles.criar_escala}>
             <h3>Dados para Criação da Escala</h3>
+            {servicosAnteriores?.length > 0 && (
+                <div style={{marginBottom: '15px', color: 'green', fontSize: '0.9em'}}>
+                    ✓ Escala anterior carregada: {servicosAnteriores.length} serviços importados.
+                </div>
+            )}
             <form onSubmit={gerenciarCriacaoEscala} noValidate>
                 <div>
                     <label>Data Inicial:</label>
