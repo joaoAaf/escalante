@@ -1,0 +1,31 @@
+networks:
+  escalante-net:
+    driver: bridge
+
+services:
+  api:
+    build:
+      context: ./apis
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - FRONT_URL=${FRONT_URL}
+    networks:
+      - escalante-net
+
+  front:
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - SERVER_NAME=${SERVER_NAME}
+      - API_URL=${API_URL}
+    depends_on:
+      - api
+    networks:
+      - escalante-net
