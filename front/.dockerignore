@@ -1,0 +1,21 @@
+# Dependências
+node_modules
+
+# Arquivos de build do Vite
+dist
+
+# Dockerfile e outros arquivos de configuração
+Dockerfile
+.dockerignore
+
+# Arquivos de Log
+*.log
+
+# Variáveis de ambiente
+.env
+
+# Outros arquivos a serem ignorados
+.vite
+README.md
+vercel.json
+*.old
