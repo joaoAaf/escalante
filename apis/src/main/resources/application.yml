@@ -6,4 +6,4 @@ spring:
     - dev
 env:
   front:
-    url: ${FRONT_URL:""}
+    url: ${FRONT_URL:http://localhost:*}
