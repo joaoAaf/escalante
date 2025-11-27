@@ -4,6 +4,7 @@ networks:
 
 services:
   api:
+    container_name: escalante-api
     build:
       context: ./apis
       dockerfile: Dockerfile
@@ -13,8 +14,14 @@ services:
       - FRONT_URL=${FRONT_URL}
     networks:
       - escalante-net
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 1G
 
   front:
+    container_name: escalante-front
     build:
       context: ./front
       dockerfile: Dockerfile
@@ -29,3 +36,8 @@ services:
       - api
     networks:
       - escalante-net
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M
