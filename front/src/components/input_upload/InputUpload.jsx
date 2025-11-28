@@ -1,6 +1,5 @@
 import { useContext, useEffect, useRef, useState } from 'react'
 import { GlobalContext } from '../../context/GlobalContext'
-import MilitarClient from '../../clients/MilitarClient'
 import Styles from './styles.module.css'
 
 export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, setDados }) {
@@ -44,7 +43,7 @@ export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, 
             funcaoUpload(arquivo, controller.signal)
                 .then(dados => {
                     setDados(dados || [])
-                    setFeedback({ type: 'success', mensagem: 'Militares importados com sucesso.' })
+                    setFeedback({ type: 'success', mensagem: 'Planilha importada com sucesso.' })
                 })
                 .catch(error => {
                     if (error.name === 'AbortError') return

@@ -31,6 +31,9 @@ export default function AcoesEscala() {
         if (!escala || escala.length === 0)
             return setFeedback({ type: 'info', mensagem: 'Não há escala disponível para exportação.' })
 
+        if (escala.length > 210)
+            return setFeedback({ type: 'info', mensagem: 'A escala não pode conter mais que 210 serviços.' })
+
         const controller = criarAbortController()
 
         setExportandoEscala(true)
