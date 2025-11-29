@@ -18,6 +18,10 @@ import org.springframework.web.multipart.MultipartFile;
 import apisemaperreio.escalante.escalante.dtos.DadosEscalaRequest;
 import apisemaperreio.escalante.escalante.dtos.ServicoOperacionalDto;
 import apisemaperreio.escalante.escalante.usecases.EscalaUseCasesEscalante;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 
 @RequestMapping("/api/escala")
 @RestController
@@ -42,7 +46,8 @@ public class EscalaControllerEscalante {
     }
 
     @PostMapping("/importar/xlsx")
-    public ResponseEntity<?> importarEscalaXLSX(@RequestParam MultipartFile escala) {
+    public ResponseEntity<?> importarEscalaXLSX(
+            @RequestParam @NotNull(message = "O arquivo de escala não pode ser nulo.") MultipartFile escala) {
         try {
             return ResponseEntity.ok(escalaUseCases.importarEscalaXLSX(escala));
         } catch (Exception e) {
@@ -52,7 +57,8 @@ public class EscalaControllerEscalante {
     }
 
     @PostMapping
-    public ResponseEntity<?> criarEscalaAutomatica(@RequestBody DadosEscalaRequest request) {
+    public ResponseEntity<?> criarEscalaAutomatica(
+            @RequestBody @NotNull(message = "Os dados da escala não podem ser nulos.") @Valid DadosEscalaRequest request) {
         try {
             return ResponseEntity.ok(escalaUseCases.criarEscalaAutomatica(request));
         } catch (Exception e) {
@@ -62,7 +68,12 @@ public class EscalaControllerEscalante {
     }
 
     @PostMapping("/exportar/xlsx")
-    public ResponseEntity<byte[]> exportarEscalaXLSX(@RequestBody List<ServicoOperacionalDto> servicos) {
+    public ResponseEntity<byte[]> exportarEscalaXLSX(
+            @RequestBody
+            @NotNull(message = "A lista de serviços operacionais não pode ser nula.")
+            @NotEmpty(message = "A lista de serviços operacionais não pode estar vazia.")
+            @Size(max = 210, message = "A lista de serviços operacionais não pode conter mais de 210 serviços.")
+            List<@Valid ServicoOperacionalDto> servicos) {
         try {
             var escalaXLSX = escalaUseCases.exportarEscalaXLSX(servicos);
             return ResponseEntity.ok()

@@ -12,13 +12,14 @@ import apisemaperreio.escalante.escalante.usecases.MilitarUseCasesEscalante;
 import apisemaperreio.escalante.escalante.utils.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
 
 @Service
-public class MilitarServiceEscalante implements MilitarUseCasesEscalante {
+public class MilitarServiceEscalante extends BaseServiceEscalante implements MilitarUseCasesEscalante {
 
     @Autowired
     private ImportadorMilitaresXLSXAdapter importadorMilitaresXLSXAdapter;
 
     @Override
     public List<MilitarEscalavel> importarMilitaresXLSX(MultipartFile planilhaMilitares) {
+        validarPlanilha(planilhaMilitares);
         return importadorMilitaresXLSXAdapter.importarMilitaresXLSX(planilhaMilitares);
     }
 

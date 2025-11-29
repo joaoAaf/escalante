@@ -24,7 +24,7 @@ import apisemaperreio.escalante.escalante.utils.mappers.MilitarMapperEscalante;
 import apisemaperreio.escalante.escalante.utils.mappers.ServicoOperacionalMapper;
 
 @Service
-public class EscalaServiceEscalante implements EscalaUseCasesEscalante {
+public class EscalaServiceEscalante extends BaseServiceEscalante implements EscalaUseCasesEscalante {
 
     @Autowired
     private ImportadorEscalaXLSXAdapter importadorXLSX;
@@ -51,11 +51,13 @@ public class EscalaServiceEscalante implements EscalaUseCasesEscalante {
 
     @Override
     public List<ServicoOperacionalDto> importarEscalaXLSX(MultipartFile planilhaEscala) {
+        validarPlanilha(planilhaEscala);
         return importadorXLSX.importarEscalaXLSX(planilhaEscala);
     }
 
     @Override
     public List<ServicoOperacionalDto> criarEscalaAutomatica(DadosEscalaRequest request) {
+        request.validarDatas();
         var militares = militarMapper.toListMilitar(request.militares());
         var servicosAnteriores = new ArrayList<ServicoOperacional>();
         if (request.servicosAnteriores() != null && !request.servicosAnteriores().isEmpty()) {

@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import apisemaperreio.escalante.escalante.usecases.MilitarUseCasesEscalante;
+import jakarta.validation.constraints.NotNull;
 
 @RequestMapping("/api/militar")
 @RestController
@@ -36,7 +37,8 @@ public class MilitarControllerEscalante {
     }
 
     @PostMapping("/importar/xlsx")
-    public ResponseEntity<?> importarMilitaresXLSX(@RequestParam MultipartFile militares) {
+    public ResponseEntity<?> importarMilitaresXLSX(
+            @RequestParam @NotNull(message = "O arquivo de militares não pode ser nulo.") MultipartFile militares) {
         try {
             return ResponseEntity.ok(militarUseCases.importarMilitaresXLSX(militares));
         } catch (Exception e) {
