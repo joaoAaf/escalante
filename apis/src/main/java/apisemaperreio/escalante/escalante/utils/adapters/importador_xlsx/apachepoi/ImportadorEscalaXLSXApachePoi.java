@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import apisemaperreio.escalante.escalante.dtos.ServicoOperacionalDto;
 import apisemaperreio.escalante.escalante.utils.adapters.importador_xlsx.ImportadorEscalaXLSXAdapter;
+import apisemaperreio.escalante.escalante.domain.exceptions.ErroProcessamentoPlanilhaException;
 
 @Component
 public class ImportadorEscalaXLSXApachePoi extends ImportadorBaseXLSX implements ImportadorEscalaXLSXAdapter {
@@ -70,7 +71,7 @@ public class ImportadorEscalaXLSXApachePoi extends ImportadorBaseXLSX implements
             throw e;
         } catch (Exception e) {
             escala.clear();
-            throw new RuntimeException("Erro ao processar a planilha de serviços operacionais.", e);
+            throw new ErroProcessamentoPlanilhaException("Erro ao processar a planilha de serviços operacionais.", e);
         }
 
         return escala;

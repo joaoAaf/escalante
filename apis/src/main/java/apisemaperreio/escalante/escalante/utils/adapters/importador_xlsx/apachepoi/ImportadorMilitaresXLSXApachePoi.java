@@ -11,6 +11,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import apisemaperreio.escalante.escalante.dtos.MilitarEscalavel;
 import apisemaperreio.escalante.escalante.utils.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
+import apisemaperreio.escalante.escalante.domain.exceptions.ErroProcessamentoPlanilhaException;
 
 @Component
 public class ImportadorMilitaresXLSXApachePoi extends ImportadorBaseXLSX implements ImportadorMilitaresXLSXAdapter {
@@ -70,7 +71,7 @@ public class ImportadorMilitaresXLSXApachePoi extends ImportadorBaseXLSX impleme
             throw e;
         } catch (Exception e) {
             militares.clear();
-            throw new RuntimeException("Erro ao processar a planilha de militares.", e);
+            throw new ErroProcessamentoPlanilhaException("Erro ao processar a planilha de militares.", e);
         }
 
         return militares;
