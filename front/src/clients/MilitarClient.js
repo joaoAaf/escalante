@@ -6,12 +6,13 @@ export default class MilitarClient {
         try {
             const response = await fetch(`${this.baseUrl}/modelo/xlsx`, { signal })
             if (!response.status.toString().startsWith('2'))
-                throw new Error(`Erro ao obter a planilha modelo: ${response.status} ${response.statusText}`)
+                throw new Error((await response.json()).Mensagem)
             return await response.arrayBuffer()
         } catch (error) {
-            console.error(error.message)
             if (error.name === 'AbortError') throw error
-            throw new Error("Erro ao obter a planilha modelo: Servidor indisponível.")
+            if (error instanceof TypeError || error instanceof SyntaxError)
+                throw new Error("Servidor indisponível.")
+            throw error
         }
     }
 
@@ -24,13 +25,15 @@ export default class MilitarClient {
                 body: formData,
                 signal
             })
+            const dados = await response.json()
             if (!response.status.toString().startsWith('2'))
-                throw new Error(`Erro ao importar militares escaláveis: ${response.status} ${response.statusText}`)
-            return await response.json()
+                throw new Error(dados.Mensagem)
+            return dados
         } catch (error) {
-            console.error(error.message)
             if (error.name === 'AbortError') throw error
-            throw new Error("Erro ao importar militares escaláveis: Servidor indisponível.")
+            if (error instanceof TypeError || error instanceof SyntaxError)
+                throw new Error("Servidor indisponível.")
+            throw error
         }
     }
 }
