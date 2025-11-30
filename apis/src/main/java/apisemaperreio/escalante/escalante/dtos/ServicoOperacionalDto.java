@@ -2,10 +2,10 @@ package apisemaperreio.escalante.escalante.dtos;
 
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
 
 public record ServicoOperacionalDto(
         @NotNull(message = "A data do serviço não pode ser nula.")
@@ -22,7 +22,8 @@ public record ServicoOperacionalDto(
         @NotBlank(message = "A função do militar não pode estar em branco.")
         String funcao,
         @NotNull(message = "A folga do militar não pode ser nula.")
-        @PositiveOrZero(message = "A folga do militar deve ser um valor positivo ou zero.")
+        @Positive(message = "A folga do militar deve ser um valor positivo.")
+        @Max(value = 30, message = "A folga do militar não pode ser maior que 30.")
         int folga) {
 
 }

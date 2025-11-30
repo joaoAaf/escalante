@@ -2,6 +2,7 @@ package apisemaperreio.escalante.escalante.dtos;
 
 import java.time.LocalDate;
 
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -21,6 +22,7 @@ public record MilitarEscalavel(
         LocalDate nascimento,
         @NotNull(message = "A folga especial do militar não pode ser nula.")
         @PositiveOrZero(message = "A folga especial do militar deve ser um valor positivo ou zero.")
+        @Max(value = 30, message = "A folga especial do militar não pode ser maior que 30.")
         int folgaEspecial,
         @NotNull(message = "C.O.V. não pode ser nulo.")
         Boolean cov) {

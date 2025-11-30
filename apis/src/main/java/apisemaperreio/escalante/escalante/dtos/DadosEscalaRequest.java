@@ -14,8 +14,8 @@ public record DadosEscalaRequest(
         LocalDate dataInicio,
         @NotNull(message = "A data de fim não pode ser nula.")
         LocalDate dataFim,
-        @NotNull(message = "Os dias de serviço não pode ser nulo.")
-        @Positive(message = "Os dias de serviço deve ser um valor positivo.")
+        @NotNull(message = "Dias de serviço não pode ser nulo.")
+        @Positive(message = "Dias de serviço deve ser um valor positivo.")
         int diasServico,
         @NotNull(message = "A lista de militares não pode ser nula.")
         @NotEmpty(message = "A lista de militares não pode estar vazia.")
