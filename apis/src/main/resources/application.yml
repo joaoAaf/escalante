@@ -20,3 +20,5 @@ logging:
 env:
   front:
     url: ${FRONT_URL:http://localhost:*}
+  jwt:
+    secret: ${JWT_SECRET:7cadc739b1a4f4ba8639f78ad73cdf44f5fba0d5e513ced7199b540fd2c1f566}

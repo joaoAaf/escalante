@@ -1,5 +1,12 @@
-{"properties": [{
-  "name": "env.front.url",
-  "type": "java.lang.String",
-  "description": "A description for 'env.front.url'"
-}]}
+{"properties": [
+  {
+    "name": "env.front.url",
+    "type": "java.lang.String",
+    "description": "A description for 'env.front.url'"
+  },
+  {
+    "name": "env.jwt.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'env.jwt.secret'"
+  }
+]}
