@@ -12,6 +12,7 @@ services:
     environment:
       - TZ=${TZ}
       - FRONT_URL=${FRONT_URL}
+      - PROFILE_ACTIVE=${PROFILE_ACTIVE}
     networks:
       - escalante-net
     deploy:
