@@ -1,4 +1,4 @@
-name: Build APIs, Docker Images and Push
+name: Build/Push Escalante Frontend Docker Image
 
 on:
     push:
@@ -6,7 +6,7 @@ on:
             - main
         paths:
             - "apis/**"
-            - ".github/workflows/build-apis.yml"
+            - ".github/workflows/build-escalante-front.yml"
 
 jobs:
     build-and-push:
@@ -32,13 +32,13 @@ jobs:
               id: build-push
               uses: docker/build-push-action@v6
               with:
-                context: ./apis
+                context: ./front
                 platforms: linux/amd64,linux/arm64
                 push: true
                 tags: |
-                    ${{ vars.DOCKERHUB_TAG_API }}:latest
-                    ${{ vars.DOCKERHUB_TAG_API }}:0.0.${{ github.run_number }}-snapshot
-                cache-from: type=registry,ref=${{ vars.DOCKERHUB_TAG_API }}:latest
+                    ${{ vars.DOCKERHUB_TAG_FRONT }}:0.0.4-snapshot
+                    ${{ vars.DOCKERHUB_TAG_FRONT }}:latest
+                cache-from: type=registry,ref=${{ vars.DOCKERHUB_TAG_FRONT }}:latest
                 cache-to: type=inline
 
             - name: Image digest
