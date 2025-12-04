@@ -3,7 +3,20 @@ spring:
     name: escalante
   profiles:
     active:
-    - dev
+    - ${PROFILE_ACTIVE:dev}
+logging:
+  level:
+    org:
+      springframework:
+        web:
+          method:
+            annotation:
+              ExceptionHandlerExceptionResolver: OFF
+          servlet:
+            mvc:
+              method:
+                annotation:
+                  ExceptionHandlerExceptionResolver: OFF
 env:
   front:
-    url: ${FRONT_URL:""}
+    url: ${FRONT_URL:http://localhost:*}

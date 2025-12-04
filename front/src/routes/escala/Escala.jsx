@@ -6,11 +6,15 @@ import BarraPesquisa from '../../components/barra_pesquisa/BarraPesquisa'
 import TabelaEscala from '../../components/tabela_escala/TabelaEscala'
 import CadastroServico from '../../components/cadastro_servico/CadastroServico'
 import AcoesEscala from '../../components/acoes_escala/AcoesEscala'
+import EscalaClient from '../../clients/EscalaClient'
+import InputUpload from '../../components/input_upload/InputUpload'
+import FormCriarEscala from '../../components/form_criar_escala/FormCriarEscala'
 
 export default function Escala() {
 
     const { escala } = useContext(GlobalContext)
 
+    const [servicosAnteriores, setServicosAnteriores] = useState([])
     const [escalaFiltrada, setEscalaFiltrada] = useState(null)
     const [ultimaPesquisa, setUltimaPesquisa] = useState(null)
 
@@ -88,6 +92,16 @@ export default function Escala() {
     return (
         <div className={Styles.main}>
             <h2>Escala de Serviço</h2>
+            <div className={Styles.upload}>
+                <label htmlFor="input_upload" className={Styles.label_upload}>Importe a Escala Anterior</label>
+                <InputUpload
+                    funcaoDownload={(signal) => EscalaClient.obterPlanilhaModeloEscala(signal)}
+                    funcaoUpload={(arquivo, signal) => EscalaClient.importarEscalaXLSX(arquivo, signal)}
+                    nomeModelo="modelo_escala.xlsx"
+                    setDados={setServicosAnteriores}
+                />
+            </div>
+            <FormCriarEscala servicosAnteriores={servicosAnteriores} />
             <CadastroServicoContextProvider>
                 <AcoesEscala />
                 <CadastroServico />

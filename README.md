@@ -8,7 +8,8 @@ A versão atual do projeto trata-se de um MVP focado no Contexto Escalante e cob
 
 - Importação dos dados de militares a partir de uma planilha no formato .xlsx;
 - Exibição e manipulação dos dados de militares;
-- Geração automática de escalas, considerando as datas de início e fim, a quantidade de dias de serviço por equipe e a distribuição dos militares disponíveis conforme as [regras de negócio](docs/regrasNegocio/ContextoEscalante.md);
+- Importação da escala do mês anterior a partir de uma planilha no formato .xlsx;
+- Geração automática de escalas, considerando as datas de início e fim, a quantidade de dias de serviço por equipe, a escala anterior importada e a distribuição dos militares disponíveis conforme as [regras de negócio](docs/regrasNegocio/ContextoEscalante.md);
 - Exibição e manipulação das escalas geradas;
 - Exportação da escala gerada em formato .xlsx.
 
@@ -36,19 +37,24 @@ Raiz do projeto (principais pastas):
   - Processamento: validação dos dados e extração para lista de militares escaláveis.
   - Saída: lista de militares escaláveis.
 
-3. Geração automática de escala (backend)
-  - Entrada: período (data de início/fim), número de dias de serviço por equipe e lista de militares.
+3. Importação da escala do mês anterior via planilha XLSX (backend)
+  - Entrada: arquivo XLSX com a escala do mês anterior (colunas: data do serviço, matrícula, militar escalado (nome de paz), patente, antiguidade, função, folga).
+  - Processamento: validação dos dados e extração para lista de serviços operacionais anteriores.
+  - Saída: lista de serviços operacionais anteriores.
+
+4. Geração automática de escala (backend)
+  - Entrada: período (data de início/fim), número de dias de serviço por equipe, lista de militares e lista de serviços operacionais anteriores.
   - Processamento: aplicação das regras de negócio para distribuir militares nas funções diárias.
   - Saída: escala de serviços operacionais por dia com atribuição de um militar para cada função.
 
-4. Exportação de escala para XLSX (backend)
+5. Exportação de escala para XLSX (backend)
   - Entrada: escala gerada (lista de serviços operacionais).
-  - Processamento: formatação dos dados em planilha Excel.
+  - Processamento: formatação dos dados em planilha no formato XLSX.
   - Saída: um arquivo no formato XLSX contendo a escala pronta para download.
 
-5. Frontend (SPA) — interface de interação com o usuário
-  - Componente para download do modelo, upload e processamento da planilha de militares.
-  - Formulário para criação de escalas (datas, dias de serviço, seleção/import de militares).
+6. Frontend (SPA) — interface de interação com o usuário
+  - Componente para download do modelo, upload e processamento da planilha de militares e escala anterior.
+  - Formulário para criação de escalas (datas, dias de serviço, lista de militares e lista de serviços operacionais anteriores).
   - Tabelas dos militares e escalas geradas, contendo opções para exclusão e alteração de itens.
   - Componentes de feedback (toasts), modais de confirmação e barra de navegação lateral.
   - Botões de ação para adição de serviços e exportação da escala.
@@ -58,7 +64,52 @@ Raiz do projeto (principais pastas):
 
 Base URL (padrão em execução local): `http://localhost:8080`
 
-1) `POST /escala`
+1) `GET /api/militar/modelo/xlsx`
+  - Descrição: Retorna o template XLSX para importação de militares (`modelo_importacao_militares.xlsx`).
+  - Response: `200 OK` com arquivo XLSX e cabeçalho `Content-Disposition: attachment; filename=modelo_importacao_militares.xlsx` ou `503` em caso de erro.
+
+2) `POST /api/militar/importar/xlsx`
+  - Descrição: Recebe um arquivo Multipart/form-data (campo `militares`) contendo a planilha de militares, valida e retorna a lista de militares escaláveis extraídos.
+  - Form-data key: `militares` (tipo: file)
+  - Response: `200 OK` com a lista de militares processados ou `503` em caso de erro.
+  - Exemplo de response body:
+```json
+[
+ {  "antiguidade": 10,
+  "matricula": "12345",
+  "patente": "CB",
+  "nomePaz": "FULANO",
+  "nascimento": "1990-01-01",
+  "folgaEspecial": 0,
+  "cov": false
+ }
+]
+```
+
+3) `GET /api/escala/modelo/xlsx`
+  - Descrição: Retorna o template XLSX para importação da escala do mês anterior (`modelo_importacao_escala.xlsx`).
+  - Response: `200 OK` com arquivo XLSX e cabeçalho `Content-Disposition: attachment; filename=modelo_importacao_escala.xlsx` ou `503` em caso de erro.
+
+4) `POST /api/escala/importar/xlsx`
+  - Descrição: Recebe um arquivo Multipart/form-data (campo `escala`) contendo a planilha da escala do mês anterior, valida e retorna a lista de serviços operacionais extraídos.
+  - Form-data key: `escala` (tipo: file)
+  - Response: `200 OK` com a lista de serviços operacionais processados ou `503` em caso de erro.
+  - Exemplo de response body:
+```json
+[
+ { 
+  "dataServico": "2024-08-31",
+  "matricula": "12345",
+  "nomePaz": "FULANO",
+  "patente": "CB",
+  "antiguidade": 10,
+  "funcao": "Operador de Linha",
+  "folga": false
+ }
+]
+```
+
+5) `POST /api/escala`
   - Descrição: Gera a escala automática com base nos parâmetros e lista de militares.
   - Content-Type: `application/json`
   - Exemplo de request body:
@@ -77,6 +128,17 @@ Base URL (padrão em execução local): `http://localhost:8080`
     "nascimento": "1990-01-01",
     "folgaEspecial": 0,
     "cov": false
+   }
+  ],
+  "servicosAnteriores": [
+   {
+    "dataServico": "2024-08-31",
+    "matricula": "12345",
+    "nomePaz": "FULANO",
+    "patente": "CB",
+    "antiguidade": 10,
+    "funcao": "Operador de Linha",
+    "folga": false
    }
   ]
 }
@@ -97,32 +159,24 @@ Base URL (padrão em execução local): `http://localhost:8080`
 ]
 ```
 
-2) `POST /escala/exportar-xlsx`
+6) `POST /api/escala/exportar/xlsx`
   - Descrição: Recebe a escala (lista de `ServicoOperacionalDto`) e retorna um arquivo .xlsx (`escala.xlsx`) pronto para download.
   - Content-Type: `application/json`
-  - Response: `200 OK` com `Content-Disposition: attachment; filename=escala.xlsx` e MIME `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` ou `503` em caso de erro.
-
-3) `GET /militar/modelo-planilha`
-  - Descrição: Retorna o template XLSX para importação de militares (`modelo_importacao_militares.xlsx`).
-  - Response: `200 OK` com arquivo XLSX e cabeçalho `Content-Disposition: attachment; filename=modelo_importacao_militares.xlsx` ou `503` em caso de erro.
-
-4) `POST /militar`
-  - Descrição: Recebe um arquivo Multipart/form-data (campo `militares`) contendo a planilha de militares, valida e retorna a lista de militares escaláveis extraídos.
-  - Form-data key: `militares` (tipo: file)
-  - Response: `200 OK` com a lista de militares processados ou `503` em caso de erro.
-  - Exemplo de response body:
+  - Exemplo de request body:
 ```json
 [
- {  "antiguidade": 10,
-  "matricula": "12345",
-  "patente": "CB",
-  "nomePaz": "FULANO",
-  "nascimento": "1990-01-01",
-  "folgaEspecial": 0,
-  "cov": false
- }
+  { 
+    "dataServico": "2024-09-01",
+    "matricula": "12345",
+    "nomePaz": "FULANO",
+    "patente": "CB",
+    "antiguidade": 10,
+    "funcao": "Operador de Linha",
+    "folga": false
+  }
 ]
 ```
+  - Response: `200 OK` com `Content-Disposition: attachment; filename=escala.xlsx` e MIME `application/vnd.openxmlformats-officedocument.spreadsheetml.sheet` ou `503` em caso de erro.
 
 ## Como Executar Localmente
 
@@ -162,13 +216,25 @@ npm run dev
 npm run build
 ```
 
+O frontend estará disponível em `http://localhost:5173` (por padrão).
+
 O frontend consome os endpoints do backend em `http://localhost:8080`. Caso o backend rode em outra porta/host, crie um arquivo `front/.env` com a variável `VITE_API_URL` apontando para a URL correta.
+
+## Fluxo de Utilização Recomendado
+
+1. Acesse a aplicação frontend no navegador.
+2. Na aba Militares: Baixe o modelo, preencha com seu efetivo e faça a importação.
+3. Na aba Escala:
+  - (Opcional) Baixe o modelo de "Escala Anterior", preencha com os serviços do mês anterior e faça a importação.
+  - Preencha as datas da nova escala, a quantidade de dias de serviço e clique em Gerar Escala.
+4. Revise a escala gerada, faça ajustes manuais se necessário.
+5. Exporte a escala finalizada em formato XLSX para distribuição.
 
 ## Tecnologias Utilizadas
 
 - Backend
   - Java 21
-  - Spring Boot 3.x.x
+  - Spring Boot 3.5.x
   - Maven 3.9.x
   - Apache POI
   - JUnit

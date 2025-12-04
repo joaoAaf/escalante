@@ -2,6 +2,7 @@ package apisemaperreio.escalante.escalante.domain;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public enum Funcao {
 
@@ -19,6 +20,13 @@ public enum Funcao {
         this.nome = nome;
         this.ordemExibicao = ordemExibicao;
         this.patentes = patentes;
+    }
+
+    public static Funcao obterFuncaoPorNome(String nome) {
+        return Arrays.stream(Funcao.values())
+                .filter(f -> f.getNome().equalsIgnoreCase(nome))
+                .findFirst()
+                .orElseThrow(() -> new NoSuchElementException("Função não encontrada: " + nome));
     }
 
     public String getNome() {

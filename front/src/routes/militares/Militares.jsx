@@ -4,12 +4,12 @@ import { GlobalContext } from '../../context/GlobalContext'
 import BarraPesquisa from '../../components/barra_pesquisa/BarraPesquisa'
 import InputUpload from '../../components/input_upload/InputUpload'
 import TabelaMilitares from '../../components/tabela_militares/TabelaMilitares'
-import FormCriarEscala from '../../components/form_criar_escala/FormCriarEscala'
+import MilitarClient from '../../clients/MilitarClient'
 
 export default function Militares() {
 
-    const { militares } = useContext(GlobalContext)
-    
+    const { militares, setMilitares } = useContext(GlobalContext)
+
     const [militaresFiltrados, setMilitaresFiltrados] = useState(null)
     const [ultimaPesquisa, setUltimaPesquisa] = useState(null)
 
@@ -26,7 +26,7 @@ export default function Militares() {
             if (pesquisa && pesquisa.campo === campo && pesquisa.consulta === consulta) return pesquisa
             return { campo, consulta }
         })
-        
+
         const q = String(consulta ?? '').trim().toLowerCase()
 
         if (!militares) return
@@ -71,9 +71,13 @@ export default function Militares() {
             <h2>Militares Escalaveis</h2>
             <div className={Styles.upload}>
                 <label htmlFor="input_upload" className={Styles.label_upload}>Importe a Planilha dos Militares</label>
-                <InputUpload />
+                <InputUpload
+                    funcaoDownload={(signal) => MilitarClient.obterPlanilhaModeloMilitares(signal)}
+                    funcaoUpload={(arquivo, signal) => MilitarClient.importarMilitaresXLSX(arquivo, signal)}
+                    nomeModelo="modelo_militares.xlsx"
+                    setDados={setMilitares}
+                />
             </div>
-            <FormCriarEscala />
             <BarraPesquisa
                 campos={camposPesquisa}
                 placeholder="Pesquisar militares..."

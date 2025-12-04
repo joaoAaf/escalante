@@ -10,15 +10,18 @@ import org.springframework.web.multipart.MultipartFile;
 import apisemaperreio.escalante.escalante.dtos.MilitarEscalavel;
 import apisemaperreio.escalante.escalante.usecases.MilitarUseCasesEscalante;
 import apisemaperreio.escalante.escalante.utils.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
+import apisemaperreio.escalante.escalante.domain.exceptions.PlanilhaModeloNaoEncontradaException;
+import apisemaperreio.escalante.escalante.domain.exceptions.ErroLeituraPlanilhaModeloException;
 
 @Service
-public class MilitarServiceEscalante implements MilitarUseCasesEscalante {
+public class MilitarServiceEscalante extends BaseServiceEscalante implements MilitarUseCasesEscalante {
 
     @Autowired
     private ImportadorMilitaresXLSXAdapter importadorMilitaresXLSXAdapter;
 
     @Override
-    public List<MilitarEscalavel> listarMilitaresEscalaveis(MultipartFile planilhaMilitares) {
+    public List<MilitarEscalavel> importarMilitaresXLSX(MultipartFile planilhaMilitares) {
+        validarPlanilha(planilhaMilitares);
         return importadorMilitaresXLSXAdapter.importarMilitaresXLSX(planilhaMilitares);
     }
 
@@ -26,10 +29,10 @@ public class MilitarServiceEscalante implements MilitarUseCasesEscalante {
     public byte[] obterPlanilhaModeloMilitares() {
         try (var inputStream = getClass().getResourceAsStream("/samples/modelo_importacao_militares.xlsx")) {
             if (inputStream == null)
-                throw new RuntimeException("Não foi possível encontrar a planilha modelo.");
+                throw new PlanilhaModeloNaoEncontradaException("Não foi possível encontrar a planilha modelo.");
             return inputStream.readAllBytes();
         } catch (IOException e) {
-            throw new RuntimeException("Erro ao ler a planilha modelo de militares.", e);
+            throw new ErroLeituraPlanilhaModeloException("Erro ao ler a planilha modelo de militares.", e);
         }
     }
 

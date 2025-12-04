@@ -1,0 +1,44 @@
+networks:
+  escalante-net:
+    driver: bridge
+
+services:
+  api:
+    container_name: escalante-api
+    build:
+      context: ./apis
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - FRONT_URL=${FRONT_URL}
+      - PROFILE_ACTIVE=${PROFILE_ACTIVE}
+    networks:
+      - escalante-net
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 1G
+
+  front:
+    container_name: escalante-front
+    build:
+      context: ./front
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    restart: unless-stopped
+    environment:
+      - TZ=${TZ}
+      - SERVER_NAME=${SERVER_NAME}
+      - API_URL=${API_URL}
+    depends_on:
+      - api
+    networks:
+      - escalante-net
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 512M

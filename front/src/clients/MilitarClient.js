@@ -1,36 +1,39 @@
 export default class MilitarClient {
 
-    static baseUrl = `${import.meta.env.VITE_API_URL ?? 'http://localhost:8080'}/militar`
+    static baseUrl = `${import.meta.env.VITE_API_URL ?? ''}/api/militar`
 
     static async obterPlanilhaModeloMilitares(signal) {
         try {
-            const response = await fetch(`${this.baseUrl}/modelo-planilha`, { signal })
+            const response = await fetch(`${this.baseUrl}/modelo/xlsx`, { signal })
             if (!response.status.toString().startsWith('2'))
-                throw new Error(`Erro ao obter a planilha modelo: ${response.status} ${response.statusText}`)
+                throw new Error((await response.json()).Mensagem)
             return await response.arrayBuffer()
         } catch (error) {
-            console.error(error.message)
             if (error.name === 'AbortError') throw error
-            throw new Error("Erro ao obter a planilha modelo: Servidor indisponível.")
+            if (error instanceof TypeError || error instanceof SyntaxError)
+                throw new Error("Servidor indisponível.")
+            throw error
         }
     }
 
-    static async listarMilitaresEscalaveis(arquivo, signal) {
+    static async importarMilitaresXLSX(arquivo, signal) {
         const formData = new FormData()
         formData.append('militares', arquivo)
         try {
-            const response = await fetch(`${this.baseUrl}`, {
+            const response = await fetch(`${this.baseUrl}/importar/xlsx`, {
                 method: 'POST',
                 body: formData,
                 signal
             })
+            const dados = await response.json()
             if (!response.status.toString().startsWith('2'))
-                throw new Error(`Erro ao listar militares escaláveis: ${response.status} ${response.statusText}`)
-            return await response.json()
+                throw new Error(dados.Mensagem)
+            return dados
         } catch (error) {
-            console.error(error.message)
             if (error.name === 'AbortError') throw error
-            throw new Error("Erro ao listar militares escaláveis: Servidor indisponível.")
+            if (error instanceof TypeError || error instanceof SyntaxError)
+                throw new Error("Servidor indisponível.")
+            throw error
         }
     }
 }

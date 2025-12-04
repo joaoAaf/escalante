@@ -1,11 +1,10 @@
 import { useState, useContext, useRef, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import { GlobalContext } from '../../context/GlobalContext'
 import Styles from './styles.module.css'
 import EscalaClient from '../../clients/EscalaClient'
 import { inserirIds } from '../../utils/geradorIds'
 
-export default function FormCriarEscala() {
+export default function FormCriarEscala({ servicosAnteriores }) {
 
     const { militares, setEscala, setFeedback } = useContext(GlobalContext)
 
@@ -13,8 +12,6 @@ export default function FormCriarEscala() {
     const [dataFim, setDataFim] = useState('')
     const [diasServico, setDiasServico] = useState(2)
     const [carregandoEscala, setCarregandoEscala] = useState(false)
-    
-    const navegar = useNavigate()
 
     const abortControllerRef = useRef(null)
 
@@ -38,25 +35,50 @@ export default function FormCriarEscala() {
         const form = evento.currentTarget
 
         if (!form.checkValidity()) {
-                    for (const element of form.elements) {
+            for (const element of form.elements) {
                 if (element.willValidate && !element.checkValidity()) {
                     return setFeedback({ type: 'info', mensagem: element.validationMessage })
                 }
             }
         }
 
-        if (dataFim <= dataInicio)
-            return setFeedback({ type: 'info', mensagem: 'A data final não pode ser anterior à data inicial.' })
+        try {
+            const inicio = new Date(dataInicio)
+            const fim = new Date(dataFim)
+
+            if (fim <= inicio)
+                return setFeedback({ type: 'info', mensagem: 'A data final não pode ser anterior à data inicial.' })
+
+            const diffTime = fim - inicio
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+
+            if (diffDays > 35) {
+                return setFeedback({ type: 'info', mensagem: 'O intervalo entre as datas não pode ser maior que 35 dias.' })
+            }
+
+        } catch (err) {
+            return setFeedback({ type: 'info', mensagem: 'Por favor, verifique as datas informadas.' })
+        }
+
+        if (!militares || militares.length === 0)
+            return setFeedback({ type: 'info', mensagem: 'Não é possível criar a escala sem militares cadastrados.' })
+
+        if (militares.length > 100)
+            return setFeedback({ type: 'info', mensagem: 'O número de militares não pode ser maior que 100.' })
+
+        if (servicosAnteriores?.length > 210)
+            return setFeedback({ type: 'info', mensagem: 'A escala anterior não pode conter mais que 210 serviços.' })
 
         const controller = criarAbortController()
-        
+
         setCarregandoEscala(true)
-        
+
         const dadosEscala = {
             dataInicio,
             dataFim,
             diasServico,
-            militares
+            militares,
+            servicosAnteriores: servicosAnteriores || []
         }
 
         EscalaClient.criarEscalaAutomatica(dadosEscala, controller.signal)
@@ -65,10 +87,9 @@ export default function FormCriarEscala() {
                 const escalaComIds = inserirIds(escalaResponse)
                 setEscala(escalaComIds)
                 setFeedback({ type: 'success', mensagem: 'Escala criada com sucesso.' })
-                navegar('/escala')
             })
             .catch(error => {
-                
+
                 if (error.name === 'AbortError') return
                 setFeedback({ type: 'error', mensagem: error.message })
             })
@@ -82,6 +103,11 @@ export default function FormCriarEscala() {
     return (
         <div className={Styles.criar_escala}>
             <h3>Dados para Criação da Escala</h3>
+            {servicosAnteriores?.length > 0 && (
+                <div style={{ marginBottom: '15px', color: 'green', fontSize: '0.9em' }}>
+                    ✓ Escala anterior carregada: {servicosAnteriores.length} serviços importados.
+                </div>
+            )}
             <form onSubmit={gerenciarCriacaoEscala} noValidate>
                 <div>
                     <label>Data Inicial:</label>

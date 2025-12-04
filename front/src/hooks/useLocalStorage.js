@@ -1,8 +1,25 @@
 import { useEffect, useState } from 'react'
 
+const localStorageDisponivel = () => {
+    try {
+        const testKey = '__test__'
+        localStorage.setItem(testKey, testKey)
+        localStorage.removeItem(testKey)
+        return true
+    } catch (e) {
+        console.warn("localStorage não está disponível:", e)
+        return false
+    }
+}
+
+const LOCAL_STORAGE_DISPONIVEL = localStorageDisponivel()
+
 export const useLocalStorage = chave => {
 
     const [dados, setDados] = useState(() => {
+        if (!LOCAL_STORAGE_DISPONIVEL) {
+            return null
+        }
         try {
             const dadosSalvos = localStorage.getItem(chave)
             return dadosSalvos ? JSON.parse(dadosSalvos) : null
@@ -13,6 +30,9 @@ export const useLocalStorage = chave => {
     })
 
     useEffect(() => {
+        if (!LOCAL_STORAGE_DISPONIVEL) {
+            return
+        }
         try {
             if (dados === null || dados === undefined)
                 localStorage.removeItem(chave)

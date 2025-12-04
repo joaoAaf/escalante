@@ -1,8 +1,15 @@
 .acoesEscala {
     display: flex;
-    justify-content: end;
+    flex-direction: column;
+    justify-content: start;
     gap: 10px;
     margin-bottom: 20px;
+}
+
+.acoesEscala div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .acoesEscala button {

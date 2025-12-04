@@ -1,0 +1,7 @@
+logging:
+  level:
+    apisemaperreio:
+      escalante:
+        escalante:
+          configs:
+            GlobalExceptionHandler: DEBUG

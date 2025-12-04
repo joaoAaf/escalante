@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
+import java.util.function.Function;
 
 import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 import org.apache.poi.xssf.usermodel.XSSFRow;
@@ -15,6 +16,7 @@ import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import apisemaperreio.escalante.escalante.domain.Funcao;
+import apisemaperreio.escalante.escalante.domain.Patente;
 import apisemaperreio.escalante.escalante.dtos.ServicoOperacionalDto;
 
 public class AbaApresentacao {
@@ -111,11 +113,14 @@ public class AbaApresentacao {
                 var servico = servicos.stream()
                         .filter(s -> s.funcao().equals(funcao.getNome()) && s.dataServico().equals(dataServico)).toList();
                 if (!servico.isEmpty()) {
-                    var militarEscalado = servico.get(0).patente() + " "
+                    Function<Integer, Patente> obterPatente = indice -> Arrays.stream(Patente.values())
+                            .filter(p -> p.getNome().equals(servico.get(indice).patente()))
+                            .findFirst().orElseThrow();
+                    var militarEscalado = obterPatente.apply(0).name() + " "
                             + servico.get(0).nomePaz();
                     celula.incluirNaCelula(celula.criarCelula(indiceColuna), militarEscalado);
                     if (servico.size() > 1) {
-                        militarEscalado = servico.get(1).patente() + " "
+                        militarEscalado = obterPatente.apply(1).name() + " "
                                 + servico.get(1).nomePaz();
                         celulaAbaixo.incluirNaCelula(celulaAbaixo.criarCelula(indiceColuna), militarEscalado);
                     } else if (funcao.equals(Funcao.OPERADOR_DE_LINHA))

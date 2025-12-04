@@ -8,7 +8,7 @@ import apisemaperreio.escalante.escalante.dtos.MilitarEscalavel;
 
 public interface MilitarUseCasesEscalante {
 
-    List<MilitarEscalavel> listarMilitaresEscalaveis(MultipartFile planilhaMilitares);
+    List<MilitarEscalavel> importarMilitaresXLSX(MultipartFile planilhaMilitares);
 
     byte[] obterPlanilhaModeloMilitares();
 

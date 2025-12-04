@@ -6,7 +6,7 @@ import { ordenarEscala } from '../../utils/ordenacaoEscala'
 
 export default function TabelaEscala({ escalaTabela }) {
 
-    const { escala, setEscala } = useContext(GlobalContext)
+    const { militares, escala, setEscala } = useContext(GlobalContext)
 
     const campos = ["DATA", "MATRÍCULA", "MILITAR ESCALADO", "POST./GRAD.", "ANTIGUIDADE", "FUNÇÃO", "FOLGA"]
     
@@ -20,13 +20,19 @@ export default function TabelaEscala({ escalaTabela }) {
     )
 
     const listarEscala = () => {
-        if (escalaTabela === null)
+        if (!militares || militares.length === 0)
             return (
                 <tr>
-                    <td colSpan="7">Vá para a aba <b>Militares</b> para iniciar a criação da escala.</td>
+                    <td colSpan="7">Vá para a aba <b>Militares</b> e importe a planilha de militares.</td>
                 </tr>
             )
-
+        if (!escalaTabela || escalaTabela.length === 0)
+            return (
+                <tr>
+                    <td colSpan="7">Importe a escala anterior e preencha os dados para criação da escala.</td>
+                </tr>
+            )
+            
         const grupos = separarGruposPorData(escalaTabela)
 
         return escalaTabela.length > 0 ? (
