@@ -1,7 +1,6 @@
 package apisemaperreio.escalante.escalante.services;
 
 import java.time.Instant;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -28,9 +27,10 @@ public class JwtService {
         Instant instanteAtual = Instant.now();
         long tempoExpiracao = 3600L;
 
-        var roles = authentication.getAuthorities().stream()
-                .map(GrantedAuthority::getAuthority)
-                .collect(Collectors.joining(" "));
+    var roles = authentication.getAuthorities().stream()
+        .map(GrantedAuthority::getAuthority)
+        .map(authority -> authority.startsWith("ROLE_") ? authority.substring(5) : authority)
+        .toList();
         
         var claims = JwtClaimsSet.builder()
                 .issuer(this.emissor)
