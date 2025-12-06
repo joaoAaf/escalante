@@ -1,4 +1,4 @@
-package apisemaperreio.escalante.escalante.configs;
+package apisemaperreio.escalante.escalante.configs.security;
 
 import java.nio.charset.StandardCharsets;
 
@@ -35,11 +35,14 @@ public class SecurityConfig {
     @Order(1)
     public SecurityFilterChain loginFilterChain(HttpSecurity http) throws Exception {
         http.securityMatcher("/api/login")
+                .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        .exceptionHandling(ex -> ex.authenticationEntryPoint(new RestAuthenticationEntryPoint())
+            .accessDeniedHandler(new RestAccessDeniedHandler()))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
 
@@ -54,14 +57,17 @@ public class SecurityConfig {
         JwtAuthenticationConverter jwtAuthConverter = new JwtAuthenticationConverter();
         jwtAuthConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
 
-        http.csrf(csrf -> csrf.disable())
+        http.cors(Customizer.withDefaults())
+                .csrf(csrf -> csrf.disable())
                 // Para permitir o acesso ao H2 Console
                 .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/h2/**").permitAll()
                         .anyRequest().authenticated())
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)))
-                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+        .exceptionHandling(ex -> ex.authenticationEntryPoint(new RestAuthenticationEntryPoint())
+            .accessDeniedHandler(new RestAccessDeniedHandler()))
+        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
 
