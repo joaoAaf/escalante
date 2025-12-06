@@ -1,8 +1,17 @@
 package apisemaperreio.escalante.escalante.domain;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import jakarta.persistence.CollectionTable;
 import jakarta.persistence.Column;
+import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 
 @Entity
 public class Admin {
@@ -11,13 +20,21 @@ public class Admin {
     private String username;
     @Column(nullable = false)
     private String password;
+    
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "admin_roles", joinColumns = @JoinColumn(name = "admin_username"))
+    @Column(name = "role")
+    @Enumerated(EnumType.STRING)
+    private Set<Role> roles = new HashSet<>();
 
     public Admin() {
+        this.roles.add(Role.ADMIN);
     }
 
     public Admin(String username, String password) {
         this.username = username;
         this.password = password;
+        this.roles.add(Role.ADMIN);
     }
     
     public String getUsername() {
@@ -31,6 +48,10 @@ public class Admin {
     }
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
     }
 
 }
