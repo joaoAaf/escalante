@@ -35,6 +35,7 @@ public class SecurityConfig {
         this.env = env;
     }
 
+    // Filtro de segurança para a rota de login, com utilização exclusiva do HTTP Basic
     @Bean
     @Order(1)
     public SecurityFilterChain loginFilterChain(HttpSecurity http) throws Exception {
@@ -44,20 +45,20 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                        .accessDeniedHandler(new RestAccessDeniedHandler()))
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(new AuthenticationEntryPointCustom())
+                        .accessDeniedHandler(new AccessDeniedHandlerCustom()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
 
+    // Filtro de segurança para as demais rotas da API, com utilização exclusiva de token JWT
     @Bean
     @Order(2)
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
-
+        // Configuração do conversor de autoridades baseado no claim "roles" do JWT
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
-
         JwtAuthenticationConverter jwtAuthConverter = new JwtAuthenticationConverter();
         jwtAuthConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
 
@@ -75,13 +76,16 @@ public class SecurityConfig {
                         auth.requestMatchers("/h2/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
+                // Configuração do recurso OAuth2 como um Resource Server que utiliza JWT
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)))
-                .exceptionHandling(ex -> ex.authenticationEntryPoint(new RestAuthenticationEntryPoint())
-                        .accessDeniedHandler(new RestAccessDeniedHandler()))
+                // Configuração de tratamento de exceções
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(new AuthenticationEntryPointCustom())
+                        .accessDeniedHandler(new AccessDeniedHandlerCustom()))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
 
+    // Beans para codificação e decodificação de JWTs utilizando uma chave secreta HMAC SHA-256
     @Bean
     JwtDecoder jwtDecoder() {
         var jwtSecret = env.getProperty("env.jwt.secret");

@@ -5,7 +5,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import apisemaperreio.escalante.escalante.domain.AdminAutenticado;
+import apisemaperreio.escalante.escalante.domain.seguranca.AdminAutenticado;
 import apisemaperreio.escalante.escalante.repository.AdminRepository;
 
 @Service

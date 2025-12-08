@@ -17,29 +17,34 @@ public class JwtService {
 
     private final JwtEncoder encoder;
     private final String emissor;
+    private final long tempoExpiracao;
 
-    public JwtService(JwtEncoder encoder, @Value("${spring.application.name}") String emissor) {
+    public JwtService(
+            JwtEncoder encoder,
+            @Value("${spring.application.name}") String emissor,
+            @Value("${env.jwt.expiration}") long tempoExpiracao) {
         this.encoder = encoder;
         this.emissor = emissor;
+        this.tempoExpiracao = tempoExpiracao;
     }
 
     public String gerarToken(Authentication authentication) {
         Instant instanteAtual = Instant.now();
-        long tempoExpiracao = 3600L;
 
-    var roles = authentication.getAuthorities().stream()
-        .map(GrantedAuthority::getAuthority)
-        .map(authority -> authority.startsWith("ROLE_") ? authority.substring(5) : authority)
-        .toList();
-        
+        var roles = authentication.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .map(authority -> authority.startsWith("ROLE_") ? authority.substring(5) : authority)
+                .toList();
+
         var claims = JwtClaimsSet.builder()
-                .issuer(this.emissor)
+                .issuer(emissor)
                 .issuedAt(instanteAtual)
                 .expiresAt(instanteAtual.plusSeconds(tempoExpiracao))
                 .subject(authentication.getName())
                 .claim("roles", roles)
                 .build();
 
+        // Cabeçalho do JWT especificando o algoritmo de assinatura
         var jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build();
 
         return encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();

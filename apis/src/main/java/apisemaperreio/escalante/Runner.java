@@ -4,7 +4,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import apisemaperreio.escalante.escalante.domain.Admin;
+import apisemaperreio.escalante.escalante.domain.seguranca.Admin;
 import apisemaperreio.escalante.escalante.repository.AdminRepository;
 
 @Configuration
