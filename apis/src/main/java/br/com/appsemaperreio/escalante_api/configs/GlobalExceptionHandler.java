@@ -11,8 +11,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.validation.BindException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import org.springframework.web.bind.MissingServletRequestParameterException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MultipartException;
@@ -162,17 +164,31 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(error);
     }
 
-    // @ExceptionHandler(DataIntegrityViolationException.class)
-    // public ResponseEntity<Map<String, String>>
-    // handleDataIntegrity(DataIntegrityViolationException ex) {
-    // Map<String, String> error = new HashMap<>();
-    // var now = LocalDateTime.now().format(FORMATTER);
-    // error.put("Data/Hora", now);
-    // error.put("Status", HttpStatus.BAD_REQUEST.toString());
-    // var root = ex.getRootCause();
-    // error.put("Mensagem", root != null ? root.getMessage() : ex.getMessage());
-    // return ResponseEntity.badRequest().body(error);
-    // }
+    @ExceptionHandler(MissingServletRequestParameterException.class)
+    public ResponseEntity<Map<String, String>> handleMissingServletRequestParameterException(MissingServletRequestParameterException ex) {
+        Map<String, String> error = new HashMap<>();
+        LOG.debug("MissingServletRequestParameterException: {}", ex.getMessage());
+        error.put("Data/Hora", LocalDateTime.now().format(FORMATO_DATA));
+        error.put("Status", HttpStatus.BAD_REQUEST.toString());
+        if (ex.getParameterName() == null) {
+            error.put("Mensagem", "Parâmetro de requisição ausente.");
+            return ResponseEntity.badRequest().body(error);
+        }
+        String mensagem = String.format("Parâmetro de requisição '%s' do tipo '%s' está ausente.",
+                ex.getParameterName(), ex.getParameterType());
+        error.put("Mensagem", mensagem);
+        return ResponseEntity.badRequest().body(error);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, String>> handleAccessDeniedException(AccessDeniedException ex) {
+        Map<String, String> error = new HashMap<>();
+        LOG.debug("AccessDeniedException: {}", ex.getMessage());
+        error.put("Data/Hora", LocalDateTime.now().format(FORMATO_DATA));
+        error.put("Status", HttpStatus.FORBIDDEN.toString());
+        error.put("Mensagem", ex.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<Map<String, String>> handleGeneral(Exception ex) {
