@@ -10,9 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import apisemaperreio.escalante.escalante.domain.DadosEscala;
-import apisemaperreio.escalante.escalante.domain.Funcao;
-import apisemaperreio.escalante.escalante.domain.ServicoOperacional;
 import apisemaperreio.escalante.escalante.dtos.DadosEscalaRequest;
 import apisemaperreio.escalante.escalante.dtos.ServicoOperacionalDto;
 import apisemaperreio.escalante.escalante.usecases.EscalaUseCasesEscalante;
@@ -23,6 +20,9 @@ import apisemaperreio.escalante.escalante.utils.factories.ServicoOperacionalFact
 import apisemaperreio.escalante.escalante.utils.mappers.MilitarMapperEscalante;
 import apisemaperreio.escalante.escalante.utils.mappers.ServicoOperacionalMapper;
 import apisemaperreio.escalante.escalante.domain.exceptions.PlanilhaModeloNaoEncontradaException;
+import apisemaperreio.escalante.escalante.domain.escalante.DadosEscala;
+import apisemaperreio.escalante.escalante.domain.escalante.Funcao;
+import apisemaperreio.escalante.escalante.domain.escalante.ServicoOperacional;
 import apisemaperreio.escalante.escalante.domain.exceptions.ErroLeituraPlanilhaModeloException;
 
 @Service

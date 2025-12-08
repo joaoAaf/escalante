@@ -1,4 +1,4 @@
-package apisemaperreio.escalante.escalante.domain;
+package apisemaperreio.escalante.escalante.domain.escalante;
 
 import java.util.Arrays;
 import java.util.List;

@@ -5,7 +5,7 @@ import java.util.List;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
-import apisemaperreio.escalante.escalante.domain.Militar;
+import apisemaperreio.escalante.escalante.domain.escalante.Militar;
 import apisemaperreio.escalante.escalante.dtos.MilitarEscalavel;
 
 @Mapper(componentModel = "spring")

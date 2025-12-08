@@ -11,7 +11,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import apisemaperreio.escalante.escalante.domain.Funcao;
+import apisemaperreio.escalante.escalante.domain.escalante.Funcao;
 import apisemaperreio.escalante.escalante.utils.adapters.importador_xlsx.ImportadorEscalaXLSXAdapter;
 import apisemaperreio.escalante.escalante.utils.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
 
