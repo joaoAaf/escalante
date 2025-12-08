@@ -1,0 +1,18 @@
+package br.com.appsemaperreio.escalante_api.services;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Service;
+
+@Service
+public class LoginService {
+
+    private final JwtService jwtService;
+
+    public LoginService(JwtService jwtService) {
+        this.jwtService = jwtService;
+    }
+
+    public String login(Authentication authentication) {
+        return jwtService.gerarToken(authentication);
+    }
+}

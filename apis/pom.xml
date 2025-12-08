@@ -8,11 +8,11 @@
 		<version>3.5.8</version>
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
-	<groupId>apisemaperreio</groupId>
-	<artifactId>escalante</artifactId>
+	<groupId>br.com.appsemaperreio</groupId>
+	<artifactId>escalante-api</artifactId>
 	<version>0.0.10-SNAPSHOT</version>
-	<name>escalante</name>
-	<description>Demo project for Spring Boot</description>
+	<name>escalante-api</name>
+	<description>Projeto Escalante</description>
 	<url/>
 	<licenses>
 		<license/>
