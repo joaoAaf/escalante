@@ -17,7 +17,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 import br.com.appsemaperreio.escalante_api.domain.escalante.Funcao;
 import br.com.appsemaperreio.escalante_api.domain.escalante.Patente;
-import br.com.appsemaperreio.escalante_api.dtos.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.dtos.escalante.ServicoOperacionalDto;
 
 public class AbaApresentacao {
 

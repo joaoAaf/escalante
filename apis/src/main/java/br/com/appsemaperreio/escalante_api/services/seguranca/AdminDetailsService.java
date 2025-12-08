@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api.services;
+package br.com.appsemaperreio.escalante_api.services.seguranca;
 
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -6,7 +6,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import br.com.appsemaperreio.escalante_api.domain.seguranca.AdminAutenticado;
-import br.com.appsemaperreio.escalante_api.repository.AdminRepository;
+import br.com.appsemaperreio.escalante_api.repository.seguranca.AdminRepository;
 
 @Service
 public class AdminDetailsService implements UserDetailsService {

@@ -6,7 +6,7 @@ import java.util.List;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
-import br.com.appsemaperreio.escalante_api.dtos.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.dtos.escalante.ServicoOperacionalDto;
 import br.com.appsemaperreio.escalante_api.utils.adapters.exportador_xlsx.ExportadorXLSXAdapter;
 
 @Component

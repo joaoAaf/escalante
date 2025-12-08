@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api.configs.security;
+package br.com.appsemaperreio.escalante_api.configs.seguranca;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -8,8 +8,8 @@ import java.util.Map;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.security.access.AccessDeniedException;
-import org.springframework.security.web.access.AccessDeniedHandler;
+import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.web.AuthenticationEntryPoint;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -17,25 +17,24 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-// Classe personalizada para lidar com tentativas de acesso não autorizado
-public class AccessDeniedHandlerCustom implements AccessDeniedHandler {
+// Classe personalizada para lidar com tentativas de acesso não autenticado
+public class AuthenticationEntryPointCustom implements AuthenticationEntryPoint {
 
     private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final ObjectMapper mapper = new ObjectMapper();
 
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response,
-            AccessDeniedException accessDeniedException) throws IOException, ServletException {
+    public void commence(HttpServletRequest request, HttpServletResponse response,
+            AuthenticationException authException) throws IOException, ServletException {
 
         Map<String, String> body = new HashMap<>();
         body.put("Data/Hora", LocalDateTime.now().format(FORMATO_DATA));
-        body.put("Status", HttpStatus.FORBIDDEN.toString());
-        String msg = accessDeniedException != null && accessDeniedException.getMessage() != null
-                ? accessDeniedException.getMessage()
-                : "Acesso proibido";
+        body.put("Status", HttpStatus.UNAUTHORIZED.toString());
+        String msg = authException != null && authException.getMessage() != null ? authException.getMessage()
+                : "Acesso não autorizado";
         body.put("Mensagem", msg);
 
-        response.setStatus(HttpStatus.FORBIDDEN.value());
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         mapper.writeValue(response.getOutputStream(), body);
     }

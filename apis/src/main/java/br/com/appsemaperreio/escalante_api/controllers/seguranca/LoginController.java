@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api.controllers;
+package br.com.appsemaperreio.escalante_api.controllers.seguranca;
 
 import java.util.Map;
 
@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.appsemaperreio.escalante_api.services.LoginService;
+import br.com.appsemaperreio.escalante_api.services.seguranca.LoginService;
 
 @RestController
 @RequestMapping("/api/login")
