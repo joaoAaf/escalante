@@ -1,13 +1,14 @@
 package apisemaperreio.escalante.escalante.configs.security;
 
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import javax.crypto.spec.SecretKeySpec;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.env.Environment;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -28,8 +29,11 @@ import com.nimbusds.jose.jwk.source.ImmutableSecret;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Value("${env.jwt.secret}")
-    private String jwtSecret;
+    private final Environment env;
+
+    public SecurityConfig(Environment env) {
+        this.env = env;
+    }
 
     @Bean
     @Order(1)
@@ -40,9 +44,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
-        .exceptionHandling(ex -> ex.authenticationEntryPoint(new RestAuthenticationEntryPoint())
-            .accessDeniedHandler(new RestAccessDeniedHandler()))
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                        .accessDeniedHandler(new RestAccessDeniedHandler()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
 
@@ -57,29 +61,38 @@ public class SecurityConfig {
         JwtAuthenticationConverter jwtAuthConverter = new JwtAuthenticationConverter();
         jwtAuthConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
 
+        var devProfileActive = List.of(env.getActiveProfiles()).contains("dev");
+
         http.cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
-                // Para permitir o acesso ao H2 Console
-                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
-                .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/h2/**").permitAll()
-                        .anyRequest().authenticated())
+                .headers(headers -> {
+                    // Para possibilitar o acesso ao console H2
+                    if (devProfileActive)
+                        headers.frameOptions(frameOptions -> frameOptions.sameOrigin());
+                })
+                .authorizeHttpRequests(auth -> {
+                    if (devProfileActive)
+                        auth.requestMatchers("/h2/**").permitAll();
+                    auth.anyRequest().authenticated();
+                })
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)))
-        .exceptionHandling(ex -> ex.authenticationEntryPoint(new RestAuthenticationEntryPoint())
-            .accessDeniedHandler(new RestAccessDeniedHandler()))
-        .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(new RestAuthenticationEntryPoint())
+                        .accessDeniedHandler(new RestAccessDeniedHandler()))
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         return http.build();
     }
 
     @Bean
     JwtDecoder jwtDecoder() {
-        var secretKey = new SecretKeySpec(this.jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        var jwtSecret = env.getProperty("env.jwt.secret");
+        var secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(secretKey).build();
     }
 
     @Bean
     JwtEncoder jwtEncoder() {
-        var secretKey = new SecretKeySpec(this.jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        var jwtSecret = env.getProperty("env.jwt.secret");
+        var secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         return new NimbusJwtEncoder(new ImmutableSecret<>(secretKey));
     }
 
