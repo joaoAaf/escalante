@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api.dtos;
+package br.com.appsemaperreio.escalante_api.dtos.escalante;
 
 import java.time.LocalDate;
 import java.util.List;

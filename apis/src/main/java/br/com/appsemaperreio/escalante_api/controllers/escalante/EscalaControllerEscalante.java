@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api.controllers;
+package br.com.appsemaperreio.escalante_api.controllers.escalante;
 
 import java.util.List;
 
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.appsemaperreio.escalante_api.dtos.DadosEscalaRequest;
-import br.com.appsemaperreio.escalante_api.dtos.ServicoOperacionalDto;
-import br.com.appsemaperreio.escalante_api.usecases.EscalaUseCasesEscalante;
+import br.com.appsemaperreio.escalante_api.dtos.escalante.DadosEscalaRequest;
+import br.com.appsemaperreio.escalante_api.dtos.escalante.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.usecases.escalante.EscalaUseCasesEscalante;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;

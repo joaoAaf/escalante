@@ -1,11 +1,11 @@
-package br.com.appsemaperreio.escalante_api.usecases;
+package br.com.appsemaperreio.escalante_api.usecases.escalante;
 
 import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.appsemaperreio.escalante_api.dtos.DadosEscalaRequest;
-import br.com.appsemaperreio.escalante_api.dtos.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.dtos.escalante.DadosEscalaRequest;
+import br.com.appsemaperreio.escalante_api.dtos.escalante.ServicoOperacionalDto;
 
 public interface EscalaUseCasesEscalante {
 

@@ -7,7 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import br.com.appsemaperreio.escalante_api.dtos.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.dtos.escalante.ServicoOperacionalDto;
 
 public class AbaConferencia {
 

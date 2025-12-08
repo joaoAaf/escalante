@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import br.com.appsemaperreio.escalante_api.domain.escalante.Militar;
-import br.com.appsemaperreio.escalante_api.dtos.MilitarEscalavel;
+import br.com.appsemaperreio.escalante_api.dtos.escalante.MilitarEscalavel;
 
 @Mapper(componentModel = "spring")
 public interface MilitarMapperEscalante {

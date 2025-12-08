@@ -5,7 +5,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import br.com.appsemaperreio.escalante_api.domain.seguranca.Admin;
-import br.com.appsemaperreio.escalante_api.repository.AdminRepository;
+import br.com.appsemaperreio.escalante_api.repository.seguranca.AdminRepository;
 
 @Configuration
 public class Runner implements CommandLineRunner {

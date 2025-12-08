@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api.services;
+package br.com.appsemaperreio.escalante_api.services.escalante;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -15,9 +15,9 @@ import br.com.appsemaperreio.escalante_api.domain.escalante.Funcao;
 import br.com.appsemaperreio.escalante_api.domain.escalante.ServicoOperacional;
 import br.com.appsemaperreio.escalante_api.domain.exceptions.ErroLeituraPlanilhaModeloException;
 import br.com.appsemaperreio.escalante_api.domain.exceptions.PlanilhaModeloNaoEncontradaException;
-import br.com.appsemaperreio.escalante_api.dtos.DadosEscalaRequest;
-import br.com.appsemaperreio.escalante_api.dtos.ServicoOperacionalDto;
-import br.com.appsemaperreio.escalante_api.usecases.EscalaUseCasesEscalante;
+import br.com.appsemaperreio.escalante_api.dtos.escalante.DadosEscalaRequest;
+import br.com.appsemaperreio.escalante_api.dtos.escalante.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.usecases.escalante.EscalaUseCasesEscalante;
 import br.com.appsemaperreio.escalante_api.utils.adapters.exportador_xlsx.ExportadorXLSXAdapter;
 import br.com.appsemaperreio.escalante_api.utils.adapters.importador_xlsx.ImportadorEscalaXLSXAdapter;
 import br.com.appsemaperreio.escalante_api.utils.factories.EscalaFactory;

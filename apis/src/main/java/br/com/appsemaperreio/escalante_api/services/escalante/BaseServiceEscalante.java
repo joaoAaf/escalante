@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api.services;
+package br.com.appsemaperreio.escalante_api.services.escalante;
 
 import org.springframework.web.multipart.MultipartFile;
 

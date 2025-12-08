@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api.services;
+package br.com.appsemaperreio.escalante_api.services.seguranca;
 
 import java.time.Instant;
 

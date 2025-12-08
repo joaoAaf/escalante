@@ -6,7 +6,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import br.com.appsemaperreio.escalante_api.domain.escalante.ServicoOperacional;
-import br.com.appsemaperreio.escalante_api.dtos.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.dtos.escalante.ServicoOperacionalDto;
 
 @Mapper(componentModel = "spring")
 public interface ServicoOperacionalMapper {

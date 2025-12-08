@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api.controllers;
+package br.com.appsemaperreio.escalante_api.controllers.escalante;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.appsemaperreio.escalante_api.usecases.MilitarUseCasesEscalante;
+import br.com.appsemaperreio.escalante_api.usecases.escalante.MilitarUseCasesEscalante;
 import jakarta.validation.constraints.NotNull;
 
 @Validated

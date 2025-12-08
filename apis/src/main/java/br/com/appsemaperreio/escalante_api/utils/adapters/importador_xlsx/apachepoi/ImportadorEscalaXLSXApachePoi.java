@@ -10,7 +10,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.appsemaperreio.escalante_api.domain.exceptions.ErroProcessamentoPlanilhaException;
-import br.com.appsemaperreio.escalante_api.dtos.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.dtos.escalante.ServicoOperacionalDto;
 import br.com.appsemaperreio.escalante_api.utils.adapters.importador_xlsx.ImportadorEscalaXLSXAdapter;
 
 @Component

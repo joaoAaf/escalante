@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api.services;
+package br.com.appsemaperreio.escalante_api.services.seguranca;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;

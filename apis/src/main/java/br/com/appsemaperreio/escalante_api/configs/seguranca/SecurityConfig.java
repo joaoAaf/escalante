@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api.configs.security;
+package br.com.appsemaperreio.escalante_api.configs.seguranca;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;
