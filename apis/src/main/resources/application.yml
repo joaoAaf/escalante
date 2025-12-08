@@ -4,6 +4,8 @@ spring:
   profiles:
     active:
     - ${PROFILE_ACTIVE:dev}
+  jpa:
+    open-in-view: false
 logging:
   level:
     org:
