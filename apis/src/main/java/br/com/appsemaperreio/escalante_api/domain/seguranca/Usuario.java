@@ -14,44 +14,50 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
 
 @Entity
-public class Admin {
+public class Usuario {
 
     @Id
     private String username;
     @Column(nullable = false)
     private String password;
-    
-    @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "admin_roles", joinColumns = @JoinColumn(name = "admin_username"))
-    @Column(name = "role")
-    @Enumerated(EnumType.STRING)
-    private Set<Role> roles = new HashSet<>();
 
-    public Admin() {
-        this.roles.add(Role.ADMIN);
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name = "perfis_usuario", joinColumns = @JoinColumn(name = "usuario_username"))
+    @Column(name = "perfil")
+    @Enumerated(EnumType.STRING)
+    private Set<Perfil> perfis = new HashSet<>();
+
+    public Usuario() {
     }
 
-    public Admin(String username, String password) {
+    public Usuario(String username, String password, Set<Perfil> perfis) {
         this.username = username;
         this.password = password;
-        this.roles.add(Role.ADMIN);
+        this.perfis = perfis;
     }
-    
+
     public String getUsername() {
         return username;
     }
+
     public void setUsername(String username) {
         this.username = username;
     }
+
     public String getPassword() {
         return password;
     }
+
     public void setPassword(String password) {
         this.password = password;
     }
 
-    public Set<Role> getRoles() {
-        return roles;
+    public Set<Perfil> getPerfis() {
+        return perfis;
+    }
+
+    public void setPerfis(Set<Perfil> perfis) {
+        this.perfis = perfis;
     }
 
 }
