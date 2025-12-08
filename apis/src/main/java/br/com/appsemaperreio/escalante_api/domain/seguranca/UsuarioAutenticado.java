@@ -7,29 +7,29 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-public class AdminAutenticado implements UserDetails {
+public class UsuarioAutenticado implements UserDetails {
 
-    private final Admin admin;
+    private final Usuario usuario;
 
-    public AdminAutenticado(Admin admin) {
-        this.admin = admin;
+    public UsuarioAutenticado(Usuario usuario) {
+        this.usuario = usuario;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-    return admin.getRoles().stream()
-        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.name()))
+    return usuario.getPerfis().stream()
+        .map(perfil -> new SimpleGrantedAuthority("ROLE_" + perfil.name()))
         .collect(Collectors.toList());
     }
 
     @Override
     public String getPassword() {
-        return admin.getPassword();
+        return usuario.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return admin.getUsername();
+        return usuario.getUsername();
     }
 
 }

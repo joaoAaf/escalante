@@ -31,7 +31,7 @@ public class JwtService {
     public String gerarToken(Authentication authentication) {
         Instant instanteAtual = Instant.now();
 
-        var roles = authentication.getAuthorities().stream()
+        var perfis = authentication.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
                 .map(authority -> authority.startsWith("ROLE_") ? authority.substring(5) : authority)
                 .toList();
@@ -41,7 +41,7 @@ public class JwtService {
                 .issuedAt(instanteAtual)
                 .expiresAt(instanteAtual.plusSeconds(tempoExpiracao))
                 .subject(authentication.getName())
-                .claim("roles", roles)
+                .claim("perfis", perfis)
                 .build();
 
         // Cabeçalho do JWT especificando o algoritmo de assinatura

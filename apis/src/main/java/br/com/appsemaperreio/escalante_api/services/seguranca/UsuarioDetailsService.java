@@ -5,22 +5,22 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import br.com.appsemaperreio.escalante_api.domain.seguranca.AdminAutenticado;
-import br.com.appsemaperreio.escalante_api.repository.seguranca.AdminRepository;
+import br.com.appsemaperreio.escalante_api.domain.seguranca.UsuarioAutenticado;
+import br.com.appsemaperreio.escalante_api.repository.seguranca.UsuarioRepository;
 
 @Service
-public class AdminDetailsService implements UserDetailsService {
+public class UsuarioDetailsService implements UserDetailsService {
 
-    private final AdminRepository adminRepository;
+    private final UsuarioRepository usuarioRepository;
 
-    public AdminDetailsService(AdminRepository adminRepository) {
-        this.adminRepository = adminRepository;
+    public UsuarioDetailsService(UsuarioRepository usuarioRepository) {
+        this.usuarioRepository = usuarioRepository;
     }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return adminRepository.findById(username)
-                .map(AdminAutenticado::new)
+        return usuarioRepository.findById(username)
+                .map(UsuarioAutenticado::new)
                 .orElseThrow(() -> new UsernameNotFoundException(String.format("O usuário %s não foi encontrado.", username)));
     }
 

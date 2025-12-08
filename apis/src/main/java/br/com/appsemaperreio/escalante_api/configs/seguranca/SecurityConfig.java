@@ -57,7 +57,7 @@ public class SecurityConfig {
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
         // Configuração do conversor de autoridades baseado no claim "roles" do JWT
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("roles");
+        grantedAuthoritiesConverter.setAuthoritiesClaimName("perfis");
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
         JwtAuthenticationConverter jwtAuthConverter = new JwtAuthenticationConverter();
         jwtAuthConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
