@@ -4,11 +4,11 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 @Service
-public class loginService {
+public class LoginService {
 
     private final JwtService jwtService;
 
-    public loginService(JwtService jwtService) {
+    public LoginService(JwtService jwtService) {
         this.jwtService = jwtService;
     }
 

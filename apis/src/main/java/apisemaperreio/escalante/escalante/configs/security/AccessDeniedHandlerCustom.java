@@ -17,7 +17,8 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
-public class RestAccessDeniedHandler implements AccessDeniedHandler {
+// Classe personalizada para lidar com tentativas de acesso não autorizado
+public class AccessDeniedHandlerCustom implements AccessDeniedHandler {
 
     private static final DateTimeFormatter FORMATO_DATA = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
     private final ObjectMapper mapper = new ObjectMapper();

@@ -1,4 +1,4 @@
-package apisemaperreio.escalante.escalante.domain;
+package apisemaperreio.escalante.escalante.domain.seguranca;
 
 import java.util.Collection;
 import java.util.stream.Collectors;
