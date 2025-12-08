@@ -5,13 +5,13 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.function.Function;
 
-import apisemaperreio.escalante.escalante.domain.AjudanteLinha;
-import apisemaperreio.escalante.escalante.domain.Cov;
-import apisemaperreio.escalante.escalante.domain.FiscalDia;
-import apisemaperreio.escalante.escalante.domain.Funcao;
-import apisemaperreio.escalante.escalante.domain.OperadorLinha;
-import apisemaperreio.escalante.escalante.domain.Permanente;
-import apisemaperreio.escalante.escalante.domain.ServicoOperacional;
+import apisemaperreio.escalante.escalante.domain.escalante.AjudanteLinha;
+import apisemaperreio.escalante.escalante.domain.escalante.Cov;
+import apisemaperreio.escalante.escalante.domain.escalante.FiscalDia;
+import apisemaperreio.escalante.escalante.domain.escalante.Funcao;
+import apisemaperreio.escalante.escalante.domain.escalante.OperadorLinha;
+import apisemaperreio.escalante.escalante.domain.escalante.Permanente;
+import apisemaperreio.escalante.escalante.domain.escalante.ServicoOperacional;
 
 public final class ServicoOperacionalFactory {
 

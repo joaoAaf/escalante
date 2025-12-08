@@ -2,8 +2,8 @@ package apisemaperreio.escalante.escalante.utils.factories;
 
 import java.util.function.Function;
 
-import apisemaperreio.escalante.escalante.domain.DadosEscala;
-import apisemaperreio.escalante.escalante.domain.Escala;
+import apisemaperreio.escalante.escalante.domain.escalante.DadosEscala;
+import apisemaperreio.escalante.escalante.domain.escalante.Escala;
 
 public final class EscalaFactory {
 
