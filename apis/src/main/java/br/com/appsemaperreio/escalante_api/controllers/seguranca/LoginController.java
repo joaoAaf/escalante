@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.appsemaperreio.escalante_api.domain.seguranca.Perfil;
 import br.com.appsemaperreio.escalante_api.services.seguranca.LoginService;
 
 @RestController
@@ -24,13 +23,7 @@ public class LoginController {
 
     @PostMapping
     public ResponseEntity<Map<String, String>> login(Authentication authentication, @RequestParam String perfil) {
-        try {
-            var perfilEnum = Perfil.valueOf(perfil.toUpperCase());
-            return ResponseEntity
-                    .ok(Map.of("bearerToken", loginService.login(authentication, perfilEnum)));
-        } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Perfil inválido: " + perfil);
-        }
+        return ResponseEntity.ok(Map.of("bearerToken", loginService.login(authentication, perfil)));
     }
 
 }
