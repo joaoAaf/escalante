@@ -19,7 +19,14 @@ public class LoginService {
         this.jwtService = jwtService;
     }
 
-    public String login(Authentication authentication, Perfil perfil) {
+    public String login(Authentication authentication, String perfilString) {
+        Perfil perfil;
+        try {
+            perfil = Perfil.valueOf(perfilString.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("Perfil inválido: " + perfilString);
+        }
+
         var authority = authentication.getAuthorities().stream()
                 .filter(auth -> auth.getAuthority().equals("ROLE_" + perfil.name()))
                 .findFirst()
@@ -30,6 +37,7 @@ public class LoginService {
                 null,
                 Collections.singletonList(
                         new SimpleGrantedAuthority(authority.getAuthority())));
+        
         return jwtService.gerarToken(newAuthentication);
     }
 }
