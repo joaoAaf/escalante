@@ -6,7 +6,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
-import br.com.appsemaperreio.escalante_api.utils.factories.ServicoOperacionalFactory;
+import br.com.appsemaperreio.escalante_api.domain.escalante.factories.ServicoOperacionalFactory;
 
 public class Escala {
 

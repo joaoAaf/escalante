@@ -18,7 +18,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 
-import br.com.appsemaperreio.escalante_api.services.seguranca.JwtService;
+import br.com.appsemaperreio.escalante_api.application.seguranca.service.JwtService;
 
 public class JwtServiceTest {
 
