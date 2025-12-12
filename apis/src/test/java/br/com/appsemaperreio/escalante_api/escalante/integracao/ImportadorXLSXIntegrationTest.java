@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api;
+package br.com.appsemaperreio.escalante_api.escalante.integracao;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -16,7 +16,7 @@ import br.com.appsemaperreio.escalante_api.utils.adapters.importador_xlsx.Import
 import br.com.appsemaperreio.escalante_api.utils.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
 
 @SpringBootTest
-class EscalanteTest {
+class ImportadorXLSXIntegrationTest {
 
 	@Autowired
 	private ImportadorMilitaresXLSXAdapter importadorMilitaresXLSXAdapter;
