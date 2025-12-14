@@ -3,7 +3,7 @@ spring:
     name: escalante-api
   profiles:
     active:
-    - ${PROFILE_ACTIVE:dev}
+    - ${PROFILE_ACTIVE}
   jpa:
     open-in-view: false
 logging:
@@ -21,7 +21,13 @@ logging:
                   ExceptionHandlerExceptionResolver: OFF
 env:
   front:
-    url: ${FRONT_URL:http://localhost:*}
+    url: ${FRONT_URL}
   jwt:
-    secret: ${JWT_SECRET:7cadc739b1a4f4ba8639f78ad73cdf44f5fba0d5e513ced7199b540fd2c1f566}
-    expiration: ${JWT_EXPIRATION:21600}
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION}
+  usuario:
+    inicial:
+      username: ${USUARIO_INICIAL_USERNAME}
+      password: ${USUARIO_INICIAL_PASSWORD}
+    padrao:
+      password: ${USUARIO_PADRAO_PASSWORD}
