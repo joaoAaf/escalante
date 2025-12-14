@@ -39,7 +39,7 @@ public class SecurityConfig {
     @Bean
     @Order(1)
     public SecurityFilterChain loginFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/api/login")
+        http.securityMatcher("/api/login", "/api/usuarios/username")
                 .cors(Customizer.withDefaults())
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(auth -> auth
