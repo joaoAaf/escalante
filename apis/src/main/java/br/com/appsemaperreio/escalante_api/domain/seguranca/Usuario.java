@@ -9,6 +9,8 @@ import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.EnumType;
@@ -17,12 +19,17 @@ import jakarta.persistence.EnumType;
 public class Usuario {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(nullable = false, unique = true, length = 20)
     private String username;
+
     @Column(nullable = false)
     private String password;
 
     @ElementCollection(fetch = FetchType.EAGER)
-    @CollectionTable(name = "perfis_usuario", joinColumns = @JoinColumn(name = "usuario_username"))
+    @CollectionTable(name = "perfis_usuario", joinColumns = @JoinColumn(name = "usuario_id"))
     @Column(name = "perfil")
     @Enumerated(EnumType.STRING)
     private Set<Perfil> perfis = new HashSet<>();
@@ -34,6 +41,10 @@ public class Usuario {
         this.username = username;
         this.password = password;
         this.perfis = perfis;
+    }
+    
+    public Long getId() {
+        return id;
     }
 
     public String getUsername() {
@@ -54,10 +65,6 @@ public class Usuario {
 
     public Set<Perfil> getPerfis() {
         return perfis;
-    }
-
-    public void setPerfis(Set<Perfil> perfis) {
-        this.perfis = perfis;
     }
 
 }
