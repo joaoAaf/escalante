@@ -1,32 +1,24 @@
 package br.com.appsemaperreio.escalante_api;
 
-import java.util.Set;
-
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
 
-import br.com.appsemaperreio.escalante_api.domain.seguranca.Perfil;
-import br.com.appsemaperreio.escalante_api.domain.seguranca.Usuario;
-import br.com.appsemaperreio.escalante_api.repository.seguranca.UsuarioRepository;
+import br.com.appsemaperreio.escalante_api.application.seguranca.UsuarioUseCases;
 
 @Configuration
 public class Runner implements CommandLineRunner {
 
-    private final UsuarioRepository adminRepository;
-    private final PasswordEncoder passwordEncoder;
+    private final UsuarioUseCases usuarioUseCases;
 
-    public Runner(UsuarioRepository adminRepository, PasswordEncoder passwordEncoder) {
-        this.adminRepository = adminRepository;
-        this.passwordEncoder = passwordEncoder;
+    public Runner(UsuarioUseCases usuarioUseCases) {
+        this.usuarioUseCases = usuarioUseCases;
     }
 
     @Override
     public void run(String... args) throws Exception {
 
-        var admin = new Usuario("joao", passwordEncoder.encode("123456"), Set.of(Perfil.ADMIN));
+        usuarioUseCases.cadastrarUsuarioInicial();
 
-        adminRepository.save(admin);
     }
 
 }
