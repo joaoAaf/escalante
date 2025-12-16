@@ -6,7 +6,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import org.springframework.core.env.Environment;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,16 +26,14 @@ public class UsuarioService implements UsuarioUseCases {
     private final UsuarioMapper usuarioMapper;
     private final PerfilMapper perfilMapper;
     private final PasswordEncoder passwordEncoder;
-    private final JwtService jwtService;
     private final Environment env;
 
     public UsuarioService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper, PerfilMapper perfilMapper,
-            PasswordEncoder passwordEncoder, JwtService jwtService, Environment env) {
+            PasswordEncoder passwordEncoder, Environment env) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioMapper = usuarioMapper;
         this.perfilMapper = perfilMapper;
         this.passwordEncoder = passwordEncoder;
-        this.jwtService = jwtService;
         this.env = env;
     }
 
@@ -49,28 +46,37 @@ public class UsuarioService implements UsuarioUseCases {
                 });
     }
 
+    private String obterEnvUsuario(String env, String msgErro) {
+        return Optional.ofNullable(this.env.getProperty(env))
+                .map(rp -> rp.isBlank() ? null : rp)
+                .orElseThrow(() -> new IllegalStateException(msgErro));
+    }
+
     @Transactional
     @Override
     public void cadastrarUsuarioInicial() {
         if (!usuarioRepository.existsByPerfisContaining(Perfil.ADMIN)) {
-            var username = Optional.ofNullable(env.getProperty("env.usuario.inicial.username"))
-                    .map(u -> u.isBlank() ? null : u)
-                    .orElseThrow(() -> new IllegalStateException("Usuário inicial não configurado"));
+            var username = obterEnvUsuario(
+                    "env.usuario.inicial.username",
+                    "Username do usuário inicial não configurado");
+
             usuarioRepository.findByUsername(username)
                     .ifPresentOrElse(usuario -> {
                         usuario.getPerfis().add(Perfil.ADMIN);
                         usuarioRepository.save(usuario);
-                    }, () -> {
-                        var rawPassword = Optional.ofNullable(env.getProperty("env.usuario.inicial.password"))
-                                .map(p -> p.isBlank() ? null : p)
-                                .orElseThrow(() -> new IllegalStateException("Senha inicial não configurada"));
-                        var password = passwordEncoder.encode(rawPassword);
+                    },
+                            () -> {
+                                var rawPassword = obterEnvUsuario(
+                                        "env.usuario.inicial.password",
+                                        "Senha do usuário inicial não configurada");
 
-                        usuarioRepository.save(new Usuario(
-                                username,
-                                password,
-                                Set.of(Perfil.ADMIN)));
-                    });
+                                var password = passwordEncoder.encode(rawPassword);
+
+                                usuarioRepository.save(new Usuario(
+                                        username,
+                                        password,
+                                        Set.of(Perfil.ADMIN)));
+                            });
         }
     }
 
@@ -78,29 +84,23 @@ public class UsuarioService implements UsuarioUseCases {
     @Override
     public UsuarioResponse cadastrarUsuario(UsuarioRequest usuarioRequest) {
         validarUsernameInicial(usuarioRequest.username());
+        var rawPassword = obterEnvUsuario(
+                "env.usuario.padrao.password",
+                "Senha padrão para novos usuários não configurada");
+
         if (usuarioRepository.existsByUsername(usuarioRequest.username()))
             throw new IllegalArgumentException("Username já está em uso");
+
         var usuario = usuarioMapper.toUsuario(usuarioRequest);
-        var rawPassword = Optional.ofNullable(env.getProperty("env.usuario.padrao.password"))
-                .map(rp -> rp.isBlank() ? null : rp)
-                .orElseThrow(() -> new IllegalStateException("Senha padrão não configurada"));
         var password = passwordEncoder.encode(rawPassword);
         usuario.setPassword(password);
+
         return usuarioMapper.toUsuarioResponse(usuarioRepository.save(usuario));
     }
 
     @Transactional(readOnly = true)
     @Override
     public UsuarioResponse obterUsuarioPorUsername(String username) {
-        return usuarioRepository.findByUsername(username)
-                .map(usuarioMapper::toUsuarioResponse)
-                .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
-    }
-
-    @Transactional(readOnly = true)
-    @Override
-    public UsuarioResponse obterUsuarioPorToken(String token) {
-        var username = jwtService.extrairUsername(token);
         return usuarioRepository.findByUsername(username)
                 .map(usuarioMapper::toUsuarioResponse)
                 .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
@@ -117,13 +117,13 @@ public class UsuarioService implements UsuarioUseCases {
 
     @Transactional
     @Override
-    public String atualizarUsername(Authentication authentication, String usernameNovo) {
+    public String atualizarUsername(String usernameAtual, String usernameNovo) {
         validarUsernameInicial(usernameNovo);
-        
+
         if (usuarioRepository.existsByUsername(usernameNovo))
             throw new IllegalArgumentException("Username já está em uso");
 
-        var usuario = usuarioRepository.findByUsername(authentication.getName())
+        var usuario = usuarioRepository.findByUsername(usernameAtual)
                 .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
 
         usuario.setUsername(usernameNovo);
@@ -133,21 +133,21 @@ public class UsuarioService implements UsuarioUseCases {
 
     @Transactional
     @Override
-    public void atualizarPassword(Authentication authentication, String novaPassword) {
-        var usuario = usuarioRepository.findByUsername(authentication.getName())
+    public void atualizarPassword(String username, String passwordNovo) {
+        var usuario = usuarioRepository.findByUsername(username)
                 .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
 
-        usuario.setPassword(passwordEncoder.encode(novaPassword));
+        usuario.setPassword(passwordEncoder.encode(passwordNovo));
 
         usuarioRepository.save(usuario);
     }
 
     @Transactional
     @Override
-    public List<Perfil> adicionarPerfis(String username, Set<String> perfisString) {
-        var perfis = perfilMapper.setStringToPerfis(perfisString);
+    public List<Perfil> adicionarPerfis(UsuarioRequest usuarioRequest) {
+        var perfis = perfilMapper.setStringToPerfis(usuarioRequest.perfis());
 
-        var usuario = usuarioRepository.findByUsername(username)
+        var usuario = usuarioRepository.findByUsername(usuarioRequest.username())
                 .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
 
         if (usuario.getPerfis().containsAll(perfis))
@@ -162,17 +162,18 @@ public class UsuarioService implements UsuarioUseCases {
 
     @Transactional
     @Override
-    public void removerPerfis(String username, Set<String> perfisString) {
-        var perfis = perfilMapper.setStringToPerfis(perfisString);
+    public List<Perfil> removerPerfis(UsuarioRequest usuarioRequest) {
+        var perfis = perfilMapper.setStringToPerfis(usuarioRequest.perfis());
 
-        var usuario = usuarioRepository.findByUsername(username)
+        var usuario = usuarioRepository.findByUsername(usuarioRequest.username())
                 .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
 
         if (!usuario.getPerfis().containsAll(perfis))
             throw new IllegalArgumentException("Usuário não possui todos os perfis informados");
 
         if (usuario.getPerfis().stream().anyMatch(
-                p -> p.equals(Perfil.ADMIN) && usuarioRepository.isOnlyUserWithPerfil(username, Perfil.ADMIN)))
+                p -> p.equals(Perfil.ADMIN)
+                        && usuarioRepository.isOnlyUserWithPerfil(usuarioRequest.username(), Perfil.ADMIN)))
             throw new IllegalArgumentException("Não é possível remover o perfil ADMIN do único usuário que o possui");
 
         usuario.getPerfis().removeAll(perfis);
@@ -181,6 +182,8 @@ public class UsuarioService implements UsuarioUseCases {
             throw new IllegalArgumentException("O usuário deve possuir ao menos um perfil");
 
         usuarioRepository.save(usuario);
+
+        return usuario.getPerfis().stream().toList();
     }
 
     @Transactional
