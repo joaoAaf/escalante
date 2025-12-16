@@ -28,7 +28,7 @@ public class JwtServiceTest {
     void deveConterClaimsEPerfisAoGerarToken() {
         var secretKey = new SecretKeySpec(TEST_SECRET.getBytes(), "HmacSHA256");
         var encoder = new NimbusJwtEncoder(new ImmutableSecret<>(secretKey));
-        var jwtService = new JwtService(encoder, null, "escalante-api", 3600L);
+        var jwtService = new JwtService(encoder, "escalante-api", 3600L);
 
         Authentication auth = new UsernamePasswordAuthenticationToken("alice", null,
                 List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER")));
@@ -59,7 +59,7 @@ public class JwtServiceTest {
     void deveMarcarExpiracaoCorretamenteAoGerarToken() throws InterruptedException {
         var secretKey = new SecretKeySpec(TEST_SECRET.getBytes(), "HmacSHA256");
         var encoder = new NimbusJwtEncoder(new ImmutableSecret<>(secretKey));
-        var jwtService = new JwtService(encoder, null, "escalante-api", 1L);
+        var jwtService = new JwtService(encoder, "escalante-api", 1L);
 
         Authentication auth = new UsernamePasswordAuthenticationToken("bob", null,
                 List.of(new SimpleGrantedAuthority("ROLE_USER")));
