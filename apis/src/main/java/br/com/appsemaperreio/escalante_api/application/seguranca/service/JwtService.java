@@ -8,7 +8,6 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
-import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.stereotype.Service;
@@ -17,17 +16,14 @@ import org.springframework.stereotype.Service;
 public class JwtService {
 
     private final JwtEncoder encoder;
-    private final JwtDecoder decoder;
     private final String emissor;
     private final long tempoExpiracao;
 
     public JwtService(
             JwtEncoder encoder,
-            JwtDecoder decoder,
             @Value("${spring.application.name}") String emissor,
             @Value("${env.jwt.expiration}") long tempoExpiracao) {
         this.encoder = encoder;
-        this.decoder = decoder;
         this.emissor = emissor;
         this.tempoExpiracao = tempoExpiracao;
     }
@@ -52,11 +48,6 @@ public class JwtService {
         var jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build();
 
         return encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();
-    }
-
-    public String extrairUsername(String token) {
-        var jwt = decoder.decode(token);
-        return jwt.getSubject();
     }
 
 }
