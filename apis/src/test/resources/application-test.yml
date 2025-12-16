@@ -32,3 +32,10 @@ env:
   jwt:
     secret: 7cadc739b1a4f4ba8639f78ad73cdf44f5fba0d5e513ced7199b540fd2c1f566
     expiration: 60
+
+  usuario:
+    inicial:
+      username: "initial-admin"
+      password: "adminpass"
+    padrao:
+      password: "userpass"

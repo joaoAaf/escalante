@@ -11,9 +11,9 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.appsemaperreio.escalante_api.adapters.importador_xlsx.ImportadorEscalaXLSXAdapter;
-import br.com.appsemaperreio.escalante_api.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
-import br.com.appsemaperreio.escalante_api.domain.escalante.Funcao;
+import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorEscalaXLSXAdapter;
+import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
+import br.com.appsemaperreio.escalante_api.escalante.domain.Funcao;
 
 @SpringBootTest
 class ImportadorXLSXIntegrationTest {
