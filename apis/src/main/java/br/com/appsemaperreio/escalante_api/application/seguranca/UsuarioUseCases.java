@@ -1,9 +1,6 @@
 package br.com.appsemaperreio.escalante_api.application.seguranca;
 
 import java.util.List;
-import java.util.Set;
-
-import org.springframework.security.core.Authentication;
 
 import br.com.appsemaperreio.escalante_api.domain.seguranca.Perfil;
 import br.com.appsemaperreio.escalante_api.dto.seguranca.UsuarioRequest;
@@ -17,17 +14,15 @@ public interface UsuarioUseCases {
 
     UsuarioResponse obterUsuarioPorUsername(String username);
 
-    UsuarioResponse obterUsuarioPorToken(String token);
-
     List<UsuarioResponse> listarUsuarios();
 
-    String atualizarUsername(Authentication authentication, String usernameNovo);
+    String atualizarUsername(String usernameAtual, String usernameNovo);
 
-    void atualizarPassword(Authentication authentication, String novaPassword);
+    void atualizarPassword(String username, String passwordNovo);
 
-    List<Perfil> adicionarPerfis(String username, Set<String> perfis);
+    List<Perfil> adicionarPerfis(UsuarioRequest usuarioRequest);
 
-    void removerPerfis(String username, Set<String> perfis);
+    List<Perfil> removerPerfis(UsuarioRequest usuarioRequest);
 
     void deletarUsuario(String username);
 
