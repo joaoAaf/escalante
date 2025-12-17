@@ -1,12 +1,8 @@
 package br.com.appsemaperreio.escalante_api.seguranca.config;
 
-import java.nio.charset.StandardCharsets;
-import java.util.List;
-
-import javax.crypto.spec.SecretKeySpec;
-
 import br.com.appsemaperreio.escalante_api.seguranca.config.custom_exceptions.AccessDeniedHandlerCustom;
 import br.com.appsemaperreio.escalante_api.seguranca.config.custom_exceptions.AuthenticationEntryPointCustom;
+import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
@@ -25,7 +21,9 @@ import org.springframework.security.oauth2.server.resource.authentication.JwtAut
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
 import org.springframework.security.web.SecurityFilterChain;
 
-import com.nimbusds.jose.jwk.source.ImmutableSecret;
+import javax.crypto.spec.SecretKeySpec;
+import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -57,9 +55,8 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
-        // Configuração do conversor de autoridades baseado no claim "roles" do JWT
+        // Configuração necessária para converter scope (claim) em GrantedAuthority (ex: 'ADMIN' -> 'ROLE_ADMIN').
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
-        grantedAuthoritiesConverter.setAuthoritiesClaimName("perfis");
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
         JwtAuthenticationConverter jwtAuthConverter = new JwtAuthenticationConverter();
         jwtAuthConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
@@ -70,12 +67,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .headers(headers -> {
                     // Para possibilitar o acesso ao console H2
-                    if (devProfileActive)
-                        headers.frameOptions(frameOptions -> frameOptions.sameOrigin());
+                    if (devProfileActive) headers.frameOptions(frameOptions -> frameOptions.sameOrigin());
                 })
                 .authorizeHttpRequests(auth -> {
-                    if (devProfileActive)
-                        auth.requestMatchers("/h2/**").permitAll();
+                    if (devProfileActive) auth.requestMatchers("/h2/**").permitAll();
                     auth.anyRequest().authenticated();
                 })
                 // Configuração do recurso OAuth2 como um Resource Server que utiliza JWT
@@ -87,10 +82,12 @@ public class SecurityConfig {
         return http.build();
     }
 
-    // Beans para codificação e decodificação de JWTs utilizando uma chave secreta HMAC SHA-256
+    // Beans para codificação e decodificação de JWTs utilizando uma chave secreta HMAC SHA-256.
     @Bean
     JwtDecoder jwtDecoder() {
         var jwtSecret = env.getProperty("env.jwt.secret");
+        if (jwtSecret == null || jwtSecret.isBlank())
+            throw new IllegalStateException("JWT secret não está configurada no ambiente.");
         var secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         return NimbusJwtDecoder.withSecretKey(secretKey).build();
     }
@@ -98,6 +95,8 @@ public class SecurityConfig {
     @Bean
     JwtEncoder jwtEncoder() {
         var jwtSecret = env.getProperty("env.jwt.secret");
+        if (jwtSecret == null || jwtSecret.isBlank())
+            throw new IllegalStateException("JWT secret não está configurada no ambiente.");
         var secretKey = new SecretKeySpec(jwtSecret.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
         return new NimbusJwtEncoder(new ImmutableSecret<>(secretKey));
     }
