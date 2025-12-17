@@ -1,4 +1,4 @@
-package br.com.appsemaperreio.escalante_api.escalante.config;
+package br.com.appsemaperreio.escalante_api.global_config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
