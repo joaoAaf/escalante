@@ -41,10 +41,10 @@ public class JwtService {
                 .issuedAt(instanteAtual)
                 .expiresAt(instanteAtual.plusSeconds(tempoExpiracao))
                 .subject(authentication.getName())
-                .claim("perfis", perfis)
+                .claim("scope", perfis) // Adiciona os perfis do usuário no claim 'scope'.
                 .build();
 
-        // Cabeçalho do JWT especificando o algoritmo de assinatura
+        // Cabeçalho do JWT especificando o algoritmo de assinatura.
         var jwsHeader = JwsHeader.with(MacAlgorithm.HS256).build();
 
         return encoder.encode(JwtEncoderParameters.from(jwsHeader, claims)).getTokenValue();

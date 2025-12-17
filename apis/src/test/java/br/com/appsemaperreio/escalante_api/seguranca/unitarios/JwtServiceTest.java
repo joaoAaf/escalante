@@ -43,7 +43,7 @@ public class JwtServiceTest {
         assertEquals("alice", decoded.getSubject());
 
         @SuppressWarnings("unchecked")
-        var perfis = (List<String>) decoded.getClaims().get("perfis");
+        var perfis = (List<String>) decoded.getClaims().get("scope");
         assertNotNull(perfis);
         assertTrue(perfis.contains("ADMIN"));
         assertTrue(perfis.contains("USER"));
