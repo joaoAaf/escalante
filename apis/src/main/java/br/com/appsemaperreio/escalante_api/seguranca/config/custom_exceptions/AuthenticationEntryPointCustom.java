@@ -29,8 +29,8 @@ public class AuthenticationEntryPointCustom implements AuthenticationEntryPoint 
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response,
             AuthenticationException authException) throws IOException, ServletException {
-        
-        LOG.debug("AuthenticationException: {}", request.getRequestURI(), authException.getMessage(), authException);
+
+        LOG.debug("AuthenticationException {}: {}", request.getRequestURI(), authException.getMessage());
 
         Map<String, String> body = new HashMap<>();
         body.put("Data/Hora", LocalDateTime.now().format(FORMATO_DATA));
