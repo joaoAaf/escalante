@@ -30,7 +30,7 @@ public class AccessDeniedHandlerCustom implements AccessDeniedHandler {
     public void handle(HttpServletRequest request, HttpServletResponse response,
             AccessDeniedException accessDeniedException) throws IOException, ServletException {
         
-        LOG.debug("AccessDeniedException: {}", request.getRequestURI(), accessDeniedException.getMessage(), accessDeniedException);
+        LOG.debug("AccessDeniedException {}: {}", request.getRequestURI(), accessDeniedException.getMessage());
 
         Map<String, String> body = new HashMap<>();
         body.put("Data/Hora", LocalDateTime.now().format(FORMATO_DATA));
