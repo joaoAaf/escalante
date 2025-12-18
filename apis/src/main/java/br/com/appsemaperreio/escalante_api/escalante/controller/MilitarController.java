@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.appsemaperreio.escalante_api.escalante.application.MilitarUseCases;
+import br.com.appsemaperreio.escalante_api.escalante.model.application.IMilitarService;
 import jakarta.validation.constraints.NotNull;
 
 @Validated
@@ -20,7 +20,7 @@ import jakarta.validation.constraints.NotNull;
 public class MilitarController {
 
     @Autowired
-    private MilitarUseCases militarUseCases;
+    private IMilitarService militarUseCases;
 
     @GetMapping("/modelo/xlsx")
     public ResponseEntity<byte[]> obterPlanilhaModeloMilitares() {

@@ -17,10 +17,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.appsemaperreio.escalante_api.seguranca.application.UsuarioUseCases;
-import br.com.appsemaperreio.escalante_api.seguranca.domain.Perfil;
-import br.com.appsemaperreio.escalante_api.seguranca.dto.UsuarioRequest;
-import br.com.appsemaperreio.escalante_api.seguranca.dto.UsuarioResponse;
+import br.com.appsemaperreio.escalante_api.seguranca.model.application.IUsuarioService;
+import br.com.appsemaperreio.escalante_api.seguranca.model.domain.Perfil;
+import br.com.appsemaperreio.escalante_api.seguranca.model.dto.UsuarioRequest;
+import br.com.appsemaperreio.escalante_api.seguranca.model.dto.UsuarioResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -32,9 +32,9 @@ import jakarta.validation.constraints.Size;
 @RequestMapping("/api/usuarios")
 public class UsuarioController {
 
-    private final UsuarioUseCases usuarioUseCases;
+    private final IUsuarioService usuarioUseCases;
 
-    public UsuarioController(UsuarioUseCases usuarioUseCases) {
+    public UsuarioController(IUsuarioService usuarioUseCases) {
         this.usuarioUseCases = usuarioUseCases;
     }
 

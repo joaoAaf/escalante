@@ -15,9 +15,9 @@ import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
-import br.com.appsemaperreio.escalante_api.escalante.domain.Funcao;
-import br.com.appsemaperreio.escalante_api.escalante.domain.Patente;
-import br.com.appsemaperreio.escalante_api.escalante.dto.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.escalante.model.domain.Funcao;
+import br.com.appsemaperreio.escalante_api.escalante.model.domain.Patente;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoOperacionalDto;
 
 public class AbaApresentacao {
 

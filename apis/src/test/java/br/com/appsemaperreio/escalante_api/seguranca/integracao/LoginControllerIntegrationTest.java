@@ -18,9 +18,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.MockMvc;
 
-import br.com.appsemaperreio.escalante_api.seguranca.domain.Perfil;
-import br.com.appsemaperreio.escalante_api.seguranca.domain.Usuario;
-import br.com.appsemaperreio.escalante_api.seguranca.repository.UsuarioRepository;
+import br.com.appsemaperreio.escalante_api.seguranca.model.domain.Perfil;
+import br.com.appsemaperreio.escalante_api.seguranca.model.domain.Usuario;
+import br.com.appsemaperreio.escalante_api.seguranca.model.repository.UsuarioRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
