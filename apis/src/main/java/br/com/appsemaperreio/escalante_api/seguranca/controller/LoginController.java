@@ -15,15 +15,18 @@ import br.com.appsemaperreio.escalante_api.seguranca.model.application.ILoginSer
 @RequestMapping("/api/login")
 public class LoginController {
 
-    private final ILoginService loginUseCases;
+    private final ILoginService service;
 
     public LoginController(ILoginService loginUseCases) {
-        this.loginUseCases = loginUseCases;
+        this.service = loginUseCases;
     }
 
     @PostMapping
-    public ResponseEntity<Map<String, String>> login(Authentication authentication, @RequestParam String perfil) {
-        return ResponseEntity.ok(Map.of("bearerToken", loginUseCases.login(authentication, perfil)));
+    public ResponseEntity<Map<String, String>> login(
+            Authentication authentication,
+            @RequestParam(value = "admin", defaultValue = "false")
+            boolean loginAdmin) {
+        return ResponseEntity.ok(Map.of("bearerToken", service.login(authentication, loginAdmin)));
     }
 
 }

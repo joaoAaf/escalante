@@ -4,6 +4,6 @@ import org.springframework.security.core.Authentication;
 
 public interface ILoginService {
 
-    String login(Authentication authentication, String perfilString);
+    String login(Authentication authentication, boolean loginAdmin);
 
 }
