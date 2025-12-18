@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
-import br.com.appsemaperreio.escalante_api.escalante.domain.exceptions.ErroProcessamentoPlanilhaException;
-import br.com.appsemaperreio.escalante_api.escalante.dto.MilitarEscalavel;
+import br.com.appsemaperreio.escalante_api.escalante.model.domain.exceptions.ErroProcessamentoPlanilhaException;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.MilitarEscalavel;
 
 @Component
 public class ImportadorMilitaresXLSXApachePoi extends ImportadorBaseXLSX implements ImportadorMilitaresXLSXAdapter {

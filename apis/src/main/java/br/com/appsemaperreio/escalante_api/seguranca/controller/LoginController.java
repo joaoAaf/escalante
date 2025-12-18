@@ -9,15 +9,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.appsemaperreio.escalante_api.seguranca.application.LoginUseCases;
+import br.com.appsemaperreio.escalante_api.seguranca.model.application.ILoginService;
 
 @RestController
 @RequestMapping("/api/login")
 public class LoginController {
 
-    private final LoginUseCases loginUseCases;
+    private final ILoginService loginUseCases;
 
-    public LoginController(LoginUseCases loginUseCases) {
+    public LoginController(ILoginService loginUseCases) {
         this.loginUseCases = loginUseCases;
     }
 

@@ -7,7 +7,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.stereotype.Component;
 
 import br.com.appsemaperreio.escalante_api.escalante.adapters.exportador_xlsx.ExportadorXLSXAdapter;
-import br.com.appsemaperreio.escalante_api.escalante.dto.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoOperacionalDto;
 
 @Component
 public class ExportadorXLSXApachePoi implements ExportadorXLSXAdapter {

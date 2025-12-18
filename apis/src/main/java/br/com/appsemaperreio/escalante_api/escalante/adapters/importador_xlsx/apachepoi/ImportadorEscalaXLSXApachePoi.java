@@ -10,8 +10,8 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorEscalaXLSXAdapter;
-import br.com.appsemaperreio.escalante_api.escalante.domain.exceptions.ErroProcessamentoPlanilhaException;
-import br.com.appsemaperreio.escalante_api.escalante.dto.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.escalante.model.domain.exceptions.ErroProcessamentoPlanilhaException;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoOperacionalDto;
 
 @Component
 public class ImportadorEscalaXLSXApachePoi extends ImportadorBaseXLSX implements ImportadorEscalaXLSXAdapter {

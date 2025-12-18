@@ -4,7 +4,7 @@ import java.util.List;
 
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.appsemaperreio.escalante_api.escalante.dto.MilitarEscalavel;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.MilitarEscalavel;
 
 public interface ImportadorMilitaresXLSXAdapter {
 

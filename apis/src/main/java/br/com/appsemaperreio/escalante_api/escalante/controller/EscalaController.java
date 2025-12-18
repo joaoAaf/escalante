@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.appsemaperreio.escalante_api.escalante.application.EscalaUseCases;
-import br.com.appsemaperreio.escalante_api.escalante.dto.DadosEscalaRequest;
-import br.com.appsemaperreio.escalante_api.escalante.dto.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.escalante.model.application.IEscalaService;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.DadosEscalaRequest;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoOperacionalDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
@@ -29,7 +29,7 @@ import jakarta.validation.constraints.Size;
 public class EscalaController {
 
     @Autowired
-    private EscalaUseCases escalaUseCases;
+    private IEscalaService escalaUseCases;
 
     @GetMapping("/modelo/xlsx")
     public ResponseEntity<byte[]> obterPlanilhaModeloEscala() {

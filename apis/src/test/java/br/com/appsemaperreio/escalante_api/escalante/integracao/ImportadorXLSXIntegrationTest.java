@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorEscalaXLSXAdapter;
 import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
-import br.com.appsemaperreio.escalante_api.escalante.domain.Funcao;
+import br.com.appsemaperreio.escalante_api.escalante.model.domain.Funcao;
 
 @SpringBootTest
 class ImportadorXLSXIntegrationTest {

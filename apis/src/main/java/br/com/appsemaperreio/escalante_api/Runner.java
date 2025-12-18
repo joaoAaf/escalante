@@ -3,14 +3,14 @@ package br.com.appsemaperreio.escalante_api;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 
-import br.com.appsemaperreio.escalante_api.seguranca.application.UsuarioUseCases;
+import br.com.appsemaperreio.escalante_api.seguranca.model.application.IUsuarioService;
 
 @Configuration
 public class Runner implements CommandLineRunner {
 
-    private final UsuarioUseCases usuarioUseCases;
+    private final IUsuarioService usuarioUseCases;
 
-    public Runner(UsuarioUseCases usuarioUseCases) {
+    public Runner(IUsuarioService usuarioUseCases) {
         this.usuarioUseCases = usuarioUseCases;
     }
 
