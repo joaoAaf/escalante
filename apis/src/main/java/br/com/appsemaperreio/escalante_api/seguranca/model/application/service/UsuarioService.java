@@ -3,6 +3,7 @@ package br.com.appsemaperreio.escalante_api.seguranca.model.application.service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 
 import org.springframework.core.env.Environment;
@@ -19,6 +20,9 @@ import br.com.appsemaperreio.escalante_api.seguranca.model.dto.UsuarioRequest;
 import br.com.appsemaperreio.escalante_api.seguranca.model.dto.UsuarioResponse;
 import br.com.appsemaperreio.escalante_api.seguranca.model.repository.UsuarioRepository;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 @Service
 public class UsuarioService implements IUsuarioService {
 
@@ -27,6 +31,9 @@ public class UsuarioService implements IUsuarioService {
     private final PerfilMapper perfilMapper;
     private final PasswordEncoder passwordEncoder;
     private final Environment env;
+    private final Random random = new Random();
+    private static final String ESPECIAL_CHARS = "!@#$%&*()-_=+[]{}<>?";
+    private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
     public UsuarioService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper, PerfilMapper perfilMapper,
             PasswordEncoder passwordEncoder, Environment env) {
@@ -52,6 +59,12 @@ public class UsuarioService implements IUsuarioService {
                 .orElseThrow(() -> new IllegalStateException(msgErro));
     }
 
+    private String gerarSenha(String prefixo) {
+        int numero = 1000 + random.nextInt(9999); // 4 dígitos
+        char especial = ESPECIAL_CHARS.charAt(random.nextInt(ESPECIAL_CHARS.length()));
+        return prefixo + numero + especial;
+    }
+
     @Transactional
     @Override
     public void cadastrarUsuarioInicial() {
@@ -66,16 +79,15 @@ public class UsuarioService implements IUsuarioService {
                         usuarioRepository.save(usuario);
                     },
                             () -> {
-                                var rawPassword = obterEnvUsuario(
-                                        "env.usuario.inicial.password",
-                                        "Senha do usuário inicial não configurada");
-
+                                var rawPassword = gerarSenha("Inicial@");
                                 var password = passwordEncoder.encode(rawPassword);
-
-                                usuarioRepository.save(new Usuario(
+                                var usuario = new Usuario(
                                         username,
                                         password,
-                                        Set.of(Perfil.ADMIN)));
+                                        Set.of(Perfil.ADMIN));
+                                usuario.setSenhaTemporaria(true);
+                                usuarioRepository.save(usuario);
+                                logger.info("Senha inicial gerada para usuário '{}': {}", username, rawPassword);
                             });
         }
     }
@@ -84,18 +96,17 @@ public class UsuarioService implements IUsuarioService {
     @Override
     public UsuarioResponse cadastrarUsuario(UsuarioRequest usuarioRequest) {
         validarUsernameInicial(usuarioRequest.username());
-        var rawPassword = obterEnvUsuario(
-                "env.usuario.padrao.password",
-                "Senha padrão para novos usuários não configurada");
 
         if (usuarioRepository.existsByUsername(usuarioRequest.username()))
             throw new IllegalArgumentException("Username já está em uso");
 
         var usuario = usuarioMapper.toUsuario(usuarioRequest);
+        var rawPassword = gerarSenha("Padrao@");
         var password = passwordEncoder.encode(rawPassword);
         usuario.setPassword(password);
-
-        return usuarioMapper.toUsuarioResponse(usuarioRepository.save(usuario));
+        usuario.setSenhaTemporaria(true);
+        var response = usuarioMapper.toUsuarioResponse(usuarioRepository.save(usuario));
+        return new UsuarioResponse(response.username(), response.perfis(), rawPassword);
     }
 
     @Transactional(readOnly = true)
@@ -138,6 +149,7 @@ public class UsuarioService implements IUsuarioService {
                 .orElseThrow(() -> new NoSuchElementException("Usuário não encontrado"));
 
         usuario.setPassword(passwordEncoder.encode(passwordNovo));
+        usuario.setSenhaTemporaria(false);
 
         usuarioRepository.save(usuario);
     }

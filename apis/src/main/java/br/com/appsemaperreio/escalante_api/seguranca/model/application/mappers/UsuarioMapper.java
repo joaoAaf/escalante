@@ -18,6 +18,7 @@ public interface UsuarioMapper {
     @Mapping(target = "perfis", source = "perfis", qualifiedByName = "setStringToPerfis")
     Usuario toUsuario(UsuarioRequest usuarioRequest);
 
+    @Mapping(target = "senhaGerada", ignore = true)
     UsuarioResponse toUsuarioResponse(Usuario usuario);
 
 }
