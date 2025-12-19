@@ -34,6 +34,9 @@ public class Usuario {
     @Enumerated(EnumType.STRING)
     private Set<Perfil> perfis = new HashSet<>();
 
+    @Column(nullable = false)
+    private boolean senhaTemporaria = false;
+
     public Usuario() {
     }
 
@@ -65,6 +68,14 @@ public class Usuario {
 
     public Set<Perfil> getPerfis() {
         return perfis;
+    }
+
+    public boolean isSenhaTemporaria() {
+        return senhaTemporaria;
+    }
+
+    public void setSenhaTemporaria(boolean senhaTemporaria) {
+        this.senhaTemporaria = senhaTemporaria;
     }
 
 }

@@ -32,4 +32,8 @@ public class UsuarioAutenticado implements UserDetails {
         return usuario.getUsername();
     }
 
+    public boolean isSenhaTemporaria() {
+        return usuario.isSenhaTemporaria();
+    }
+
 }

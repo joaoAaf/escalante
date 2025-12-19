@@ -28,6 +28,4 @@ env:
   usuario:
     inicial:
       username: ${USUARIO_INICIAL_USERNAME}
-      password: ${USUARIO_INICIAL_PASSWORD}
-    padrao:
-      password: ${USUARIO_PADRAO_PASSWORD}
+
