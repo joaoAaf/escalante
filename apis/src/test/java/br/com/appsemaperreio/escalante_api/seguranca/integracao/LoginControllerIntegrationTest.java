@@ -46,8 +46,11 @@ public class LoginControllerIntegrationTest {
         usuarioRepository.deleteAll();
         var user1 = new Usuario("testuser1", passwordEncoder.encode("pass123"), Set.of(Perfil.ADMIN));
         var user2 = new Usuario("testuser2", passwordEncoder.encode("pass456"), Set.of(Perfil.ADMIN, Perfil.ESCALANTE));
+        var user3 = new Usuario("testuser3", passwordEncoder.encode("pass789"), Set.of(Perfil.ESCALANTE));
+        user3.setSenhaTemporaria(true);
         usuarioRepository.save(user1);
         usuarioRepository.save(user2);
+        usuarioRepository.save(user3);
     }
 
     @Test
@@ -93,7 +96,26 @@ public class LoginControllerIntegrationTest {
                 scopes.add(scopeNode.asText());
             }
         }
+
+        // Verifica que o token contém apenas o perfil 'ESCALANTE'
         assertEquals(List.of("ESCALANTE"), scopes);
+    }
+
+    @Test
+    void deveRetornarTokenVazioQuandoSenhaPadraoOuInicial() throws Exception {
+        MvcResult result = mockMvc.perform(post("/api/login")
+                .with(SecurityMockMvcRequestPostProcessors.httpBasic("testuser3", "pass789"))
+                .param("admin", "false"))
+                .andExpect(status().isOk())
+                .andReturn();
+
+        String content = result.getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        var root = mapper.readTree(content);
+        String token = root.get("bearerToken").asText();
+
+        // quando a senha é temporária, o login deve retornar uma string vazia
+        assertEquals("", token);
     }
 
 }

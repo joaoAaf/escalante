@@ -23,10 +23,10 @@ public class LoginService implements ILoginService {
 
     @Override
     public String login(Authentication authentication, boolean loginAdmin) {
-        
-        var principal = (UserDetails) authentication.getPrincipal();
 
-        if (principal instanceof UsuarioAutenticado usuarioAuth && usuarioAuth.isSenhaTemporaria()) return "";
+        var usuarioAuth = (UsuarioAutenticado) authentication.getPrincipal();
+
+        if (usuarioAuth.isSenhaTemporaria()) return "";
 
         var ehAdmin = authentication.getAuthorities().stream()
                 .anyMatch(auth -> auth.getAuthority().equals("ROLE_" + Perfil.ADMIN.name()));
