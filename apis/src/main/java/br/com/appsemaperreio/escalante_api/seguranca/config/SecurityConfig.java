@@ -44,7 +44,9 @@ public class SecurityConfig {
                 .cors(Customizer.withDefaults())
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .anyRequest().authenticated())
+                        .requestMatchers(HttpMethod.POST, "/api/login").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/usuarios/password").authenticated()
+                        .anyRequest().denyAll())
                 .httpBasic(Customizer.withDefaults())
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new AuthenticationEntryPointCustom())
                         .accessDeniedHandler(new AccessDeniedHandlerCustom()))
@@ -75,9 +77,13 @@ public class SecurityConfig {
                     auth.requestMatchers(HttpMethod.GET, "/api/usuarios/atual").authenticated();
                     auth.requestMatchers(HttpMethod.POST, "/api/usuarios").hasRole("ADMIN")
                             .requestMatchers(HttpMethod.GET, "/api/usuarios/**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.PATCH, "/api/usuarios/username").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.PATCH, "/api/usuarios/perfis/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/usuarios/username",
+                                    "/api/usuarios/perfis/**").hasRole("ADMIN")
                             .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.POST, "/api/militar/**",
+                                    "/api/escala/**").hasRole("ESCALANTE")
+                            .requestMatchers(HttpMethod.GET, "/api/militar/**",
+                                    "/api/escala/**").hasRole("ESCALANTE")
                             .anyRequest().denyAll();
                 })
                 // Configuração do recurso OAuth2 como um Resource Server que utiliza JWT
