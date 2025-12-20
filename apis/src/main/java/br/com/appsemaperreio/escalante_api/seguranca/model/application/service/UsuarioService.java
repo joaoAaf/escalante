@@ -32,7 +32,7 @@ public class UsuarioService implements IUsuarioService {
     private final PasswordEncoder passwordEncoder;
     private final Environment env;
     private final Random random = new Random();
-    private static final String ESPECIAL_CHARS = "!@#$%&*()-_=+[]{}<>?";
+    private static final String ESPECIAL_CHARS = "!@#$%&*()-._=+[]{}<>?";
     private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
     public UsuarioService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper, PerfilMapper perfilMapper,
