@@ -1,16 +1,5 @@
 package br.com.appsemaperreio.escalante_api.seguranca.model.application.service;
 
-import java.util.List;
-import java.util.NoSuchElementException;
-import java.util.Optional;
-import java.util.Random;
-import java.util.Set;
-
-import org.springframework.core.env.Environment;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import br.com.appsemaperreio.escalante_api.seguranca.model.application.IUsuarioService;
 import br.com.appsemaperreio.escalante_api.seguranca.model.application.mappers.PerfilMapper;
 import br.com.appsemaperreio.escalante_api.seguranca.model.application.mappers.UsuarioMapper;
@@ -19,9 +8,18 @@ import br.com.appsemaperreio.escalante_api.seguranca.model.domain.Usuario;
 import br.com.appsemaperreio.escalante_api.seguranca.model.dto.UsuarioRequest;
 import br.com.appsemaperreio.escalante_api.seguranca.model.dto.UsuarioResponse;
 import br.com.appsemaperreio.escalante_api.seguranca.model.repository.UsuarioRepository;
-
+import org.apache.commons.lang3.RandomStringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.NoSuchElementException;
+import java.util.Optional;
+import java.util.Set;
 
 @Service
 public class UsuarioService implements IUsuarioService {
@@ -30,22 +28,20 @@ public class UsuarioService implements IUsuarioService {
     private final UsuarioMapper usuarioMapper;
     private final PerfilMapper perfilMapper;
     private final PasswordEncoder passwordEncoder;
-    private final Environment env;
-    private final Random random = new Random();
-    private static final String ESPECIAL_CHARS = "!@#$%&*()-._=+[]{}<>?";
+    private final String usernameInicial;
     private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
     public UsuarioService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper, PerfilMapper perfilMapper,
-            PasswordEncoder passwordEncoder, Environment env) {
+            PasswordEncoder passwordEncoder, @Value("${env.usuario.inicial.username}") String usernameInicial) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioMapper = usuarioMapper;
         this.perfilMapper = perfilMapper;
         this.passwordEncoder = passwordEncoder;
-        this.env = env;
+        this.usernameInicial = usernameInicial;
     }
 
     private void validarUsernameInicial(String username) {
-        Optional.ofNullable(env.getProperty("env.usuario.inicial.username"))
+        Optional.ofNullable(usernameInicial)
                 .map(u -> u.isBlank() ? null : u)
                 .ifPresent(usernameInicial -> {
                     if (username.equals(usernameInicial))
@@ -53,25 +49,21 @@ public class UsuarioService implements IUsuarioService {
                 });
     }
 
-    private String obterEnvUsuario(String env, String msgErro) {
-        return Optional.ofNullable(this.env.getProperty(env))
-                .map(rp -> rp.isBlank() ? null : rp)
-                .orElseThrow(() -> new IllegalStateException(msgErro));
-    }
-
-    private String gerarSenha(String prefixo) {
-        int numero = 1000 + random.nextInt(9999); // 4 dígitos
-        char especial = ESPECIAL_CHARS.charAt(random.nextInt(ESPECIAL_CHARS.length()));
-        return prefixo + numero + especial;
+    private String gerarSenha() {
+        var randomPart1 = RandomStringUtils.secure().nextAlphabetic(6);
+        var randomPart2 = RandomStringUtils.secure().next(1, "!@#$%&*-._=+?");
+        var randomPart3 = RandomStringUtils.secure().nextNumeric(4);
+        return randomPart1 + randomPart2 + randomPart3;
     }
 
     @Transactional
     @Override
     public void cadastrarUsuarioInicial() {
         if (!usuarioRepository.existsByPerfisContaining(Perfil.ADMIN)) {
-            var username = obterEnvUsuario(
-                    "env.usuario.inicial.username",
-                    "Username do usuário inicial não configurado");
+
+            var username = Optional.ofNullable(usernameInicial)
+                    .map(rp -> rp.isBlank() ? null : rp)
+                    .orElseThrow(() -> new IllegalStateException("Username do usuário inicial não configurado"));
 
             usuarioRepository.findByUsername(username)
                     .ifPresentOrElse(usuario -> {
@@ -79,7 +71,7 @@ public class UsuarioService implements IUsuarioService {
                         usuarioRepository.save(usuario);
                     },
                             () -> {
-                                var rawPassword = gerarSenha("Inicial@");
+                                var rawPassword = gerarSenha();
                                 var password = passwordEncoder.encode(rawPassword);
                                 var usuario = new Usuario(
                                         username,
@@ -101,7 +93,7 @@ public class UsuarioService implements IUsuarioService {
             throw new IllegalArgumentException("Username já está em uso");
 
         var usuario = usuarioMapper.toUsuario(usuarioRequest);
-        var rawPassword = gerarSenha("Padrao@");
+        var rawPassword = gerarSenha();
         var password = passwordEncoder.encode(rawPassword);
         usuario.setPassword(password);
         usuario.setSenhaTemporaria(true);
