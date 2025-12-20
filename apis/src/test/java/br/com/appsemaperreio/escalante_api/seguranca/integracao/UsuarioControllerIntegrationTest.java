@@ -39,12 +39,16 @@ public class UsuarioControllerIntegrationTest {
 
     private final ObjectMapper mapper = new ObjectMapper();
 
+    private static final String ADMIN = "admin@example.com";
+    private static final String NORMAL = "normal@example.com";
+    private static final String MULTI = "multi@example.com";
+
     @BeforeEach
     void setup() {
         usuarioRepository.deleteAll();
-        criarUsuario("adminUser", "adminpass", Set.of(Perfil.ADMIN));
-        criarUsuario("normalUser", "userpass", Set.of(Perfil.ESCALANTE));
-        criarUsuario("multiUser", "multipass", Set.of(Perfil.ADMIN, Perfil.ESCALANTE));
+        criarUsuario(ADMIN, "adminpass", Set.of(Perfil.ADMIN));
+        criarUsuario(NORMAL, "userpass", Set.of(Perfil.ESCALANTE));
+        criarUsuario(MULTI, "multipass", Set.of(Perfil.ADMIN, Perfil.ESCALANTE));
     }
 
     private void criarUsuario(String username, String rawPassword, Set<Perfil> perfis) {
@@ -72,33 +76,33 @@ public class UsuarioControllerIntegrationTest {
 
     @Test
     void tokenValido_deveRetornar200_paraUsuarioAtual() throws Exception {
-        String token = login("normalUser", "userpass", false);
+        String token = login(NORMAL, "userpass", false);
 
         mockMvc.perform(get("/api/usuarios/atual").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("normalUser"));
+                .andExpect(jsonPath("$.username").value(NORMAL));
     }
 
     @Test
     void obterUsuarioPorUsername_adminPodeAcessar_devolve200() throws Exception {
-        String token = login("adminUser", "adminpass", true);
+        String token = login(ADMIN, "adminpass", true);
 
-        mockMvc.perform(get("/api/usuarios/normalUser").header("Authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/usuarios/{username}", NORMAL).header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("normalUser"));
+                .andExpect(jsonPath("$.username").value(NORMAL));
     }
 
     @Test
     void obterUsuarioPorUsername_naoAdminRecebe403() throws Exception {
-        String token = login("normalUser", "userpass", false);
+        String token = login(NORMAL, "userpass", false);
 
-        mockMvc.perform(get("/api/usuarios/multiUser").header("Authorization", "Bearer " + token))
+        mockMvc.perform(get("/api/usuarios/{username}", MULTI).header("Authorization", "Bearer " + token))
                 .andExpect(status().isForbidden());
     }
 
     @Test
     void listarUsuarios_adminRecebe200ELista() throws Exception {
-        String token = login("adminUser", "adminpass", true);
+        String token = login(ADMIN, "adminpass", true);
 
         mockMvc.perform(get("/api/usuarios").header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
@@ -107,7 +111,7 @@ public class UsuarioControllerIntegrationTest {
 
     @Test
     void listarUsuarios_naoAdminRecebe403() throws Exception {
-        String token = login("normalUser", "userpass", false);
+        String token = login(NORMAL, "userpass", false);
 
         mockMvc.perform(get("/api/usuarios").header("Authorization", "Bearer " + token))
                 .andExpect(status().isForbidden());
@@ -115,14 +119,16 @@ public class UsuarioControllerIntegrationTest {
 
     @Test
     void atualizarUsername_adminAtualizaProprioUsername() throws Exception {
-        String token = login("adminUser", "adminpass", true);
+        String token = login(ADMIN, "adminpass", true);
+
+        var novo = "admin.renamed@example.com";
 
         mockMvc.perform(patch("/api/usuarios/username").header("Authorization", "Bearer " + token)
-                        .param("novo", "adminRenamed"))
+                        .param("novo", novo))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value("adminRenamed"));
+                .andExpect(jsonPath("$.username").value(novo));
 
-        assertThat(usuarioRepository.findByUsername("adminRenamed").isPresent()).isTrue();
+        assertThat(usuarioRepository.findByUsername(novo).isPresent()).isTrue();
     }
 
     @Test
@@ -130,21 +136,21 @@ public class UsuarioControllerIntegrationTest {
         var newPassword = "Newpass1!";
 
         mockMvc.perform(patch("/api/usuarios/password")
-                        .with(SecurityMockMvcRequestPostProcessors.httpBasic("normalUser", "userpass"))
+                        .with(SecurityMockMvcRequestPostProcessors.httpBasic(NORMAL, "userpass"))
                         .param("novo", newPassword))
                 .andExpect(status().isNoContent());
 
-        var usuario = usuarioRepository.findByUsername("normalUser").orElseThrow();
+        var usuario = usuarioRepository.findByUsername(NORMAL).orElseThrow();
         assertThat(passwordEncoder.matches(newPassword, usuario.getPassword())).isTrue();
         assertThat(usuario.isSenhaTemporaria()).isFalse();
     }
 
     @Test
     void adicionarPerfis_adminAdicionaPerfil() throws Exception {
-        String token = login("adminUser", "adminpass", true);
+        String token = login(ADMIN, "adminpass", true);
 
         var payload = mapper.createObjectNode();
-        payload.put("username", "normalUser");
+        payload.put("username", NORMAL);
         payload.putArray("perfis").add("ADMIN");
 
         mockMvc.perform(patch("/api/usuarios/perfis/adicionar")
@@ -154,16 +160,16 @@ public class UsuarioControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(2));
 
-        var usuario = usuarioRepository.findByUsername("normalUser").orElseThrow();
+        var usuario = usuarioRepository.findByUsername(NORMAL).orElseThrow();
         assertThat(usuario.getPerfis()).contains(Perfil.ADMIN);
     }
 
     @Test
     void removerPerfis_adminRemovePerfil() throws Exception {
-        String token = login("adminUser", "adminpass", true);
+        String token = login(ADMIN, "adminpass", true);
 
         var payload = mapper.createObjectNode();
-        payload.put("username", "multiUser");
+        payload.put("username", MULTI);
         payload.putArray("perfis").add("ESCALANTE");
 
         mockMvc.perform(patch("/api/usuarios/perfis/remover")
@@ -173,18 +179,18 @@ public class UsuarioControllerIntegrationTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(1));
 
-        var usuario = usuarioRepository.findByUsername("multiUser").orElseThrow();
+        var usuario = usuarioRepository.findByUsername(MULTI).orElseThrow();
         assertThat(usuario.getPerfis()).doesNotContain(Perfil.ESCALANTE);
     }
 
     @Test
     void deletarUsuario_adminDeletaUsuario() throws Exception {
-        String token = login("adminUser", "adminpass", true);
+        String token = login(ADMIN, "adminpass", true);
 
-        mockMvc.perform(delete("/api/usuarios/normalUser").header("Authorization", "Bearer " + token))
+        mockMvc.perform(delete("/api/usuarios/{username}", NORMAL).header("Authorization", "Bearer " + token))
                 .andExpect(status().isNoContent());
 
-        assertThat(usuarioRepository.findByUsername("normalUser").isPresent()).isFalse();
+        assertThat(usuarioRepository.findByUsername(NORMAL).isPresent()).isFalse();
     }
 
 }

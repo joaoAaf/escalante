@@ -5,10 +5,7 @@ import br.com.appsemaperreio.escalante_api.seguranca.model.domain.Perfil;
 import br.com.appsemaperreio.escalante_api.seguranca.model.dto.UsuarioRequest;
 import br.com.appsemaperreio.escalante_api.seguranca.model.dto.UsuarioResponse;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.validation.annotation.Validated;
@@ -62,9 +59,10 @@ public class UsuarioController {
     public ResponseEntity<Map<String, String>> atualizarUsername(Authentication authentication,
             @RequestParam("novo")
             @NotBlank(message = "O nome de usuário é obrigatório")
-            @Size(min = 3, max = 20, message = "O nome de usuário deve ter entre 3 e 20 caracteres")
-            @Pattern(regexp = "^(?!.*[\\s\\p{Zs}])[A-Za-z0-9_.-]+$",
-                message = "O nome de usuário deve conter apenas letras ASCII, números, '.', '_' e '-', sem espaços")
+            @Size(max = 130, message = "O nome de usuário deve ter no máximo 130 caracteres")
+            @Pattern(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@"
+                    + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$",
+                message = "O nome de usuário deve ser um e-mail válido")
             String usernameNovo) {
         var usernameAtual = authentication.getName();
         var usernameAtualizado = service.atualizarUsername(usernameAtual, usernameNovo);
