@@ -7,9 +7,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.annotation.Order;
 import org.springframework.core.env.Environment;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,17 +34,15 @@ public class SecurityConfig {
 
     private final Environment env;
 
-    public SecurityConfig(Environment env) {
-        this.env = env;
-    }
+    public SecurityConfig(Environment env) { this.env = env; }
 
     // Filtro de segurança para a rota de login, com utilização exclusiva do HTTP Basic
     @Bean
     @Order(1)
     public SecurityFilterChain loginFilterChain(HttpSecurity http) throws Exception {
-        http.securityMatcher("/api/login", "/api/usuarios/username")
+        http.securityMatcher("/api/login", "/api/usuarios/password")
                 .cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .anyRequest().authenticated())
                 .httpBasic(Customizer.withDefaults())
@@ -64,14 +65,20 @@ public class SecurityConfig {
         var devProfileActive = List.of(env.getActiveProfiles()).contains("dev");
 
         http.cors(Customizer.withDefaults())
-                .csrf(csrf -> csrf.disable())
+                .csrf(AbstractHttpConfigurer::disable)
                 .headers(headers -> {
                     // Para possibilitar o acesso ao console H2
-                    if (devProfileActive) headers.frameOptions(frameOptions -> frameOptions.sameOrigin());
+                    if (devProfileActive) headers.frameOptions(HeadersConfigurer.FrameOptionsConfig::sameOrigin);
                 })
                 .authorizeHttpRequests(auth -> {
                     if (devProfileActive) auth.requestMatchers("/h2/**").permitAll();
-                    auth.anyRequest().authenticated();
+                    auth.requestMatchers(HttpMethod.GET, "/api/usuarios/atual").authenticated();
+                    auth.requestMatchers(HttpMethod.POST, "/api/usuarios").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.GET, "/api/usuarios/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/usuarios/username").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/usuarios/perfis/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasRole("ADMIN")
+                            .anyRequest().denyAll();
                 })
                 // Configuração do recurso OAuth2 como um Resource Server que utiliza JWT
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)))
