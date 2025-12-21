@@ -8,7 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
 
-public record MilitarEscalavel(
+public record MilitarDto(
         @NotNull(message = "A antiguidade do militar não pode ser nula.")
         @Positive(message = "A antiguidade do militar deve ser um valor positivo.")
         Integer antiguidade,
