@@ -1,28 +1,30 @@
-package br.com.appsemaperreio.escalante_api.escalante.integracao;
+package br.com.appsemaperreio.escalante_api.escalante.unitarios;
+
+import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorEscalaXLSXAdapter;
+import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
+import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.apachepoi.ImportadorEscalaXLSXApachePoi;
+import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.apachepoi.ImportadorMilitaresXLSXApachePoi;
+import br.com.appsemaperreio.escalante_api.escalante.model.domain.Funcao;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
-import java.time.LocalDate;
+class ImportadorXLSXTest {
 
-import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.web.multipart.MultipartFile;
-
-import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorEscalaXLSXAdapter;
-import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
-import br.com.appsemaperreio.escalante_api.escalante.model.domain.Funcao;
-
-@SpringBootTest
-class ImportadorXLSXIntegrationTest {
-
-	@Autowired
 	private ImportadorMilitaresXLSXAdapter importadorMilitaresXLSXAdapter;
-
-	@Autowired
 	private ImportadorEscalaXLSXAdapter importadorEscalaXLSXAdapter;
+
+	@BeforeEach
+	void setup() {
+		this.importadorMilitaresXLSXAdapter = new ImportadorMilitaresXLSXApachePoi();
+		this.importadorEscalaXLSXAdapter = new ImportadorEscalaXLSXApachePoi();
+	}
 
 	@Test
 	public void deveImportarMilitaresXLSXQuandoPlanilhaPresenteEValida() throws Exception {
