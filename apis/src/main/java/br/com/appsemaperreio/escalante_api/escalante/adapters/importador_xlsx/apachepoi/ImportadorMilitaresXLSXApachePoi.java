@@ -5,21 +5,21 @@ import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.List;
 
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.MilitarDto;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.exceptions.ErroProcessamentoPlanilhaException;
-import br.com.appsemaperreio.escalante_api.escalante.model.dto.MilitarEscalavel;
 
 @Component
 public class ImportadorMilitaresXLSXApachePoi extends ImportadorBaseXLSX implements ImportadorMilitaresXLSXAdapter {
 
     @Override
-    public List<MilitarEscalavel> importarMilitaresXLSX(MultipartFile planilha) {
+    public List<MilitarDto> importarMilitaresXLSX(MultipartFile planilha) {
 
-        List<MilitarEscalavel> militares = new ArrayList<>();
+        List<MilitarDto> militares = new ArrayList<>();
 
         try {
             var workbook = WorkbookFactory.create(planilha.getInputStream());
@@ -46,7 +46,7 @@ public class ImportadorMilitaresXLSXApachePoi extends ImportadorBaseXLSX impleme
                     var folgaEspecial = Integer.valueOf(validarCelulas(row.getCell(5)));
                     var cov = validarCelulas(row.getCell(6)).equalsIgnoreCase("sim");
 
-                    var militar = new MilitarEscalavel(
+                    var militar = new MilitarDto(
                             antiguidade,
                             matricula,
                             patente,

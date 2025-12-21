@@ -20,7 +20,7 @@ public record DadosEscalaRequest(
         @NotNull(message = "A lista de militares não pode ser nula.")
         @NotEmpty(message = "A lista de militares não pode estar vazia.")
         @Size(max = 100, message = "A lista de militares não pode conter mais de 100 militares.")
-        List<@Valid MilitarEscalavel> militares,
+        List<@Valid MilitarDto> militares,
         @Size(max = 210, message = "A lista de serviços anteriores não pode conter mais de 210 serviços.")
         List<@Valid ServicoOperacionalDto> servicosAnteriores
     ) {
