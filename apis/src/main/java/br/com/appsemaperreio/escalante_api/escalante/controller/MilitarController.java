@@ -2,6 +2,7 @@ package br.com.appsemaperreio.escalante_api.escalante.controller;
 
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.MilitarDto;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -38,7 +39,7 @@ public class MilitarController {
     }
 
     @PostMapping("/importar/xlsx")
-    public ResponseEntity<?> importarMilitaresXLSX(
+    public ResponseEntity<List<MilitarDto>> importarMilitaresXLSX(
             @RequestParam @NotNull(message = "O arquivo de militares não pode ser nulo.") MultipartFile militares) {
         return ResponseEntity.ok(service.importarMilitaresXLSX(militares));
     }
@@ -50,6 +51,27 @@ public class MilitarController {
             List<@Valid MilitarDto> militaresDto) {
         List<MilitarDto> militaresCadastrados = service.cadastrarMilitares(militaresDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(militaresCadastrados);
+    }
+
+    @GetMapping
+    public ResponseEntity<List<MilitarDto>> listarMilitares() {
+        List<MilitarDto> militares = service.listarMilitares();
+        if (militares.isEmpty()) return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(militares);
+    }
+
+    @PutMapping
+    public ResponseEntity<MilitarDto> atualizarMilitar(
+            @RequestBody @NotNull(message = "O militar não pode ser nulo.") @Valid MilitarDto militarDto) {
+        MilitarDto militarAtualizado = service.atualizarMilitar(militarDto);
+        return ResponseEntity.ok(militarAtualizado);
+    }
+
+    @DeleteMapping("/{matricula}")
+    public ResponseEntity<Void> deletarMilitar(
+            @PathVariable @NotBlank(message = "A matrícula do militar não pode ser nula ou vazia.") String matricula) {
+        service.deletarMilitar(matricula);
+        return ResponseEntity.noContent().build();
     }
 
 }

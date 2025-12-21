@@ -6,6 +6,7 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Militar {
@@ -13,7 +14,7 @@ public class Militar {
     @Id
     private String matricula;
 
-    @Column(nullable = false, length = 10)
+    @Column(nullable = false, length = 30)
     private String nomePaz;
 
     @Column(nullable = false)
@@ -123,25 +124,27 @@ public class Militar {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((matricula == null) ? 0 : matricula.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Militar militar = (Militar) o;
+
+        return folgaEspecial == militar.folgaEspecial &&
+                nomePaz.equals(militar.nomePaz) &&
+                nascimento.equals(militar.nascimento) &&
+                patente == militar.patente &&
+                antiguidade.equals(militar.antiguidade) &&
+                cov.equals(militar.cov);
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        Militar other = (Militar) obj;
-        if (matricula == null) {
-            return other.matricula == null;
-        } else return matricula.equals(other.matricula);
+    public int hashCode() {
+        int result = nomePaz.hashCode();
+        result = 31 * result + nascimento.hashCode();
+        result = 31 * result + patente.hashCode();
+        result = 31 * result + antiguidade.hashCode();
+        result = 31 * result + folgaEspecial;
+        result = 31 * result + cov.hashCode();
+        return result;
     }
-
 }

@@ -84,6 +84,8 @@ public class SecurityConfig {
                                     "/api/escala/**").hasRole("ESCALANTE")
                             .requestMatchers(HttpMethod.GET, "/api/militar/**",
                                     "/api/escala/**").hasRole("ESCALANTE")
+                            .requestMatchers(HttpMethod.PUT, "/api/militar/**").hasRole("ESCALANTE")
+                            .requestMatchers(HttpMethod.DELETE, "/api/militar/**").hasRole("ESCALANTE")
                             .anyRequest().denyAll();
                 })
                 // Configuração do recurso OAuth2 como um Resource Server que utiliza JWT
