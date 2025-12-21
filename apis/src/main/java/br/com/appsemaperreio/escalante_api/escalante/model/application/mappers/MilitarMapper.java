@@ -14,6 +14,8 @@ public interface MilitarMapper {
     @Mapping(target = "ultimosServicos", ignore = true)
     Militar toMilitar(MilitarDto militarDto);
 
+    MilitarDto toMilitarDto(Militar militar);
+
     List<Militar> toListMilitar(List<MilitarDto> militaresDto);
 
     List<MilitarDto> toListMilitarDto(List<Militar> militares);

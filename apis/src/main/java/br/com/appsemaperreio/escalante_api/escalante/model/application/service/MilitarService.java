@@ -8,6 +8,7 @@ import br.com.appsemaperreio.escalante_api.escalante.model.domain.exceptions.Pla
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.MilitarDto;
 import br.com.appsemaperreio.escalante_api.escalante.model.repository.MilitarRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -47,11 +48,42 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
         }
     }
 
+    @Transactional
     @Override
     public List<MilitarDto> cadastrarMilitares(List<MilitarDto> militaresDto) {
         var militares = militarMapper.toListMilitar(militaresDto);
         var militaresCadastrados = militarRepository.saveAll(militares);
         return militarMapper.toListMilitarDto(militaresCadastrados);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public List<MilitarDto> listarMilitares() {
+        return militarMapper.toListMilitarDto(militarRepository.findAll());
+    }
+
+    @Transactional
+    @Override
+    public MilitarDto atualizarMilitar(MilitarDto militarDto) {
+        var militarExistente = militarRepository.findById(militarDto.matricula())
+                .orElseThrow(() -> new IllegalArgumentException("Militar com matrícula "
+                        + militarDto.matricula() + " não encontrado."));
+
+        var militarAtualizado = militarMapper.toMilitar(militarDto);
+
+        if (militarExistente.equals(militarAtualizado))
+            throw new IllegalArgumentException("Não foram identificadas alterações no militar informado.");
+
+        return militarMapper.toMilitarDto(militarRepository.save(militarAtualizado));
+    }
+
+    @Transactional
+    @Override
+    public void deletarMilitar(String matricula) {
+        var militarExistente = militarRepository.findById(matricula)
+                .orElseThrow(() -> new IllegalArgumentException("Militar com matrícula "
+                        + matricula + " não encontrado."));
+        militarRepository.delete(militarExistente);
     }
 
 }
