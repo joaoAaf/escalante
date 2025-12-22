@@ -6,7 +6,7 @@ import java.util.Optional;
 
 public class FiscalDia extends AntigosPrimeiro {
 
-    private final int FOLGA_FISCAL = 4;
+    private final int FOLGA_FISCAL = 3;
 
     public FiscalDia(LocalDate dataServico) {
         super(dataServico, Funcao.FISCAL_DE_DIA);
