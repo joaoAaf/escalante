@@ -1,8 +1,7 @@
-import { useState } from 'react'
 import './App.css'
 import Sidebar from '../components/sidebar/Sidebar'
-import { Outlet } from 'react-router-dom'
-import { GlobalContextProvider } from '../context/GlobalContext'
+import {Outlet} from 'react-router-dom'
+import {GlobalContextProvider} from '../context/GlobalContext'
 import FeedbackToast from '../components/feedback_toast/FeedbackToast'
 
 export default function App() {
