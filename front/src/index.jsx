@@ -7,6 +7,7 @@ import Escala from './routes/escala/Escala'
 import Login from './routes/login/Login'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import {GlobalContextProvider} from './context/GlobalContext'
+import FeedbackToast from './components/feedback_toast/FeedbackToast'
 
 const router = createBrowserRouter([
   {
@@ -17,11 +18,14 @@ const router = createBrowserRouter([
       { path: '/escala', element: <Escala /> },
     ],
   },
-  { path: '/login', element: <GlobalContextProvider><Login /></GlobalContextProvider> },
+  { path: '/login', element: <Login /> },
 ]);
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RouterProvider router={router} />
+    <GlobalContextProvider>
+      <RouterProvider router={router} />
+      <FeedbackToast />
+    </GlobalContextProvider>
   </StrictMode>,
 )

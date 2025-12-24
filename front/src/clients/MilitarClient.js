@@ -1,6 +1,6 @@
 export default class MilitarClient {
 
-    static baseUrl = `${import.meta.env.VITE_API_URL ?? ''}/api/militar`
+    static baseUrl = '/api/militar'
 
     static async obterPlanilhaModeloMilitares(signal) {
         try {
