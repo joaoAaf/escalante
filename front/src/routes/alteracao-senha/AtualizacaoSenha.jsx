@@ -2,15 +2,16 @@ import Styles from './styles.module.css'
 import {useContext, useEffect, useRef, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {GlobalContext} from '../../context/GlobalContext'
-import LoginClient from "../../clients/LoginClient.js";
+import UsuarioClient from "../../clients/UsuarioClient.js";
 
-export default function Login() {
+export default function AtualizacaoSenha() {
   const navigate = useNavigate()
   const { setToken, setFeedback } = useContext(GlobalContext)
 
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [carregandoLogin, setCarregandoLogin] = useState(false)
+  const [newPassword, setNewPassword] = useState('')
+  const [carregandoAtualizacao, setCarregandoAtualizacao] = useState(false)
 
   const abortControllerRef = useRef(null)
 
@@ -28,7 +29,7 @@ export default function Login() {
     return controller
   }
 
-  const gerenciarLogin = evento => {
+  const gerenciarAtualizacaoSenha = evento => {
     evento.preventDefault()
 
     const form = evento.currentTarget
@@ -41,29 +42,35 @@ export default function Login() {
       }
     }
 
-    if (!email || !password) {
-      setFeedback({ type: 'info', mensagem: 'Preencha email e senha.' })
+    if (!email || !password || !newPassword) {
+      setFeedback({ type: 'info', mensagem: 'Preencha email, senha e a nova senha.' })
+      return
+    }
+
+    const regexPass = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).{9,50}$/
+    if (!regexPass.test(newPassword)) {
+      setFeedback({ type: 'info', mensagem: 'Por favor, digite uma senha válida.' })
       return
     }
 
     const controller = criarAbortController()
 
-    setCarregandoLogin(true)
+    setCarregandoAtualizacao(true)
 
-    const dadosLogin = { email, password }
+    const dadosAtualizacao = { email, password, newPassword }
 
-    LoginClient.login(dadosLogin, controller.signal)
-      .then(token => {
-        setToken(token)
-        navigate('/')
-        setFeedback({ type: 'success', mensagem: 'Login realizado com sucesso.' })
+    UsuarioClient.atualizarPassword(dadosAtualizacao, controller.signal)
+      .then(() => {
+        setToken("")
+        navigate('/login')
+        setFeedback({ type: 'success', mensagem: 'Senha atualizada com sucesso.' })
       })
       .catch(error => {
         if (error.name === 'AbortError') return
         setFeedback({ type: 'error', mensagem: error.message })
       })
       .finally(() => {
-        setCarregandoLogin(false)
+        setCarregandoAtualizacao(false)
         if (abortControllerRef.current === controller)
           abortControllerRef.current = null
       })
@@ -73,8 +80,8 @@ export default function Login() {
     <div className={Styles.page}>
       <h1 className={Styles.title}>Escalante</h1>
       <div className={Styles.container}>
-        <h2>Entrar</h2>
-        <form className={Styles.form} onSubmit={gerenciarLogin} noValidate>
+        <h2>Atualizar Senha</h2>
+        <form className={Styles.form} onSubmit={gerenciarAtualizacaoSenha} noValidate>
           <label className={Styles.label} htmlFor="email">Email</label>
           <input
             className={Styles.input}
@@ -105,12 +112,29 @@ export default function Login() {
             onInvalid={e => e.target.setCustomValidity("Por favor, digite sua senha.")}
           />
 
+          <label className={Styles.label} htmlFor="new-password">Nova Senha</label>
+          <input
+              className={Styles.input}
+              type="password"
+              value={newPassword}
+              onChange={(e) => {
+                e.target.setCustomValidity("")
+                setNewPassword(e.target.value)
+              }}
+              placeholder="********"
+              required
+              minLength="9"
+              maxLength="50"
+              title="A senha deve conter entre 9 e 50 caracteres, pelo menos uma letra maiúscula, uma letra minúscula, um número e um caractere especial."
+              onInvalid={e => e.target.setCustomValidity("Por favor, digite uma senha válida.")}
+          />
+
           <button
               type="submit"
-              disabled={carregandoLogin}
+              disabled={carregandoAtualizacao}
               className={Styles.button}
           >
-            {carregandoLogin ? "Entrando..." : "Entrar"}
+            {carregandoAtualizacao ? "Entrando..." : "Entrar"}
           </button>
         </form>
       </div>

@@ -8,6 +8,7 @@ import Login from './routes/login/Login'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import {GlobalContextProvider} from './context/GlobalContext'
 import FeedbackToast from './components/feedback_toast/FeedbackToast'
+import AtualizacaoSenha from "./routes/alteracao-senha/AtualizacaoSenha.jsx";
 
 const router = createBrowserRouter([
   {
@@ -19,6 +20,7 @@ const router = createBrowserRouter([
     ],
   },
   { path: '/login', element: <Login /> },
+  { path: '/usuarios/password', element: <AtualizacaoSenha /> },
 ]);
 
 createRoot(document.getElementById('root')).render(
