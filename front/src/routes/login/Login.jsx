@@ -1,4 +1,3 @@
-// styles are managed by PaginaAutenticacao
 import {useContext, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {GlobalContext} from '../../context/GlobalContext'
@@ -21,6 +20,12 @@ export default function Login() {
     const dadosLogin = { email, password }
 
     const token = await LoginClient.login(dadosLogin, controller.signal)
+
+    if (!token || token === "") {
+      navigate('/usuarios/password')
+      return setFeedback({ type: 'info', mensagem: 'É necessário atualizar sua senha.' })
+    }
+
     setToken(token)
     navigate('/')
     setFeedback({ type: 'success', mensagem: 'Login realizado com sucesso.' })
