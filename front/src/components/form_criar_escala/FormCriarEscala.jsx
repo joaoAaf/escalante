@@ -6,7 +6,7 @@ import { inserirIds } from '../../utils/geradorIds'
 
 export default function FormCriarEscala({ servicosAnteriores }) {
 
-    const { militares, setEscala, setFeedback } = useContext(GlobalContext)
+    const { token, militares, setEscala, setFeedback } = useContext(GlobalContext)
 
     const [dataInicio, setDataInicio] = useState('')
     const [dataFim, setDataFim] = useState('')
@@ -81,7 +81,7 @@ export default function FormCriarEscala({ servicosAnteriores }) {
             servicosAnteriores: servicosAnteriores || []
         }
 
-        EscalaClient.criarEscalaAutomatica(dadosEscala, controller.signal)
+        EscalaClient.criarEscalaAutomatica(dadosEscala, token, controller.signal)
             .then(escala => {
                 const escalaResponse = (escala || [])
                 const escalaComIds = inserirIds(escalaResponse)

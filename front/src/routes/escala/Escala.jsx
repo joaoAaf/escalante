@@ -95,8 +95,8 @@ export default function Escala() {
             <div className={Styles.upload}>
                 <label htmlFor="input_upload" className={Styles.label_upload}>Importe a Escala Anterior</label>
                 <InputUpload
-                    funcaoDownload={(signal) => EscalaClient.obterPlanilhaModeloEscala(signal)}
-                    funcaoUpload={(arquivo, signal) => EscalaClient.importarEscalaXLSX(arquivo, signal)}
+                    funcaoDownload={(token, signal) => EscalaClient.obterPlanilhaModeloEscala(token, signal)}
+                    funcaoUpload={(arquivo, token, signal) => EscalaClient.importarEscalaXLSX(arquivo, token, signal)}
                     nomeModelo="modelo_escala.xlsx"
                     setDados={setServicosAnteriores}
                 />

@@ -6,7 +6,7 @@ import EscalaClient from '../../clients/EscalaClient'
 
 export default function AcoesEscala() {
 
-    const { escala, setFeedback } = useContext(GlobalContext)
+    const { token, escala, setFeedback } = useContext(GlobalContext)
     const { setStatusModal } = useContext(CadastroServicoContext)
 
     const [exportandoEscala, setExportandoEscala] = useState(false)
@@ -37,7 +37,7 @@ export default function AcoesEscala() {
         const controller = criarAbortController()
 
         setExportandoEscala(true)
-        EscalaClient.exportarEscalaXLSX(escala, controller.signal)
+        EscalaClient.exportarEscalaXLSX(escala, token, controller.signal)
             .then(arrayBuffer => {
                 if (arrayBuffer) {
                     const blob = new Blob([arrayBuffer],

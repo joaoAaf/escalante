@@ -2,9 +2,14 @@ export default class MilitarClient {
 
     static baseUrl = '/api/militar'
 
-    static async obterPlanilhaModeloMilitares(signal) {
+    static async obterPlanilhaModeloMilitares(token, signal) {
         try {
-            const response = await fetch(`${this.baseUrl}/modelo/xlsx`, { signal })
+            const response = await fetch(`${this.baseUrl}/modelo/xlsx`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                signal
+            })
             if (!response.status.toString().startsWith('2'))
                 throw new Error((await response.json()).Mensagem)
             return await response.arrayBuffer()
@@ -16,12 +21,15 @@ export default class MilitarClient {
         }
     }
 
-    static async importarMilitaresXLSX(arquivo, signal) {
+    static async importarMilitaresXLSX(arquivo, token, signal) {
         const formData = new FormData()
         formData.append('militares', arquivo)
         try {
             const response = await fetch(`${this.baseUrl}/importar/xlsx`, {
                 method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
                 body: formData,
                 signal
             })

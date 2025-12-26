@@ -4,7 +4,7 @@ import Styles from './styles.module.css'
 
 export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, setDados }) {
 
-    const { setFeedback } = useContext(GlobalContext)
+    const { token, setFeedback } = useContext(GlobalContext)
     
     const [nomeArquivo, setNomeArquivo] = useState("Nenhuma seleção.")
     const [arquivo, setArquivo] = useState(null)
@@ -40,7 +40,7 @@ export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, 
             const controller = criarAbortController()
 
             setCarregando(true)
-            funcaoUpload(arquivo, controller.signal)
+            funcaoUpload(arquivo, token, controller.signal)
                 .then(dados => {
                     setDados(dados || [])
                     setFeedback({ type: 'success', mensagem: 'Planilha importada com sucesso.' })
@@ -63,7 +63,7 @@ export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, 
         const controller = criarAbortController()
 
         setBaixando(true)
-        funcaoDownload(controller.signal)
+        funcaoDownload(token, controller.signal)
             .then(arrayBuffer => {
                 if (arrayBuffer) {
                     const blob = new Blob([arrayBuffer],
