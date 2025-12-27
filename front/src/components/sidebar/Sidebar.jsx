@@ -1,6 +1,7 @@
 import Styles from './styles.module.css'
 import FireFighter from './assets/firefighter.png'
 import Notes from './assets/notes.png'
+import Users from './assets/users.png'
 import { NavLink } from 'react-router-dom'
 
 export default function Sidebar() {
@@ -23,6 +24,14 @@ export default function Sidebar() {
                 >
                     <img src={Notes} alt="Escala" />
                     <span>Escala</span>
+                </NavLink>
+                <NavLink
+                    to="/usuarios"
+                    title="Usuários"
+                    className={({ isActive }) => isActive ? Styles.active : '' }
+                >
+                    <img src={Users} alt="Usuários" />
+                    <span>Usuários</span>
                 </NavLink>
             </nav>
         </div>

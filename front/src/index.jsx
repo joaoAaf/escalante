@@ -5,6 +5,7 @@ import App from './app/App'
 import Militares from './routes/militares/Militares'
 import Escala from './routes/escala/Escala'
 import Login from './routes/login/Login'
+import Usuarios from './routes/usuarios/Usuarios'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import {GlobalContextProvider} from './context/GlobalContext'
 import FeedbackToast from './components/feedback_toast/FeedbackToast'
@@ -17,6 +18,7 @@ const router = createBrowserRouter([
     children: [
       { path: '/', element: <Militares /> },
       { path: '/escala', element: <Escala /> },
+      { path: '/usuarios', element: <Usuarios /> },
     ],
   },
   { path: '/login', element: <Login /> },
