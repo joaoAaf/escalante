@@ -13,8 +13,12 @@ export default class LoginClient {
                 },
                 signal
             })
+
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? "Não foi possivel fazer login." : JSON.parse(erro)?.Mensagem || erro)
+            }
             const dados = await response.json()
-            if (!response.status.toString().startsWith('2')) throw new Error(dados.Mensagem)
             return dados.bearerToken
         } catch (error) {
             if (error.name === 'AbortError') throw error

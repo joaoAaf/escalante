@@ -14,8 +14,8 @@ export default class UsuarioClient {
                 signal
             })
             if (!response.status.toString().startsWith('2')) {
-                const dados = await response.json()
-                throw new Error(dados?.Mensagem || dados)
+                const erro = await response.text()
+                throw new Error(!erro ? 'Não foi possível atualizar a senha.' : JSON.parse(erro)?.Mensagem || erro)
             }
         } catch (error) {
             if (error.name === 'AbortError') throw error
@@ -23,4 +23,26 @@ export default class UsuarioClient {
             throw error
         }
     }
+
+    static async listarUsuarios(token, signal) {
+        try {
+            const response = await fetch(this.baseUrl, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                signal
+            })
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? 'Não foi possível listar os usuários.' : JSON.parse(erro)?.Mensagem || erro)
+            }
+            return await response.json()
+        } catch (error) {
+            if (error.name === 'AbortError') throw error
+            if (error instanceof TypeError || error instanceof SyntaxError)
+                throw new Error("Servidor indisponível.")
+            throw error
+        }
+    }
+
 }

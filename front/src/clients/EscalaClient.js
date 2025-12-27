@@ -13,10 +13,11 @@ export default class EscalaClient {
                 body: JSON.stringify(dadosEscala),
                 signal
             })
-            const dados = await response.json()
-            if (!response.status.toString().startsWith('2'))
-                throw new Error(dados.Mensagem)
-            return dados
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? "Não foi possivel criar escala." : JSON.parse(erro)?.Mensagem || erro)
+            }
+            return await response.json()
         } catch (error) {
             if (error.name === 'AbortError') throw error
             if (error instanceof TypeError || error instanceof SyntaxError)
@@ -36,8 +37,10 @@ export default class EscalaClient {
                 body: JSON.stringify(escala),
                 signal
             })
-            if (!response.status.toString().startsWith('2'))
-                throw new Error((await response.json()).Mensagem)
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? "Não foi possivel exportar escala." : JSON.parse(erro)?.Mensagem || erro)
+            }
             return await response.arrayBuffer()
         } catch (error) {
             if (error.name === 'AbortError') throw error
@@ -55,8 +58,10 @@ export default class EscalaClient {
                 },
                 signal
             })
-            if (!response.status.toString().startsWith('2'))
-                throw new Error((await response.json()).Mensagem)
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? "Não foi possivel obter modelo." : JSON.parse(erro)?.Mensagem || erro)
+            }
             return await response.arrayBuffer()
         } catch (error) {
             if (error.name === 'AbortError') throw error
@@ -78,10 +83,11 @@ export default class EscalaClient {
                 body: formData,
                 signal
             })
-            const dados = await response.json()
-            if (!response.status.toString().startsWith('2'))
-                throw new Error(dados.Mensagem)
-            return dados
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? "Não foi possivel importar planilha." : JSON.parse(erro)?.Mensagem || erro)
+            }
+            return await response.json()
         } catch (error) {
             if (error.name === 'AbortError') throw error
             if (error instanceof TypeError || error instanceof SyntaxError)
