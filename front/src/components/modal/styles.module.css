@@ -12,6 +12,7 @@
 }
 
 .dialog {
+    position: relative;
     background: #fff;
     padding: 25px;
     border-radius: 8px;
@@ -83,5 +84,3 @@
 .cancelar:hover {
     background-color: #e0e0e0;
 }
-
-
