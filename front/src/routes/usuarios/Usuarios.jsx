@@ -1,13 +1,15 @@
 import Styles from './styles.module.css'
-import { useContext, useEffect, useRef, useState } from 'react'
+import {useContext, useEffect, useRef, useState} from 'react'
 import BotaoRemover from '../../components/botao_remover/BotaoRemover'
-import { GlobalContext } from "../../context/GlobalContext.jsx";
+import {GlobalContext} from "../../context/GlobalContext.jsx";
 import UsuarioClient from "../../clients/UsuarioClient.js";
+import CadastroUsuario from '../../components/cadastro_usuario/CadastroUsuario'
 
 export default function Usuarios() {
 
     const { token, setFeedback } = useContext(GlobalContext)
     const [usuarios, setUsuarios] = useState([])
+    const [abrirCadastro, setAbrirCadastro] = useState(false)
 
     const abortControllerRef = useRef(null)
 
@@ -75,7 +77,7 @@ export default function Usuarios() {
             <h2>Gerenciamento de Usuários</h2>
 
             <div className={Styles.acoes}>
-                <button onClick={() => alert('Abrir modal de cadastro (exemplo)')}>Cadastrar Usuário</button>
+                <button onClick={() => setAbrirCadastro(true)}>Cadastrar Usuário</button>
             </div>
             <table className={Styles.table}>
                 <thead>
@@ -89,6 +91,8 @@ export default function Usuarios() {
                     {tabelaUsuarios()}
                 </tbody>
             </table>
+
+            <CadastroUsuario abrir={abrirCadastro} fechar={() => setAbrirCadastro(false)} setUsuarios={setUsuarios} />
         </div>
     )
 }

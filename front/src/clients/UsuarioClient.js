@@ -45,4 +45,28 @@ export default class UsuarioClient {
         }
     }
 
+    static async cadastrarUsuario(token, usuarioRequest, signal) {
+        try {
+            const response = await fetch(this.baseUrl, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(usuarioRequest),
+                signal
+            })
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? 'Não foi possível cadastrar o usuário.' : JSON.parse(erro)?.Mensagem || erro)
+            }
+            return await response.json()
+        } catch (error) {
+            if (error.name === 'AbortError') throw error
+            if (error instanceof TypeError || error instanceof SyntaxError)
+                throw new Error("Servidor indisponível.")
+            throw error
+        }
+    }
+
 }
