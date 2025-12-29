@@ -35,6 +35,12 @@ export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
             }
         }
 
+        const emailRegex = /^(?=.{1,64}@)[A-Za-z0-9._-]+@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/
+
+        if (!emailRegex.test(email)) {
+            return setFeedback({type: 'info', mensagem: 'Por favor, digite um email válido.'})
+        }
+
         if (!perfis || perfis.length === 0) {
             return setFeedback({type: 'info', mensagem: 'Adicione pelo menos um perfil ao usuário.'})
         }
@@ -72,7 +78,6 @@ export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
                     }}
                     required
                     maxLength={130}
-                    pattern={"^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$"}
                     onInvalid={e => e.target.setCustomValidity('Por favor, digite um email válido.')}
                 />
 
