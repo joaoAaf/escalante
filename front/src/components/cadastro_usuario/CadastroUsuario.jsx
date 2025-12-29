@@ -5,23 +5,15 @@ import Styles from './styles.module.css'
 import UsuarioClient from '../../clients/UsuarioClient'
 import {GlobalContext} from '../../context/GlobalContext'
 import RespostaCadastroUsuario from './resposta_cadastro/RespostaCadastroUsuario.jsx'
+import InputEmail from "../input_email/InputEmail.jsx";
+import InputPerfis from "../input_perfis/InputPerfis.jsx";
 
 export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
     const {token, setFeedback} = useContext(GlobalContext)
     const [email, setEmail] = useState('')
-    const [perfilSelect, setPerfilSelect] = useState('')
     const [perfis, setPerfis] = useState([])
     const [usuarioCriado, setUsuarioCriado] = useState(null)
     const [abrirResultado, setAbrirResultado] = useState(false)
-
-    const adicionarPerfil = () => {
-        if (!perfilSelect) return setFeedback({type: 'info', mensagem: 'Selecione um perfil para adicionar.'})
-        if (perfis.includes(perfilSelect)) return setFeedback({type: 'info', mensagem: 'Perfil já adicionado.'})
-        setPerfis([...perfis, perfilSelect])
-        setPerfilSelect('')
-    }
-
-    const removerPerfil = perfil => setPerfis(perfis.filter(p => p !== perfil))
 
     const cadastrar = async evento => {
         evento.preventDefault()
@@ -35,10 +27,8 @@ export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
             }
         }
 
-        const emailRegex = /^(?=.{1,64}@)[A-Za-z0-9._-]+@[^-][A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*(\.[A-Za-z]{2,})$/
-
-        if (!emailRegex.test(email)) {
-            return setFeedback({type: 'info', mensagem: 'Por favor, digite um email válido.'})
+        if (!email) {
+            return setFeedback({type: 'info', mensagem: 'O campo de email é obrigatório.'})
         }
 
         if (!perfis || perfis.length === 0) {
@@ -52,7 +42,6 @@ export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
             setUsuarios(prev => [...(prev || []), usuarioSalvo])
             setEmail('')
             setPerfis([])
-            setPerfilSelect('')
             fechar()
             setUsuarioCriado(usuarioSalvo)
             setAbrirResultado(true)
@@ -68,45 +57,9 @@ export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
         <Modal abrir={abrir} fechar={fechar} titulo="Cadastrar Usuário">
             <form onSubmit={cadastrar} className={Styles.CadastroUsuario} noValidate>
 
-                <label>Email:</label>
-                <input
-                    type="email"
-                    value={email}
-                    onChange={e => {
-                        e.target.setCustomValidity('');
-                        setEmail(e.target.value)
-                    }}
-                    required
-                    maxLength={130}
-                    onInvalid={e => e.target.setCustomValidity('Por favor, digite um email válido.')}
-                />
+                <InputEmail email={email} setEmail={setEmail} />
 
-                <label>Perfis selecionados:</label>
-
-                <div className={Styles.perfilSelect}>
-                    <select
-                        value={perfilSelect}
-                        onChange={e => {
-                            e.target.setCustomValidity('');
-                            setPerfilSelect(e.target.value)
-                        }}
-                    >
-                        <option value="" disabled>Selecione o Perfil</option>
-                        <option>ADMIN</option>
-                        <option>ESCALANTE</option>
-                    </select>
-                    <button type="button" onClick={adicionarPerfil}>Adicionar</button>
-                </div>
-
-                <div className={Styles.perfis}>
-                    {perfis.map(p => (
-                        <span key={p}>
-                        {p}
-                            <button type="button" className={Styles.clearBtn}
-                                    onClick={() => removerPerfil(p)}>x</button>
-                    </span>))}
-                </div>
-                <input type="text" readOnly value={perfis.join(', ')} hidden/>
+                <InputPerfis perfis={perfis} setPerfis={setPerfis} />
 
                 <BotoesModal
                     typeConfirmar="submit"

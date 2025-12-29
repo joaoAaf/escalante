@@ -2,7 +2,7 @@ import {useContext, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
 import {GlobalContext} from '../../context/GlobalContext'
 import LoginClient from "../../clients/LoginClient.js";
-import PaginaAutenticacao from '../../components/pagina-autenticacao/PaginaAutenticacao'
+import PaginaAutenticacao from '../../components/pagina_autenticacao/PaginaAutenticacao'
 
 export default function Login() {
     const navigate = useNavigate()
