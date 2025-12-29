@@ -69,4 +69,25 @@ export default class UsuarioClient {
         }
     }
 
+    static async deletarUsuario(token, username, signal) {
+        try {
+            const response = await fetch(`${this.baseUrl}/${encodeURIComponent(username)}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                signal
+            })
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? 'Não foi possível deletar o usuário.' : JSON.parse(erro)?.Mensagem || erro)
+            }
+        } catch (error) {
+            if (error.name === 'AbortError') throw error
+            if (error instanceof TypeError || error instanceof SyntaxError)
+                throw new Error("Servidor indisponível.")
+            throw error
+        }
+    }
+
 }

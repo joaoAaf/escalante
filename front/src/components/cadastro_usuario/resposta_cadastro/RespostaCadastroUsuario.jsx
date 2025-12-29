@@ -1,7 +1,7 @@
-import Modal from '../modal/Modal'
+import Modal from '../../modal/Modal.jsx'
 import Styles from './styles.module.css'
 
-export default function ResultadoCadastroUsuario({ abrir, fechar, usuario }) {
+export default function RespostaCadastroUsuario({ abrir, fechar, usuario }) {
   if (!usuario) return null
   const { username, perfis, senhaGerada } = usuario
   return (

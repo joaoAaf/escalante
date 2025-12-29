@@ -6,7 +6,7 @@ import Delete from './assets/delete.png'
 import Styles from './styles.module.css'
 import { formatarData } from '../../utils/formatarData'
 
-export default function BotaoRemover({ tabela, setTabela, id, idKey, campos }) {
+export default function BotaoRemover({ tabela, setTabela, id, idKey, campos, apiRemover }) {
 
     const { setFeedback } = useContext(GlobalContext)
     const [statusModal, setStatusModal] = useState(false)
@@ -40,10 +40,19 @@ export default function BotaoRemover({ tabela, setTabela, id, idKey, campos }) {
         setStatusModal(true)
     }
 
-    const removerItem = () => {
+    const removerItem = async () => {
+        setStatusModal(false)
+        if (apiRemover) {
+            try {
+                await apiRemover(id)
+            } catch (error) {
+                if (error.name === 'AbortError') return
+                setFeedback({ type: 'error', mensagem: error.message })
+                return
+            }
+        }
         const novaTabela = (tabela || []).filter(item => String(item?.[idKey]) !== String(id))
         setTabela(novaTabela)
-        setStatusModal(false)
         setFeedback({ type: 'success', mensagem: 'Item removido com sucesso.' })
     }
 

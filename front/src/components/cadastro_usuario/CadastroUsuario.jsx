@@ -4,7 +4,7 @@ import BotoesModal from '../modal/BotoesModal'
 import Styles from './styles.module.css'
 import UsuarioClient from '../../clients/UsuarioClient'
 import {GlobalContext} from '../../context/GlobalContext'
-import ResultadoCadastroUsuario from '../resultado_cadastro_usuario/ResultadoCadastroUsuario'
+import RespostaCadastroUsuario from './resposta_cadastro/RespostaCadastroUsuario.jsx'
 
 export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
     const {token, setFeedback} = useContext(GlobalContext)
@@ -111,7 +111,7 @@ export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
             </form>
         </Modal>
 
-        <ResultadoCadastroUsuario abrir={abrirResultado} fechar={() => { setAbrirResultado(false); setUsuarioCriado(null); }} usuario={usuarioCriado} />
+        <RespostaCadastroUsuario abrir={abrirResultado} fechar={() => { setAbrirResultado(false); setUsuarioCriado(null); }} usuario={usuarioCriado} />
         </>
     )
 }

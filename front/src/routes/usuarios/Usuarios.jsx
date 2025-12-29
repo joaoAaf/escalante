@@ -65,11 +65,26 @@ export default function Usuarios() {
                             id={usuario.username}
                             idKey={'username'}
                             campos={["Email", "Perfil"]}
+                            apiRemover={removerUsuario}
                         />
                     </td>
                 </tr>
             )
         })
+    }
+
+    const removerUsuario = username => {
+
+        const controller = criarAbortController()
+
+        return UsuarioClient.deletarUsuario(token, username, controller.signal)
+            .catch(error => {
+                return Promise.reject(error)
+            })
+            .finally(() => {
+                if (abortControllerRef.current === controller)
+                    abortControllerRef.current = null
+            })
     }
 
     return (
