@@ -55,3 +55,16 @@
     font-weight: bold;
 }
 
+.dadosUsuario {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+
+.edit img {
+    vertical-align: middle;
+    width: 32px;
+    height: 32px;
+}

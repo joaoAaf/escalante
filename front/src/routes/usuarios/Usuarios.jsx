@@ -4,10 +4,11 @@ import BotaoRemover from '../../components/botao_remover/BotaoRemover'
 import {GlobalContext} from "../../context/GlobalContext.jsx";
 import UsuarioClient from "../../clients/UsuarioClient.js";
 import CadastroUsuario from '../../components/cadastro_usuario/CadastroUsuario'
+import Edit from './assets/edit.png'
 
 export default function Usuarios() {
 
-    const { token, setFeedback } = useContext(GlobalContext)
+    const {token, setFeedback} = useContext(GlobalContext)
     const [usuarios, setUsuarios] = useState([])
     const [abrirCadastro, setAbrirCadastro] = useState(false)
 
@@ -37,7 +38,7 @@ export default function Usuarios() {
             })
             .catch(error => {
                 if (error.name === 'AbortError') return
-                setFeedback({ type: 'error', mensagem: error.message })
+                setFeedback({type: 'error', mensagem: error.message})
             })
             .finally(() => {
                 if (abortControllerRef.current === controller)
@@ -56,8 +57,30 @@ export default function Usuarios() {
         return usuarios.map(usuario => {
             return (
                 <tr key={usuario.username}>
-                    <td>{usuario.username}</td>
-                    <td>{usuario.perfis.join(' ')}</td>
+                    <td>
+                        <span className={Styles.dadosUsuario}>
+                            {usuario.username}
+                            <a
+                                href="#"
+                                onClick={e => e}
+                                className={Styles.edit}
+                            >
+                            <img src={Edit} alt="Editar Email"/>
+                            </a>
+                        </span>
+                    </td>
+                    <td>
+                        <span className={Styles.dadosUsuario}>
+                            {usuario.perfis.join(', ')}
+                            <a
+                                href="#"
+                                onClick={e => e}
+                                className={Styles.edit}
+                            >
+                                <img src={Edit} alt="Editar Perfil"/>
+                            </a>
+                        </span>
+                    </td>
                     <td>
                         <BotaoRemover
                             tabela={usuarios}
@@ -96,18 +119,18 @@ export default function Usuarios() {
             </div>
             <table className={Styles.table}>
                 <thead>
-                    <tr>
-                        <th>EMAIL</th>
-                        <th>PERFIL</th>
-                        <th>AÇÕES</th>
-                    </tr>
+                <tr>
+                    <th>EMAIL</th>
+                    <th>PERFIL</th>
+                    <th>AÇÕES</th>
+                </tr>
                 </thead>
                 <tbody>
-                    {tabelaUsuarios()}
+                {tabelaUsuarios()}
                 </tbody>
             </table>
 
-            <CadastroUsuario abrir={abrirCadastro} fechar={() => setAbrirCadastro(false)} setUsuarios={setUsuarios} />
+            <CadastroUsuario abrir={abrirCadastro} fechar={() => setAbrirCadastro(false)} setUsuarios={setUsuarios}/>
         </div>
     )
 }
