@@ -4,7 +4,7 @@ import BotaoRemover from '../../components/botao_remover/BotaoRemover'
 import {GlobalContext} from "../../context/GlobalContext.jsx";
 import UsuarioClient from "../../clients/UsuarioClient.js";
 import CadastroUsuario from '../../components/cadastro_usuario/CadastroUsuario'
-import Edit from './assets/edit.png'
+import AtualizacaoPerfis from "../../components/atualizacao_perfis/AtualizacaoPerfis.jsx";
 
 export default function Usuarios() {
 
@@ -57,28 +57,16 @@ export default function Usuarios() {
         return usuarios.map(usuario => {
             return (
                 <tr key={usuario.username}>
-                    <td>
-                        <span className={Styles.dadosUsuario}>
-                            {usuario.username}
-                            <a
-                                href="#"
-                                onClick={e => e}
-                                className={Styles.edit}
-                            >
-                            <img src={Edit} alt="Editar Email"/>
-                            </a>
-                        </span>
-                    </td>
+                    <td>{usuario.username}</td>
                     <td>
                         <span className={Styles.dadosUsuario}>
                             {usuario.perfis.join(', ')}
-                            <a
-                                href="#"
-                                onClick={e => e}
-                                className={Styles.edit}
-                            >
-                                <img src={Edit} alt="Editar Perfil"/>
-                            </a>
+                            <AtualizacaoPerfis
+                                usuarios={usuarios}
+                                setUsuarios={setUsuarios}
+                                id={usuario.username}
+                                idKey={'username'}
+                            />
                         </span>
                     </td>
                     <td>

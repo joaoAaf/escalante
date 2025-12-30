@@ -90,4 +90,51 @@ export default class UsuarioClient {
         }
     }
 
+    static async adicionarPerfis(token, usuarioRequest, signal) {
+        try {
+            const response = await fetch(`${this.baseUrl}/perfis/adicionar`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(usuarioRequest),
+                signal
+            })
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? 'Não foi possível adicionar os perfis.' : JSON.parse(erro)?.Mensagem || erro)
+            }
+            return await response.json()
+        } catch (error) {
+            if (error.name === 'AbortError') throw error
+            if (error instanceof TypeError || error instanceof SyntaxError)
+                throw new Error("Servidor indisponível.")
+            throw error
+        }
+    }
+
+    static async removerPerfis(token, usuarioRequest, signal) {
+        try {
+            const response = await fetch(`${this.baseUrl}/perfis/remover`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(usuarioRequest),
+                signal
+            })
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? 'Não foi possível remover os perfis.' : JSON.parse(erro)?.Mensagem || erro)
+            }
+            return await response.json()
+        } catch (error) {
+            if (error.name === 'AbortError') throw error
+            if (error instanceof TypeError || error instanceof SyntaxError)
+                throw new Error("Servidor indisponível.")
+            throw error
+        }
+    }
 }
