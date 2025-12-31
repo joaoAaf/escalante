@@ -40,13 +40,6 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioResponse);
     }
 
-    @GetMapping("/atual")
-    public ResponseEntity<UsuarioResponse> obterUsuarioAtual(Authentication authentication) {
-        var username = authentication.getName();
-        var usuarioResponse = service.obterUsuarioPorUsername(username);
-        return ResponseEntity.ok(usuarioResponse);
-    }
-
     @GetMapping
     public ResponseEntity<List<UsuarioResponse>> listarUsuarios() {
         var usuarios = service.listarUsuarios();
