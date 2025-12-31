@@ -2,7 +2,7 @@ import Styles from './styles.module.css'
 import {GlobalContext} from "../../context/GlobalContext.jsx";
 import {useContext} from "react";
 
-export default function InputEmail({email, setEmail}) {
+export default function InputEmail({email, setEmail, label = 'Email:'}) {
 
     const {setFeedback} = useContext(GlobalContext)
 
@@ -17,7 +17,7 @@ export default function InputEmail({email, setEmail}) {
 
     return (
         <>
-            <label className={Styles.label}>Email:</label>
+            <label className={Styles.label}>{label}</label>
             <input
                 className={Styles.input}
                 type="email"
