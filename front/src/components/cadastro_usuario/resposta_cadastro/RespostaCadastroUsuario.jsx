@@ -6,7 +6,7 @@ export default function RespostaCadastroUsuario({ abrir, fechar, usuario }) {
   const { username, perfis, senhaGerada } = usuario
   return (
     <Modal abrir={abrir} fechar={fechar} titulo="Usuário Cadastrado">
-      <button className={Styles.close} onClick={fechar} aria-label="Fechar">×</button>
+      <button className={Styles.fechar} onClick={fechar} aria-label="Fechar">×</button>
       <p>Usuário: <strong>{username}</strong></p>
       <p>Perfis: <strong>{(perfis || []).join(', ')}</strong></p>
       {senhaGerada ? (

@@ -1,11 +1,23 @@
+.email {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
 .fechar {
   position: absolute;
-  right: 12px;
-  top: 8px;
-  background: transparent;
+  top: 10px;
+  right: 10px;
   border: none;
+  background: transparent;
   font-size: 22px;
-  color: #333;
+  line-height: 1;
+  cursor: pointer;
+  color: #888888;
+}
+
+.fechar:hover {
+  color: #555555;
 }
 
 .acoes {

@@ -27,9 +27,7 @@ export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
             }
         }
 
-        if (!email) {
-            return setFeedback({type: 'info', mensagem: 'O campo de email é obrigatório.'})
-        }
+        if (!email) return
 
         if (!perfis || perfis.length === 0) {
             return setFeedback({type: 'info', mensagem: 'Adicione pelo menos um perfil ao usuário.'})

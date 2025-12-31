@@ -70,7 +70,7 @@ export default function AtualizacaoPerfis({usuarios, setUsuarios, id, idKey}) {
             >
                 <img src={Edit} alt="Atualizar Perfis"/>
             </a>
-            <Modal abrir={statusModal} fechar={() => setStatusModal(false)} titulo="Confirmar Remoção">
+            <Modal abrir={statusModal} fechar={() => setStatusModal(false)} titulo="Atualizar Perfis">
                 <div className={Styles.formPerfis}>
                     <InputPerfis perfis={perfis} setPerfis={setPerfis}/>
                     <BotoesModal confirmar={atualizarPerfis} cancelar={() => setStatusModal(false)}/>

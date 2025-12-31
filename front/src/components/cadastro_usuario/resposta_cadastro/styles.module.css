@@ -7,11 +7,11 @@
   font-size: 22px;
   line-height: 1;
   cursor: pointer;
-    color: #888888;
+  color: #888888;
 }
 
 .fechar:hover {
-    color: #555555;
+  color: #555555;
 }
 
 .senhaBox {

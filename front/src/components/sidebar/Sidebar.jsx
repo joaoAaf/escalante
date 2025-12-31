@@ -25,10 +25,9 @@ export default function Sidebar() {
         if (!token) return null
         const claims = parseJwt(token)
         if (!claims) return null
-        const email = claims.sub || null
+        const username = claims.sub || null
         const perfis = claims.scope || []
-        const perfisArr = Array.isArray(perfis) ? perfis : (typeof perfis === 'string' ? [perfis] : [])
-        return {email, perfis: perfisArr}
+        return {username, perfis}
     }
 
     const usuario = usuarioDoToken()
@@ -73,7 +72,7 @@ export default function Sidebar() {
             </div>
 
             <PerfilUsuario abrir={abrirPerfil} fechar={() => setAbrirPerfil(false)} usuario={usuario}
-                           onAlterarSenha={navegarAlterarSenha}/>
+                           alterarSenha={navegarAlterarSenha}/>
         </div>
     )
 }
