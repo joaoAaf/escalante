@@ -1,0 +1,33 @@
+.fechar {
+  position: absolute;
+  right: 12px;
+  top: 8px;
+  background: transparent;
+  border: none;
+  font-size: 22px;
+  color: #333;
+}
+
+.acoes {
+  margin-top: 16px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.alterarSenha {
+  padding: 8px 20px;
+  background-color: tomato;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: normal;
+  color: #333;
+  font-size: 16px;
+  display: flex;
+  align-items: center;
+  margin-left: auto;
+}
+
+.alterarSenha:hover {
+  background-color: rgba(255, 99, 71, 0.625);
+}
