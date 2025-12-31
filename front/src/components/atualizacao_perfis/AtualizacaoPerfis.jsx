@@ -37,43 +37,28 @@ export default function AtualizacaoPerfis({usuarios, setUsuarios, id, idKey}) {
 
         const controller = criarAbortController()
 
-        if (perfis.length > usuario?.perfis.length) {
+        try {
+            let perfisAtualizados = usuario.perfis
 
-            const usuarioAtualizado = {...usuario, perfis: perfis.filter(p => !usuario.perfis.includes(p))}
+            if (perfis.length > usuario?.perfis.length) {
+                const usuarioAtualizado = {...usuario, perfis: perfis.filter(p => !usuario.perfis.includes(p))}
+                perfisAtualizados = await UsuarioClient.adicionarPerfis(token, usuarioAtualizado, controller.signal)
+            } else {
+                const usuarioAtualizado = {...usuario, perfis: usuario.perfis.filter(p => !perfis.includes(p))}
+                perfisAtualizados = await UsuarioClient.removerPerfis(token, usuarioAtualizado, controller.signal)
+            }
 
-            UsuarioClient.adicionarPerfis(token, usuarioAtualizado, controller.signal)
-                .then(perfis => usuario.perfis = perfis)
-                .catch(error => {
-                    if (error.name === 'AbortError') return
-                    setFeedback({type: 'error', mensagem: error.message})
-                })
-                .catch(error => {
-                    if (error.name === 'AbortError') return
-                    setFeedback({type: 'error', mensagem: error.message})
-                })
-                .finally(() => {
-                    if (abortControllerRef.current === controller)
-                        abortControllerRef.current = null
-                })
-        } else {
+            const usuariosAtualizados = usuarios.map(item => String(item?.[idKey]) === String(id) ? {...item, perfis: perfisAtualizados} : item)
+            setUsuarios(usuariosAtualizados)
+            setFeedback({type: 'success', mensagem: 'Perfis atualizados com sucesso.'})
 
-            const usuarioAtualizado = {...usuario, perfis: usuario.perfis.filter(p => !perfis.includes(p))}
-
-            UsuarioClient.removerPerfis(token, usuarioAtualizado, controller.signal)
-                .then(perfis => usuario.perfis = perfis)
-                .catch(error => {
-                    if (error.name === 'AbortError') return
-                    setFeedback({type: 'error', mensagem: error.message})
-                })
-                .finally(() => {
-                    if (abortControllerRef.current === controller)
-                        abortControllerRef.current = null
-                })
+        } catch (error) {
+            if (error.name === 'AbortError') return
+            setFeedback({type: 'error', mensagem: error.message})
+        } finally {
+            if (abortControllerRef.current === controller)
+                abortControllerRef.current = null
         }
-
-        const usuariosAtualizados = usuarios.map(item => String(item?.[idKey]) === String(id) ? usuario : item)
-        setUsuarios(usuariosAtualizados)
-        setFeedback({type: 'success', mensagem: 'Perfis atualizados com sucesso.'})
     }
 
     return (
