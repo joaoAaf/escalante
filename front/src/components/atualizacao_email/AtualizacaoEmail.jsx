@@ -69,7 +69,7 @@ export default function AtualizacaoEmail({email, setEmail}) {
                 <div className={Styles.formEmail}>
                     <InputEmail email={inputEmail} setEmail={setInputEmail}/>
                     <InputEmail email={inputConfirmacaoEmail} setEmail={setInputConfirmacaoEmail}
-                                label="Confirmação Email"/>
+                                label="Confirmação Email:"/>
                     <BotoesModal confirmar={atualizarEmail} cancelar={() => setStatusModal(false)}/>
                 </div>
             </Modal>

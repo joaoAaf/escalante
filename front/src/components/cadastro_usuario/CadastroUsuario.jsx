@@ -11,6 +11,7 @@ import InputPerfis from "../input_perfis/InputPerfis.jsx";
 export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
     const {token, setFeedback} = useContext(GlobalContext)
     const [email, setEmail] = useState('')
+    const [confirmacaoEmail, setConfirmacaoEmail] = useState('')
     const [perfis, setPerfis] = useState([])
     const [usuarioCriado, setUsuarioCriado] = useState(null)
     const [abrirResultado, setAbrirResultado] = useState(false)
@@ -27,11 +28,13 @@ export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
             }
         }
 
-        if (!email) return
+        if (!email || !confirmacaoEmail) return
 
-        if (!perfis || perfis.length === 0) {
+        if (email !== confirmacaoEmail)
+            return setFeedback({type: 'info', mensagem: 'Os emails não coincidem. Por favor, verifique.'})
+
+        if (!perfis || perfis.length === 0)
             return setFeedback({type: 'info', mensagem: 'Adicione pelo menos um perfil ao usuário.'})
-        }
 
         try {
             const controller = new AbortController()
@@ -56,6 +59,8 @@ export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
             <form onSubmit={cadastrar} className={Styles.CadastroUsuario} noValidate>
 
                 <InputEmail email={email} setEmail={setEmail} />
+
+                <InputEmail email={confirmacaoEmail} setEmail={setConfirmacaoEmail} label="Confirmação Email:" />
 
                 <InputPerfis perfis={perfis} setPerfis={setPerfis} />
 
