@@ -28,6 +28,7 @@ export default function InputEmail({email, setEmail, label = 'Email:'}) {
                 }}
                 onBlur={e => setEmail(validarEmail(e.target.value))}
                 required
+                placeholder="email@exemplo.com"
                 maxLength={130}
                 onInvalid={e => e.target.setCustomValidity('Por favor, digite um email válido.')}
             />

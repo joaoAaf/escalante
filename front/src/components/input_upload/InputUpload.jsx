@@ -106,7 +106,7 @@ export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, 
                 accept=".xlsx"
             />
 
-            <label htmlFor="input_upload" className={Styles.browse_btn}>Importar</label>
+            <label htmlFor="input_upload" className={Styles.browse_btn}>Selecionar</label>
 
             <span className={Styles.file_name}>{nomeArquivo}</span>
 
@@ -115,7 +115,7 @@ export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, 
                 onClick={enviarArquivo}
                 disabled={carregando}
             >
-                {carregando ? "Carregando..." : "Enviar/Processar"}
+                {carregando ? "Carregando..." : "Importar"}
             </button>
         </div>
     )

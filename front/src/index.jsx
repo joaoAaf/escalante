@@ -9,7 +9,7 @@ import Usuarios from './routes/usuarios/Usuarios'
 import {createBrowserRouter, RouterProvider} from 'react-router-dom'
 import {GlobalContextProvider} from './context/GlobalContext'
 import FeedbackToast from './components/feedback_toast/FeedbackToast'
-import AtualizacaoSenha from "./routes/alteracao-senha/AtualizacaoSenha.jsx";
+import AtualizacaoSenha from "./routes/atualizacao-senha/AtualizacaoSenha.jsx";
 
 const router = createBrowserRouter([
   {
