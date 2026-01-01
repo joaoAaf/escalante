@@ -3,10 +3,10 @@ export default class LoginClient {
     static baseUrl = '/api/login'
 
     static async login(dadosLogin, signal) {
-        const { email, password } = dadosLogin || {}
+        const { email, password, admin } = dadosLogin || {}
         try {
             const credentials = btoa(`${email}:${password}`)
-            const response = await fetch(`${this.baseUrl}`, {
+            const response = await fetch(`${this.baseUrl}?admin=${encodeURIComponent(admin)}`, {
                 method: 'POST',
                 headers: {
                     'Authorization': `Basic ${credentials}`

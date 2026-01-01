@@ -1,0 +1,7 @@
+.admin {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+    padding-top: 10px;
+    font-size: 14px;
+}
