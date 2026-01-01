@@ -1,4 +1,4 @@
-export default function parseJwt(token) {
+export default function extrairDadosJwt(token) {
     if (!token) return null
     try {
         const parts = token.split('.')

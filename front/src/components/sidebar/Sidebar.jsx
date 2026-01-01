@@ -6,7 +6,7 @@ import User from './assets/user.png'
 import {NavLink, useNavigate} from 'react-router-dom'
 import {useContext, useState} from 'react'
 import {GlobalContext} from '../../context/GlobalContext'
-import parseJwt from '../../utils/parseJwt'
+import extrairDadosJwt from '../../utils/extrairDadosJwt.js'
 import PerfilUsuario from '../perfil_usuario/PerfilUsuario.jsx'
 
 export default function Sidebar() {
@@ -23,7 +23,7 @@ export default function Sidebar() {
 
     const usuarioDoToken = () => {
         if (!token) return null
-        const claims = parseJwt(token)
+        const claims = extrairDadosJwt(token)
         if (!claims) return null
         const username = claims.sub || null
         const perfis = claims.scope || []
