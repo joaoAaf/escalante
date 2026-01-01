@@ -3,10 +3,10 @@ export default class UsuarioClient {
     static baseUrl = '/api/usuarios'
 
     static async atualizarPassword(dadosAtualizacao, signal) {
-        const {email, password, newPassword} = dadosAtualizacao || {}
+        const {email, password, novoPassword} = dadosAtualizacao || {}
         try {
             const credentials = btoa(`${email}:${password}`)
-            const response = await fetch(`${this.baseUrl}/password?novo=${encodeURIComponent(newPassword)}`, {
+            const response = await fetch(`${this.baseUrl}/password?novo=${encodeURIComponent(novoPassword)}`, {
                 method: 'PATCH',
                 headers: {
                     'Authorization': `Basic ${credentials}`

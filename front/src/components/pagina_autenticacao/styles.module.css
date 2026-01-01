@@ -17,7 +17,7 @@
 .title{
   font-size: 2rem;
   margin: 0 0 20px 0;
-  color: #7a1616;
+  color: #a22222;
   text-align: center;
 }
 
@@ -41,29 +41,21 @@
   font-size: 0.9rem;
 }
 
-.container form input,
-.container form textarea,
-.container form select{
-  padding: 10px 12px;
-  border-radius: 4px;
-  border: 1px solid #ddd;
-  font-size: 1rem;
-  box-sizing: border-box;
-}
-
-.container form input[type="submit"],
 .container form button{
   margin-top: 18px;
   padding: 10px 12px;
-  border-radius: 4px;
+  background-color: #a22222;
   border: none;
-  background: #7a1616;
-  color: white;
+  border-radius: 5px;
   cursor: pointer;
+  font-weight: normal;
+  color: white;
+  font-size: 16px;
+  align-items: center;
 }
 
 .container form button:hover{
-  background: #a22222;
+  background: #7a1616;
 }
 
 .container form button:disabled{
