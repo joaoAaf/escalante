@@ -8,6 +8,7 @@ import {useContext, useState} from 'react'
 import {GlobalContext} from '../../context/GlobalContext'
 import extrairDadosJwt from '../../utils/extrairDadosJwt.js'
 import PerfilUsuario from '../perfil_usuario/PerfilUsuario.jsx'
+import {obterPerfis} from '../../utils/gerenciadorRedirecionamento.js'
 
 export default function Sidebar() {
     const {token, setFeedback} = useContext(GlobalContext)
@@ -26,7 +27,7 @@ export default function Sidebar() {
         const claims = extrairDadosJwt(token)
         if (!claims) return null
         const username = claims.sub || null
-        const perfis = claims.scope || []
+        const perfis = obterPerfis(claims) || []
         return {username, perfis}
     }
 
@@ -34,37 +35,47 @@ export default function Sidebar() {
 
     const navegarAlterarSenha = () => {
         setAbrirPerfil(false)
-        navigate('/usuarios/password')
+        navigate('/password')
     }
+
+    const perfisUsuario = (usuario && usuario.perfis) || []
+    const isAdmin = perfisUsuario.includes('ADMIN')
+    const isEscalante = perfisUsuario.includes('ESCALANTE')
 
     return (
         <div className={Styles.sidebar}>
             <h1>Escalante</h1>
             <nav>
-                <NavLink
-                    to="/"
-                    title="Militares"
-                    className={({isActive}) => isActive ? Styles.active : ''}
-                >
-                    <img src={FireFighter} alt="Militares"/>
-                    <span>Militares</span>
-                </NavLink>
-                <NavLink
-                    to="/escala"
-                    title="Escala"
-                    className={({isActive}) => isActive ? Styles.active : ''}
-                >
-                    <img src={Notes} alt="Escala"/>
-                    <span>Escala</span>
-                </NavLink>
-                <NavLink
-                    to="/usuarios"
-                    title="Usuários"
-                    className={({isActive}) => isActive ? Styles.active : ''}
-                >
-                    <img src={Users} alt="Usuários"/>
-                    <span>Usuários</span>
-                </NavLink>
+                {!isAdmin && (
+                    <NavLink
+                        to="/militares"
+                        title="Militares"
+                        className={({isActive}) => isActive ? Styles.active : ''}
+                    >
+                        <img src={FireFighter} alt="Militares"/>
+                        <span>Militares</span>
+                    </NavLink>
+                )}
+                {!isAdmin && (
+                    <NavLink
+                        to="/escala"
+                        title="Escala"
+                        className={({isActive}) => isActive ? Styles.active : ''}
+                    >
+                        <img src={Notes} alt="Escala"/>
+                        <span>Escala</span>
+                    </NavLink>
+                )}
+                {!isEscalante && (
+                    <NavLink
+                        to="/usuarios"
+                        title="Usuários"
+                        className={({isActive}) => isActive ? Styles.active : ''}
+                    >
+                        <img src={Users} alt="Usuários"/>
+                        <span>Usuários</span>
+                    </NavLink>
+                )}
             </nav>
 
             <div className={Styles.userIconContainer} onClick={abrirModalPerfil} role="button" aria-label="Meu perfil">
