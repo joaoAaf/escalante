@@ -1,5 +1,5 @@
 import {useContext, useRef, useState} from 'react'
-import {GlobalContext} from '../../context/GlobalContext'
+import GlobalContext from '../../context/GlobalContext'
 import Modal from '../modal/Modal'
 import BotoesModal from '../modal/BotoesModal'
 import Edit from './assets/edit.png'

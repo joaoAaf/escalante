@@ -1,6 +1,6 @@
 import Styles from './styles.module.css'
 import {useContext, useEffect, useRef, useState} from 'react'
-import {GlobalContext} from '../../context/GlobalContext'
+import GlobalContext from '../../context/GlobalContext'
 
 export default function PaginaAutenticacao({children, onSubmit, submitButton, submitButtonDisabled}) {
     const {setFeedback} = useContext(GlobalContext)

@@ -1,13 +1,13 @@
-import { useContext, useEffect, useState } from 'react'
-import { GlobalContext } from '../../context/GlobalContext'
+import {useContext, useEffect, useState} from 'react'
+import GlobalContext from '../../context/GlobalContext'
 import ModalLargo from '../modal/ModalLargo.jsx'
 import BotoesModal from '../modal/BotoesModal'
 import TabelaMilitares from '../tabela_militares/TabelaMilitares'
 import MilitarClient from '../../clients/MilitarClient'
 import Styles from './styles.module.css'
 
-export default function CadastroListaMilitares({ abrir, fechar, militaresImportados, onSucesso }) {
-    const { token, setFeedback } = useContext(GlobalContext)
+export default function CadastroListaMilitares({abrir, fechar, militaresImportados, onSucesso}) {
+    const {token, setFeedback} = useContext(GlobalContext)
     const [salvando, setSalvando] = useState(false)
 
     const [listaEditavel, setListaEditavel] = useState([])
@@ -20,18 +20,18 @@ export default function CadastroListaMilitares({ abrir, fechar, militaresImporta
 
     const salvar = async () => {
         if (!podeSalvar) {
-            setFeedback({ type: 'info', mensagem: 'Não há militares para salvar.' })
+            setFeedback({type: 'info', mensagem: 'Não há militares para salvar.'})
             return
         }
 
         try {
             setSalvando(true)
             await MilitarClient.cadastrarListaMilitares(listaEditavel, token)
-            setFeedback({ type: 'success', mensagem: 'Militares cadastrados com sucesso.' })
+            setFeedback({type: 'success', mensagem: 'Militares cadastrados com sucesso.'})
             fechar()
             onSucesso?.()
         } catch (error) {
-            setFeedback({ type: 'error', mensagem: error.message })
+            setFeedback({type: 'error', mensagem: error.message})
         } finally {
             setSalvando(false)
         }
@@ -44,13 +44,12 @@ export default function CadastroListaMilitares({ abrir, fechar, militaresImporta
             </p>
 
             <div className={Styles.tabelaScroll}>
-                <TabelaMilitares tabela={listaEditavel} setTabela={setListaEditavel} />
+                <TabelaMilitares tabela={listaEditavel} setTabela={setListaEditavel}/>
             </div>
 
-            <BotoesModal confirmar={salvar} cancelar={fechar} textoConfirmar="Salvar" />
+            <BotoesModal confirmar={salvar} cancelar={fechar} textoConfirmar="Salvar"/>
 
             {salvando && <span className={Styles.status}>Salvando...</span>}
         </ModalLargo>
     )
 }
-

@@ -2,7 +2,7 @@ import Modal from '../modal/Modal.jsx'
 import Styles from './styles.module.css'
 import {useContext, useState} from "react";
 import {useNavigate} from 'react-router-dom'
-import {GlobalContext} from '../../context/GlobalContext'
+import GlobalContext from '../../context/GlobalContext'
 import AtualizacaoEmail from "../atualizacao_email/AtualizacaoEmail.jsx";
 
 export default function PerfilUsuario({abrir, fechar, usuario, alterarSenha}) {

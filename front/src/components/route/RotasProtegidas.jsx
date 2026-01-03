@@ -1,7 +1,7 @@
 import {useContext, useEffect, useState} from 'react'
 import {Navigate} from 'react-router-dom'
-import {GlobalContext} from '../../context/GlobalContext'
-import extrairDadosJwt from '../../utils/extrairDadosJwt.js'
+import GlobalContext from '../../context/GlobalContext'
+import extrairDadosJwt from '../../utils/extrairDadosJwt'
 import {obterPerfis, redirecionar} from '../../utils/gerenciadorRedirecionamento.js'
 
 export default function RotasProtegidas({perfisPermitidos = [], children}) {
@@ -42,4 +42,3 @@ export default function RotasProtegidas({perfisPermitidos = [], children}) {
     const {path} = redirecionar(token)
     return <Navigate to={path} replace/>
 }
-

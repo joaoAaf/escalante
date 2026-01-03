@@ -1,6 +1,6 @@
 import Styles from './styles.module.css'
-import { useEffect, useState, useCallback, useContext, useRef } from 'react'
-import { GlobalContext } from '../../context/GlobalContext'
+import {useCallback, useContext, useEffect, useRef, useState} from 'react'
+import GlobalContext from '../../context/GlobalContext'
 import BarraPesquisa from '../../components/barra_pesquisa/BarraPesquisa'
 import InputUpload from '../../components/input_upload/InputUpload'
 import TabelaMilitares from '../../components/tabela_militares/TabelaMilitares'
@@ -9,7 +9,7 @@ import CadastroListaMilitares from '../../components/cadastro_militares/Cadastro
 
 export default function Militares() {
 
-    const { militares, setMilitares, token, setFeedback, reload, setReload } = useContext(GlobalContext)
+    const {militares, setMilitares, token, setFeedback, reload, setReload} = useContext(GlobalContext)
 
     const [militaresFiltrados, setMilitaresFiltrados] = useState(null)
     const [ultimaPesquisa, setUltimaPesquisa] = useState(null)
@@ -20,9 +20,9 @@ export default function Militares() {
     const abortControllerRef = useRef(null)
 
     const camposPesquisa = [
-        { value: 'nome', label: 'Nome de Paz' },
-        { value: 'matricula', label: 'Matrícula' },
-        { value: 'cov', label: 'C.O.V.', disableInput: true }
+        {value: 'nome', label: 'Nome de Paz'},
+        {value: 'matricula', label: 'Matrícula'},
+        {value: 'cov', label: 'C.O.V.', disableInput: true}
     ]
 
     const normalize = v => String(v ?? '').toLowerCase()
@@ -46,7 +46,7 @@ export default function Militares() {
             .catch(error => {
                 if (error.name === 'AbortError') return
                 setMilitares([])
-                setFeedback?.({ type: 'error', mensagem: error.message })
+                setFeedback?.({type: 'error', mensagem: error.message})
             })
             .finally(() => {
                 setCarregando(false)
@@ -60,10 +60,10 @@ export default function Militares() {
         return () => abortControllerRef.current?.abort()
     }, [carregarMilitares, reload])
 
-    const gerenciarPesquisa = useCallback(({ campo, consulta }) => {
+    const gerenciarPesquisa = useCallback(({campo, consulta}) => {
         setUltimaPesquisa(pesquisa => {
             if (pesquisa && pesquisa.campo === campo && pesquisa.consulta === consulta) return pesquisa
-            return { campo, consulta }
+            return {campo, consulta}
         })
 
         const q = String(consulta ?? '').trim().toLowerCase()
@@ -106,7 +106,7 @@ export default function Militares() {
 
     const iniciarRevisaoImportacao = listaImportada => {
         if (!Array.isArray(listaImportada) || listaImportada.length === 0) {
-            setFeedback?.({ type: 'info', mensagem: 'A planilha não retornou militares para revisão.' })
+            setFeedback?.({type: 'info', mensagem: 'A planilha não retornou militares para revisão.'})
             return
         }
 
@@ -145,7 +145,7 @@ export default function Militares() {
             />
 
             {carregando && <p>Carregando militares...</p>}
-            <TabelaMilitares militaresTabela={militaresTabela} />
+            <TabelaMilitares militaresTabela={militaresTabela}/>
 
             <CadastroListaMilitares
                 abrir={abrirModalImportacao}

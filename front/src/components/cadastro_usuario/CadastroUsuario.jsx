@@ -3,7 +3,7 @@ import Modal from '../modal/Modal'
 import BotoesModal from '../modal/BotoesModal'
 import Styles from './styles.module.css'
 import UsuarioClient from '../../clients/UsuarioClient'
-import {GlobalContext} from '../../context/GlobalContext'
+import GlobalContext from '../../context/GlobalContext'
 import RespostaCadastroUsuario from './resposta_cadastro/RespostaCadastroUsuario.jsx'
 import InputEmail from "../input_email/InputEmail.jsx";
 import InputPerfis from "../input_perfis/InputPerfis.jsx";
@@ -55,24 +55,27 @@ export default function CadastroUsuario({abrir, fechar, setUsuarios}) {
 
     return (
         <>
-        <Modal abrir={abrir} fechar={fechar} titulo="Cadastrar Usuário">
-            <form onSubmit={cadastrar} className={Styles.CadastroUsuario} noValidate>
+            <Modal abrir={abrir} fechar={fechar} titulo="Cadastrar Usuário">
+                <form onSubmit={cadastrar} className={Styles.CadastroUsuario} noValidate>
 
-                <InputEmail email={email} setEmail={setEmail} />
+                    <InputEmail email={email} setEmail={setEmail}/>
 
-                <InputEmail email={confirmacaoEmail} setEmail={setConfirmacaoEmail} label="Confirmação Email:" />
+                    <InputEmail email={confirmacaoEmail} setEmail={setConfirmacaoEmail} label="Confirmação Email:"/>
 
-                <InputPerfis perfis={perfis} setPerfis={setPerfis} />
+                    <InputPerfis perfis={perfis} setPerfis={setPerfis}/>
 
-                <BotoesModal
-                    typeConfirmar="submit"
-                    cancelar={fechar}
-                />
+                    <BotoesModal
+                        typeConfirmar="submit"
+                        cancelar={fechar}
+                    />
 
-            </form>
-        </Modal>
+                </form>
+            </Modal>
 
-        <RespostaCadastroUsuario abrir={abrirResultado} fechar={() => { setAbrirResultado(false); setUsuarioCriado(null); }} usuario={usuarioCriado} />
+            <RespostaCadastroUsuario abrir={abrirResultado} fechar={() => {
+                setAbrirResultado(false);
+                setUsuarioCriado(null);
+            }} usuario={usuarioCriado}/>
         </>
     )
 }

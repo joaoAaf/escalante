@@ -1,5 +1,5 @@
 import {useContext, useRef, useState} from 'react'
-import {GlobalContext} from '../../context/GlobalContext'
+import GlobalContext from '../../context/GlobalContext'
 import Modal from '../modal/Modal'
 import BotoesModal from '../modal/BotoesModal'
 import Edit from './assets/edit.png'
@@ -48,7 +48,10 @@ export default function AtualizacaoPerfis({usuarios, setUsuarios, id, idKey}) {
                 perfisAtualizados = await UsuarioClient.removerPerfis(token, usuarioAtualizado, controller.signal)
             }
 
-            const usuariosAtualizados = usuarios.map(item => String(item?.[idKey]) === String(id) ? {...item, perfis: perfisAtualizados} : item)
+            const usuariosAtualizados =
+                usuarios.map(item => String(item?.[idKey]) === String(id) ? {
+                    ...item, perfis: perfisAtualizados
+                } : item)
             setUsuarios(usuariosAtualizados)
             setFeedback({type: 'success', mensagem: 'Perfis atualizados com sucesso.'})
 

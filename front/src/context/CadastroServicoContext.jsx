@@ -1,14 +1,16 @@
-import { createContext, useState } from 'react'
+import {createContext, useState} from 'react'
 
-export const CadastroServicoContext = createContext()
+const CadastroServicoContext = createContext()
 
-export const CadastroServicoContextProvider = ({ children }) => {
-    
+export const CadastroServicoContextProvider = ({children}) => {
+
     const [statusModal, setStatusModal] = useState(false)
 
     return (
-        <CadastroServicoContext.Provider value={{ statusModal, setStatusModal }}>
+        <CadastroServicoContext.Provider value={{statusModal, setStatusModal}}>
             {children}
         </CadastroServicoContext.Provider>
     )
 }
+
+export default CadastroServicoContext

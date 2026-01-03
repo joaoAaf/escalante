@@ -1,11 +1,11 @@
-import { useContext, useEffect, useRef, useState } from 'react'
-import { GlobalContext } from '../../context/GlobalContext'
 import Styles from './styles.module.css'
+import {useContext, useEffect, useRef, useState} from 'react'
+import GlobalContext from '../../context/GlobalContext'
 
-export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, setDados }) {
+export default function InputUpload({funcaoDownload, funcaoUpload, nomeModelo, setDados}) {
 
-    const { token, setFeedback } = useContext(GlobalContext)
-    
+    const {token, setFeedback} = useContext(GlobalContext)
+
     const [nomeArquivo, setNomeArquivo] = useState("Nenhuma seleção.")
     const [arquivo, setArquivo] = useState(null)
     const [carregando, setCarregando] = useState(false)
@@ -43,11 +43,11 @@ export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, 
             funcaoUpload(arquivo, token, controller.signal)
                 .then(dados => {
                     setDados(dados || [])
-                    setFeedback({ type: 'success', mensagem: 'Planilha importada com sucesso.' })
+                    setFeedback({type: 'success', mensagem: 'Planilha importada com sucesso.'})
                 })
                 .catch(error => {
                     if (error.name === 'AbortError') return
-                    setFeedback({ type: 'error', mensagem: error.message })
+                    setFeedback({type: 'error', mensagem: error.message})
                 })
                 .finally(() => {
                     setCarregando(false)
@@ -55,7 +55,7 @@ export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, 
                         abortControllerRef.current = null
                 })
         } else
-            setFeedback({ type: 'info', mensagem: 'Por favor, selecione um arquivo antes de enviar.' })
+            setFeedback({type: 'info', mensagem: 'Por favor, selecione um arquivo antes de enviar.'})
     }
 
     const baixarModelo = () => {
@@ -67,7 +67,7 @@ export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, 
             .then(arrayBuffer => {
                 if (arrayBuffer) {
                     const blob = new Blob([arrayBuffer],
-                        { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' })
+                        {type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'})
                     const url = URL.createObjectURL(blob)
                     const link = document.createElement('a')
                     link.href = url
@@ -75,11 +75,11 @@ export default function InputUpload({ funcaoDownload, funcaoUpload, nomeModelo, 
                     link.click()
                     URL.revokeObjectURL(url)
                 }
-                setFeedback({ type: 'success', mensagem: 'Download do modelo iniciado.' })
+                setFeedback({type: 'success', mensagem: 'Download do modelo iniciado.'})
             })
             .catch(error => {
                 if (error.name === 'AbortError') return
-                setFeedback({ type: 'error', mensagem: error.message })
+                setFeedback({type: 'error', mensagem: error.message})
             })
             .finally(() => {
                 setBaixando(false)

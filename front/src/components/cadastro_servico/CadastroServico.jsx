@@ -1,17 +1,16 @@
-import { useContext } from 'react'
-import { GlobalContext } from '../../context/GlobalContext'
-import { CadastroServicoContext } from '../../context/CadastroServicoContext'
+import {useContext, useState} from 'react'
+import GlobalContext from '../../context/GlobalContext'
+import CadastroServicoContext from '../../context/CadastroServicoContext'
 import Styles from './styles.module.css'
-import { useState } from 'react'
-import { ordenarEscala } from '../../utils/ordenacaoEscala'
-import { obterProximoId } from '../../utils/geradorIds'
+import {ordenarEscala} from '../../utils/ordenacaoEscala'
+import {obterProximoId} from '../../utils/geradorIds'
 import Modal from '../modal/Modal'
 import BotoesModal from '../modal/BotoesModal'
 
 export default function CadastroServico() {
 
-    const { escala, setEscala, setFeedback } = useContext(GlobalContext)
-    const { statusModal, setStatusModal } = useContext(CadastroServicoContext)
+    const {escala, setEscala, setFeedback} = useContext(GlobalContext)
+    const {statusModal, setStatusModal} = useContext(CadastroServicoContext)
 
     const servicoModelo = {
         dataServico: '',
@@ -33,12 +32,12 @@ export default function CadastroServico() {
         if (!form.checkValidity()) {
             for (const element of form.elements) {
                 if (element.willValidate && !element.checkValidity()) {
-                    return setFeedback({ type: 'info', mensagem: element.validationMessage })
+                    return setFeedback({type: 'info', mensagem: element.validationMessage})
                 }
             }
         }
 
-        const servicoComId = { ...servico, id: obterProximoId(escala) }
+        const servicoComId = {...servico, id: obterProximoId(escala)}
         let novaEscala = [...(escala || []), servicoComId]
         novaEscala = ordenarEscala(novaEscala)
         setEscala(novaEscala)
@@ -65,7 +64,7 @@ export default function CadastroServico() {
                         value={servico.dataServico}
                         onChange={e => {
                             e.target.setCustomValidity("")
-                            setServico({ ...servico, dataServico: e.target.value })
+                            setServico({...servico, dataServico: e.target.value})
                         }}
                         required
                         onInvalid={e => e.target.setCustomValidity("Por favor, digite uma data válida.")}
@@ -78,7 +77,7 @@ export default function CadastroServico() {
                         value={servico.matricula}
                         onChange={e => {
                             e.target.setCustomValidity("")
-                            setServico({ ...servico, matricula: e.target.value })
+                            setServico({...servico, matricula: e.target.value})
                         }}
                         required
                         pattern="[A-Z0-9]{8,8}"
@@ -95,9 +94,9 @@ export default function CadastroServico() {
                         value={servico.nomePaz}
                         onChange={e => {
                             e.target.setCustomValidity("")
-                            setServico({ ...servico, nomePaz: converterMaiusculas(e.target.value) })
+                            setServico({...servico, nomePaz: converterMaiusculas(e.target.value)})
                         }}
-                        onBlur={e => setServico({ ...servico, nomePaz: removerEspacosExtras(e.target.value) })}
+                        onBlur={e => setServico({...servico, nomePaz: removerEspacosExtras(e.target.value)})}
                         required
                         pattern="(?=.*[a-zA-ZáàâãéèêíóôõúçÁÀÂÃÉÈÊÍÓÔÕÚÇ])[a-zA-ZáàâãéèêíóôõúçÁÀÂÃÉÈÊÍÓÔÕÚÇ ]{3,20}"
                         title="O nome do militar deve conter apenas letras e ter entre 3 e 20 caracteres."
@@ -112,7 +111,7 @@ export default function CadastroServico() {
                         value={servico.patente}
                         onChange={e => {
                             e.target.setCustomValidity("")
-                            setServico({ ...servico, patente: e.target.value })
+                            setServico({...servico, patente: e.target.value})
                         }}
                         required
                         onInvalid={e => e.target.setCustomValidity("Por favor, selecione um posto ou graduação.")}
@@ -132,7 +131,7 @@ export default function CadastroServico() {
                         value={servico.antiguidade}
                         onChange={e => {
                             e.target.setCustomValidity("")
-                            setServico({ ...servico, antiguidade: e.target.value })
+                            setServico({...servico, antiguidade: e.target.value})
                         }}
                         required
                         min="1"
@@ -148,7 +147,7 @@ export default function CadastroServico() {
                         value={servico.funcao}
                         onChange={e => {
                             e.target.setCustomValidity("")
-                            setServico({ ...servico, funcao: e.target.value })
+                            setServico({...servico, funcao: e.target.value})
                         }}
                         required
                         onInvalid={e => e.target.setCustomValidity("Por favor, selecione uma função.")}
@@ -168,7 +167,7 @@ export default function CadastroServico() {
                         value={servico.folga}
                         onChange={e => {
                             e.target.setCustomValidity("")
-                            setServico({ ...servico, folga: e.target.value })
+                            setServico({...servico, folga: e.target.value})
                         }}
                         required
                         min="1"

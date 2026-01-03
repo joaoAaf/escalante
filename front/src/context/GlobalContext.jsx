@@ -1,10 +1,10 @@
 import {createContext, useState} from 'react'
 import {useLocalStorage} from '../hooks/useLocalStorage'
 
-export const GlobalContext = createContext()
+const GlobalContext = createContext()
 
-export const GlobalContextProvider = ({ children }) => {
-    
+export const GlobalContextProvider = ({children}) => {
+
     const [escala, setEscala] = useLocalStorage('escala')
     const [militares, setMilitares] = useState([])
     const [token, setToken] = useLocalStorage('token')
@@ -28,3 +28,5 @@ export const GlobalContextProvider = ({ children }) => {
         </GlobalContext.Provider>
     )
 }
+
+export default GlobalContext

@@ -1,7 +1,7 @@
 import Styles from './styles.module.css'
 import {useContext, useEffect, useRef, useState} from 'react'
 import BotaoRemover from '../../components/botao_remover/BotaoRemover'
-import {GlobalContext} from "../../context/GlobalContext.jsx";
+import GlobalContext from '../../context/GlobalContext.jsx';
 import UsuarioClient from "../../clients/UsuarioClient.js";
 import CadastroUsuario from '../../components/cadastro_usuario/CadastroUsuario'
 import AtualizacaoPerfis from "../../components/atualizacao_perfis/AtualizacaoPerfis.jsx";

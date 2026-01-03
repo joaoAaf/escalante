@@ -1,6 +1,6 @@
 import {useContext, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
-import {GlobalContext} from '../../context/GlobalContext'
+import GlobalContext from '../../context/GlobalContext'
 import LoginClient from "../../clients/LoginClient.js"
 import PaginaAutenticacao from '../../components/pagina_autenticacao/PaginaAutenticacao'
 import InputEmail from "../../components/input_email/InputEmail.jsx"

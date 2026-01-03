@@ -1,10 +1,10 @@
-import { useContext } from 'react'
-import { GlobalContext } from '../../context/GlobalContext'
 import Styles from './styles.module.css'
+import {useContext} from 'react'
+import GlobalContext from '../../context/GlobalContext'
 import BotaoRemover from '../botao_remover/BotaoRemover'
-import { formatarData } from '../../utils/formatarData'
+import {formatarData} from '../../utils/formatarData'
 
-export default function TabelaMilitares({ militaresTabela, tabela, setTabela }) {
+export default function TabelaMilitares({militaresTabela, tabela, setTabela}) {
 
     const ctx = useContext(GlobalContext)
 
@@ -56,7 +56,7 @@ export default function TabelaMilitares({ militaresTabela, tabela, setTabela }) 
     }
 
     const listarDadosMilitar = militar => {
-        const militarFormatado = { ...militar, nascimento: formatarData(militar.nascimento) }
+        const militarFormatado = {...militar, nascimento: formatarData(militar.nascimento)}
         return Object.keys(militarFormatado).map((campo, index) => militarFormatado[campo] !== militar.cov ? (
             <td key={index}>{militarFormatado[campo] ?? "-"}</td>
         ) : (
@@ -76,7 +76,7 @@ export default function TabelaMilitares({ militaresTabela, tabela, setTabela }) 
         if (typeof sourceSetTabela !== 'function') return
         sourceSetTabela(prev => (prev || []).map(militar => {
             if (militar.matricula === matricula)
-                return { ...militar, cov: !militar.cov }
+                return {...militar, cov: !militar.cov}
             return militar
         }))
     }
@@ -84,10 +84,10 @@ export default function TabelaMilitares({ militaresTabela, tabela, setTabela }) 
     return (
         <table className={Styles.table}>
             <thead>
-                {criarCabecalho()}
+            {criarCabecalho()}
             </thead>
             <tbody>
-                {listarMilitares()}
+            {listarMilitares()}
             </tbody>
         </table>
     )

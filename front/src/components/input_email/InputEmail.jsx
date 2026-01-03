@@ -1,5 +1,5 @@
 import Styles from './styles.module.css'
-import {GlobalContext} from "../../context/GlobalContext.jsx";
+import GlobalContext from "../../context/GlobalContext.jsx";
 import {useContext} from "react";
 
 export default function InputEmail({email, setEmail, label = 'Email:'}) {

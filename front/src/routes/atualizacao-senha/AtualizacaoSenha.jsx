@@ -1,6 +1,6 @@
 import {useContext, useState} from 'react'
 import {useNavigate} from 'react-router-dom'
-import {GlobalContext} from '../../context/GlobalContext'
+import GlobalContext from '../../context/GlobalContext'
 import UsuarioClient from "../../clients/UsuarioClient.js";
 import PaginaAutenticacao from '../../components/pagina_autenticacao/PaginaAutenticacao'
 import InputSenha from "../../components/input_senha/InputSenha.jsx";
