@@ -1,8 +1,8 @@
 import {useContext, useEffect, useRef, useState} from 'react'
 import GlobalContext from '../../context/GlobalContext'
 import CadastroServicoContext from '../../context/CadastroServicoContext'
-import Styles from './styles.module.css'
 import EscalaClient from '../../clients/EscalaClient'
+import Acoes from "./Acoes.jsx";
 
 export default function AcoesEscala() {
 
@@ -66,17 +66,14 @@ export default function AcoesEscala() {
     }
 
     return (
-        <div className={Styles.acoesEscala}>
-            <h3>Ações para Escala Criada</h3>
-            <div>
-                <button onClick={() => setStatusModal(true)}>Adicionar Serviço</button>
-                <button
-                    onClick={() => exportarEscalaXLSX(escala)}
-                    disabled={exportandoEscala}
-                >
-                    {exportandoEscala ? "Exportando..." : "Exportar Escala"}
-                </button>
-            </div>
-        </div>
+        <Acoes titulo="Ações para Tabela da Escala">
+            <button onClick={() => setStatusModal(true)}>Adicionar Serviço</button>
+            <button
+                onClick={() => exportarEscalaXLSX(escala)}
+                disabled={exportandoEscala}
+            >
+                {exportandoEscala ? "Exportando..." : "Exportar Escala"}
+            </button>
+        </Acoes>
     )
 }

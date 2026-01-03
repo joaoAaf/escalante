@@ -5,7 +5,7 @@ import {CadastroServicoContextProvider} from '../../context/CadastroServicoConte
 import BarraPesquisa from '../../components/barra_pesquisa/BarraPesquisa'
 import TabelaEscala from '../../components/tabela_escala/TabelaEscala'
 import CadastroServico from '../../components/cadastro_servico/CadastroServico'
-import AcoesEscala from '../../components/acoes_escala/AcoesEscala'
+import AcoesEscala from '../../components/acoes/AcoesEscala'
 import EscalaClient from '../../clients/EscalaClient'
 import InputUpload from '../../components/input_upload/InputUpload'
 import FormCriarEscala from '../../components/form_criar_escala/FormCriarEscala'
