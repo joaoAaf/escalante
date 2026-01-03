@@ -6,6 +6,7 @@ import InputUpload from '../../components/input_upload/InputUpload'
 import TabelaMilitares from '../../components/tabela_militares/TabelaMilitares'
 import MilitarClient from '../../clients/MilitarClient'
 import CadastroListaMilitares from '../../components/cadastro_militares/CadastroListaMilitares.jsx'
+import AcoesMilitares from "../../components/acoes/AcoesMilitares.jsx";
 
 export default function Militares() {
 
@@ -137,6 +138,8 @@ export default function Militares() {
                     setDados={iniciarRevisaoImportacao}
                 />
             </div>
+
+            <AcoesMilitares/>
 
             <BarraPesquisa
                 campos={camposPesquisa}
