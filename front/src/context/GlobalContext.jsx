@@ -6,8 +6,9 @@ export const GlobalContext = createContext()
 export const GlobalContextProvider = ({ children }) => {
     
     const [escala, setEscala] = useLocalStorage('escala')
-    const [militares, setMilitares] = useLocalStorage('militares')
+    const [militares, setMilitares] = useState([])
     const [token, setToken] = useLocalStorage('token')
+    const [reload, setReload] = useState(true)
     const [feedback, setFeedback] = useState(null)
 
     return (
@@ -18,6 +19,8 @@ export const GlobalContextProvider = ({ children }) => {
             setMilitares,
             token,
             setToken,
+            reload,
+            setReload,
             feedback,
             setFeedback
         }}>

@@ -9,12 +9,11 @@ import CadastroListaMilitares from '../../components/cadastro_militares/Cadastro
 
 export default function Militares() {
 
-    const { militares, setMilitares, token, setFeedback } = useContext(GlobalContext)
+    const { militares, setMilitares, token, setFeedback, reload, setReload } = useContext(GlobalContext)
 
     const [militaresFiltrados, setMilitaresFiltrados] = useState(null)
     const [ultimaPesquisa, setUltimaPesquisa] = useState(null)
     const [carregando, setCarregando] = useState(false)
-
     const [abrirModalImportacao, setAbrirModalImportacao] = useState(false)
     const [militaresImportados, setMilitaresImportados] = useState(null)
 
@@ -42,6 +41,7 @@ export default function Militares() {
         MilitarClient.listarMilitares(token, controller.signal)
             .then(lista => {
                 setMilitares(Array.isArray(lista) ? lista : [])
+                setReload(false)
             })
             .catch(error => {
                 if (error.name === 'AbortError') return
@@ -53,12 +53,12 @@ export default function Militares() {
                 if (abortControllerRef.current === controller)
                     abortControllerRef.current = null
             })
-    }, [token, setMilitares, setFeedback])
+    }, [token, setMilitares, setReload, setFeedback])
 
     useEffect(() => {
-        carregarMilitares()
+        if (reload) carregarMilitares()
         return () => abortControllerRef.current?.abort()
-    }, [carregarMilitares])
+    }, [carregarMilitares, reload])
 
     const gerenciarPesquisa = useCallback(({ campo, consulta }) => {
         setUltimaPesquisa(pesquisa => {
