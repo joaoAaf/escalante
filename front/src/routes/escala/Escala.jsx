@@ -1,10 +1,8 @@
 import Styles from './styles.module.css'
 import {useCallback, useContext, useEffect, useState} from 'react'
 import GlobalContext from '../../context/GlobalContext'
-import {CadastroServicoContextProvider} from '../../context/CadastroServicoContext'
 import BarraPesquisa from '../../components/barra_pesquisa/BarraPesquisa'
 import TabelaEscala from '../../components/tabela_escala/TabelaEscala'
-import CadastroServico from '../../components/cadastro/CadastroServico'
 import AcoesEscala from '../../components/acoes/AcoesEscala'
 import EscalaClient from '../../clients/EscalaClient'
 import InputUpload from '../../components/input_upload/InputUpload'
@@ -102,10 +100,7 @@ export default function Escala() {
                 />
             </div>
             <FormCriarEscala servicosAnteriores={servicosAnteriores}/>
-            <CadastroServicoContextProvider>
-                <AcoesEscala/>
-                <CadastroServico/>
-            </CadastroServicoContextProvider>
+            <AcoesEscala/>
             <BarraPesquisa
                 campos={camposPesquisa}
                 placeholder="Pesquisar na escala..."

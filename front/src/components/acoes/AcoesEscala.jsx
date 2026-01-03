@@ -1,13 +1,13 @@
 import {useContext, useEffect, useRef, useState} from 'react'
 import GlobalContext from '../../context/GlobalContext'
-import CadastroServicoContext from '../../context/CadastroServicoContext'
 import EscalaClient from '../../clients/EscalaClient'
 import Acoes from "./Acoes.jsx";
+import CadastroServico from "../cadastro/CadastroServico.jsx";
 
 export default function AcoesEscala() {
 
     const {token, escala, setFeedback} = useContext(GlobalContext)
-    const {setStatusModal} = useContext(CadastroServicoContext)
+    const [abrirCadastro, setAbrirCadastro] = useState(false)
 
     const [exportandoEscala, setExportandoEscala] = useState(false)
 
@@ -66,14 +66,17 @@ export default function AcoesEscala() {
     }
 
     return (
-        <Acoes titulo="Ações para Tabela da Escala">
-            <button onClick={() => setStatusModal(true)}>Adicionar Serviço</button>
-            <button
-                onClick={() => exportarEscalaXLSX(escala)}
-                disabled={exportandoEscala}
-            >
-                {exportandoEscala ? "Exportando..." : "Exportar Escala"}
-            </button>
-        </Acoes>
+        <>
+            <Acoes titulo="Ações para Tabela da Escala">
+                <button onClick={() => setAbrirCadastro(true)}>Adicionar Serviço</button>
+                <button
+                    onClick={() => exportarEscalaXLSX(escala)}
+                    disabled={exportandoEscala}
+                >
+                    {exportandoEscala ? "Exportando..." : "Exportar Escala"}
+                </button>
+            </Acoes>
+            <CadastroServico abrir={abrirCadastro} fechar={() => setAbrirCadastro(false)}/>
+        </>
     )
 }

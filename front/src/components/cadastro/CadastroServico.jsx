@@ -1,16 +1,14 @@
 import {useContext, useState} from 'react'
 import GlobalContext from '../../context/GlobalContext'
-import CadastroServicoContext from '../../context/CadastroServicoContext'
 import Styles from './styles.module.css'
 import {ordenarEscala} from '../../utils/ordenacaoEscala'
 import {obterProximoId} from '../../utils/geradorIds'
 import Modal from '../modal/Modal'
 import BotoesModal from '../modal/BotoesModal'
 
-export default function CadastroServico() {
+export default function CadastroServico({abrir, fechar}) {
 
     const {escala, setEscala, setFeedback} = useContext(GlobalContext)
-    const {statusModal, setStatusModal} = useContext(CadastroServicoContext)
 
     const servicoModelo = {
         dataServico: '',
@@ -42,7 +40,7 @@ export default function CadastroServico() {
         novaEscala = ordenarEscala(novaEscala)
         setEscala(novaEscala)
         setServico(servicoModelo)
-        setStatusModal(false)
+        fechar()
     }
 
     const converterMaiusculas = nome => {
@@ -55,7 +53,7 @@ export default function CadastroServico() {
 
     return (
         <>
-            <Modal abrir={statusModal} fechar={() => setStatusModal(false)} titulo="Adicionar Serviço">
+            <Modal abrir={abrir} fechar={fechar} titulo="Adicionar Serviço">
                 <form onSubmit={cadastrarServico} className={Styles.cadastro} noValidate>
 
                     <label>Data do Serviço:</label>
@@ -179,7 +177,7 @@ export default function CadastroServico() {
 
                     <BotoesModal
                         typeConfirmar="submit"
-                        cancelar={() => setStatusModal(false)}
+                        cancelar={fechar}
                     />
 
                 </form>
