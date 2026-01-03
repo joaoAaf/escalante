@@ -10,7 +10,7 @@ export default function TabelaEscala({ escalaTabela }) {
 
     const campos = ["DATA", "MATRÍCULA", "MILITAR ESCALADO", "POST./GRAD.", "ANTIGUIDADE", "FUNÇÃO", "FOLGA"]
     
-    const criarCabeçalho = () => (
+    const criarCabecalho = () => (
         <tr>
             {campos.map(campo => (
                 <th key={campo}>{campo}</th>
@@ -23,7 +23,9 @@ export default function TabelaEscala({ escalaTabela }) {
         if (!militares || militares.length === 0)
             return (
                 <tr>
-                    <td colSpan="7">Vá para a aba <b>Militares</b> e importe a planilha de militares.</td>
+                    <td colSpan="7">
+                        Não há militares disponiveis. Vá para a aba <b>Militares</b> e importe ou cadastre os militares.
+                    </td>
                 </tr>
             )
         if (!escalaTabela || escalaTabela.length === 0)
@@ -132,7 +134,7 @@ export default function TabelaEscala({ escalaTabela }) {
     return (
         <table className={Styles.table}>
             <thead>
-                {criarCabeçalho()}
+                {criarCabecalho()}
             </thead>
             <tbody>
                 {listarEscala()}

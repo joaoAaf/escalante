@@ -50,7 +50,7 @@ export default function TabelaMilitares({ militaresTabela, tabela, setTabela }) 
             })
         ) : (
             <tr>
-                <td colSpan="8">Nenhum militar encontrado.</td>
+                <td colSpan="8">Nenhum militar encontrado. Importe ou cadastre os militares</td>
             </tr>
         )
     }
