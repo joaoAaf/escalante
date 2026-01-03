@@ -4,13 +4,21 @@ import Styles from './styles.module.css'
 import BotaoRemover from '../botao_remover/BotaoRemover'
 import { formatarData } from '../../utils/formatarData'
 
-export default function TabelaMilitares({ militaresTabela }) {
+export default function TabelaMilitares({ militaresTabela, tabela, setTabela }) {
 
-    const { militares, setMilitares } = useContext(GlobalContext)
+    const ctx = useContext(GlobalContext)
+
+    const sourceTabela = Array.isArray(tabela)
+        ? tabela
+        : Array.isArray(militaresTabela)
+            ? militaresTabela
+            : (Array.isArray(ctx?.militares) ? ctx.militares : [])
+
+    const sourceSetTabela = setTabela ?? ctx?.setMilitares
 
     const campos = ["ANTIGUIDADE", "MATRÍCULA", "POST./GRAD.", "NOME DE PAZ", "NASCIMENTO", "FOLGA ESPECIAL", "C.O.V."]
 
-    const criarCabeçalho = () => (
+    const criarCabecalho = () => (
         <tr>
             {campos.map(campo => (
                 <th key={campo}>{campo}</th>
@@ -20,34 +28,29 @@ export default function TabelaMilitares({ militaresTabela }) {
     )
 
     const listarMilitares = () => {
-        if (militaresTabela === null)
-            return (
-                <tr>
-                    <td colSpan="7">Importe a planilha para carregar os militares.</td>
-                </tr>
-            )
-        return militaresTabela.length > 0 ? (
-                militaresTabela.map((militar, index) => {
-                    const source = militares ?? militaresTabela
-                    const key = (militar?.matricula ?? '') || `m-${index}`
-                    return (
-                        <tr key={key}>
-                            {listarDadosMilitar(militar)}
-                            <td>
-                                <BotaoRemover
-                                    id={militar?.matricula}
-                                    idKey={'matricula'}
-                                    tabela={source}
-                                    setTabela={setMilitares}
-                                    campos={campos}
-                                />
-                            </td>
-                        </tr>
-                    )
-                })
+        const lista = sourceTabela
+
+        return lista.length > 0 ? (
+            lista.map((militar, index) => {
+                const key = (militar?.matricula ?? '') || `m-${index}`
+                return (
+                    <tr key={key}>
+                        {listarDadosMilitar(militar)}
+                        <td>
+                            <BotaoRemover
+                                id={militar?.matricula}
+                                idKey={'matricula'}
+                                tabela={lista}
+                                setTabela={sourceSetTabela}
+                                campos={campos}
+                            />
+                        </td>
+                    </tr>
+                )
+            })
         ) : (
             <tr>
-                <td colSpan="7">Nenhum militar encontrado. Importe a planilha.</td>
+                <td colSpan="8">Nenhum militar encontrado.</td>
             </tr>
         )
     }
@@ -69,18 +72,19 @@ export default function TabelaMilitares({ militaresTabela }) {
         />
     )
 
-    const alterarCov = matricula => setMilitares(
-        militares => militares.map(militar => {
+    const alterarCov = matricula => {
+        if (typeof sourceSetTabela !== 'function') return
+        sourceSetTabela(prev => (prev || []).map(militar => {
             if (militar.matricula === matricula)
                 return { ...militar, cov: !militar.cov }
             return militar
-        })
-    )
+        }))
+    }
 
     return (
         <table className={Styles.table}>
             <thead>
-                {criarCabeçalho()}
+                {criarCabecalho()}
             </thead>
             <tbody>
                 {listarMilitares()}

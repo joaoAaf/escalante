@@ -47,4 +47,54 @@ export default class MilitarClient {
             throw error
         }
     }
+
+    static async cadastrarListaMilitares(militares, token, signal) {
+        try {
+            const response = await fetch(`${this.baseUrl}`, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(militares || []),
+                signal
+            })
+
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? 'Não foi possivel cadastrar militares.' : JSON.parse(erro)?.Mensagem || erro)
+            }
+
+            return await response.json()
+        } catch (error) {
+            if (error.name === 'AbortError') throw error
+            if (error instanceof TypeError || error instanceof SyntaxError)
+                throw new Error('Servidor indisponível.')
+            throw error
+        }
+    }
+
+    static async listarMilitares(token, signal) {
+        try {
+            const response = await fetch(`${this.baseUrl}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                signal
+            })
+
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? 'Não foi possivel obter militares.' : JSON.parse(erro)?.Mensagem || erro)
+            }
+
+            const texto = await response.text()
+            return texto ? JSON.parse(texto) : []
+        } catch (error) {
+            if (error.name === 'AbortError') throw error
+            if (error instanceof TypeError || error instanceof SyntaxError)
+                throw new Error('Servidor indisponível.')
+            throw error
+        }
+    }
 }
