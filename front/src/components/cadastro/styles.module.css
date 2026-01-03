@@ -1,18 +1,26 @@
-.CadastroServico {
+.cadastro {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.CadastroServico label {
+.cadastro label {
     font-weight: bold;
     margin-bottom: -10px;
 }
 
-.CadastroServico input,
-.CadastroServico select {
+.cadastro input,
+.cadastro select {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
     font-size: 16px;
+}
+
+.cov {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    padding-top: 10px;
+    font-weight: bold;
 }

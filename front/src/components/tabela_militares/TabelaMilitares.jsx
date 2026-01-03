@@ -6,6 +6,16 @@ import {formatarData} from '../../utils/formatarData'
 
 export default function TabelaMilitares({militaresTabela, tabela, setTabela}) {
 
+    const camposMilitar = {
+        antiguidade: 'ANTIGUIDADE',
+        matricula: 'MATRÍCULA',
+        patente: 'POST./GRAD.',
+        nomePaz: 'NOME DE PAZ',
+        nascimento: 'NASCIMENTO',
+        folgaEspecial: 'FOLGA ESPECIAL',
+        cov: 'C.O.V.'
+    }
+
     const ctx = useContext(GlobalContext)
 
     const sourceTabela = Array.isArray(tabela)
@@ -16,11 +26,9 @@ export default function TabelaMilitares({militaresTabela, tabela, setTabela}) {
 
     const sourceSetTabela = setTabela ?? ctx?.setMilitares
 
-    const campos = ["ANTIGUIDADE", "MATRÍCULA", "POST./GRAD.", "NOME DE PAZ", "NASCIMENTO", "FOLGA ESPECIAL", "C.O.V."]
-
     const criarCabecalho = () => (
         <tr>
-            {campos.map(campo => (
+            {Object.values(camposMilitar).map(campo => (
                 <th key={campo}>{campo}</th>
             ))}
             <th>AÇÃO</th>
@@ -42,7 +50,7 @@ export default function TabelaMilitares({militaresTabela, tabela, setTabela}) {
                                 idKey={'matricula'}
                                 tabela={lista}
                                 setTabela={sourceSetTabela}
-                                campos={campos}
+                                campos={Object.values(camposMilitar)}
                             />
                         </td>
                     </tr>
@@ -56,12 +64,11 @@ export default function TabelaMilitares({militaresTabela, tabela, setTabela}) {
     }
 
     const listarDadosMilitar = militar => {
-        const militarFormatado = {...militar, nascimento: formatarData(militar.nascimento)}
-        return Object.keys(militarFormatado).map((campo, index) => militarFormatado[campo] !== militar.cov ? (
-            <td key={index}>{militarFormatado[campo] ?? "-"}</td>
-        ) : (
-            <td key={index}>{checkboxCov(militar)}</td>
-        ))
+        const m = { ...militar, nascimento: formatarData(militar.nascimento) }
+        return Object.keys(camposMilitar).map((campo) => {
+            if (campo === 'cov') return <td key={campo}>{checkboxCov(militar)}</td>
+            return <td key={campo}>{m[campo] ?? "-"}</td>
+        })
     }
 
     const checkboxCov = militar => (

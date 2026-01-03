@@ -56,7 +56,7 @@ export default function CadastroServico() {
     return (
         <>
             <Modal abrir={statusModal} fechar={() => setStatusModal(false)} titulo="Adicionar Serviço">
-                <form onSubmit={cadastrarServico} className={Styles.CadastroServico} noValidate>
+                <form onSubmit={cadastrarServico} className={Styles.cadastro} noValidate>
 
                     <label>Data do Serviço:</label>
                     <input
