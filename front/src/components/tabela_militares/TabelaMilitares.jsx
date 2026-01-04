@@ -3,6 +3,7 @@ import {useContext} from 'react'
 import GlobalContext from '../../context/GlobalContext'
 import BotaoRemover from '../botao_remover/BotaoRemover'
 import {formatarData} from '../../utils/formatarData'
+import AtualizacaoMilitar from "../atualizacao_form/AtualizacaoMilitar.jsx";
 
 export default function TabelaMilitares({militaresTabela, tabela, setTabela, removerMilitar}) {
 
@@ -45,6 +46,11 @@ export default function TabelaMilitares({militaresTabela, tabela, setTabela, rem
                     <tr key={key}>
                         {listarDadosMilitar(militar)}
                         <td>
+                            <AtualizacaoMilitar
+                                matricula={militar?.matricula}
+                                matriculaKey={'matricula'}
+                            />
+                            {' '}
                             <BotaoRemover
                                 id={militar?.matricula}
                                 idKey={'matricula'}
