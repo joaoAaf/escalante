@@ -1,11 +1,11 @@
 import {useContext, useRef, useState} from 'react'
-import GlobalContext from '../../context/GlobalContext'
-import Modal from '../modal/Modal'
-import BotoesModal from '../modal/BotoesModal'
-import Edit from './assets/edit.png'
+import GlobalContext from '../../context/GlobalContext.jsx'
+import Modal from '../modal/Modal.jsx'
+import BotoesModal from '../modal/BotoesModal.jsx'
 import Styles from './styles.module.css'
 import InputPerfis from "../input_perfis/InputPerfis.jsx";
 import UsuarioClient from "../../clients/UsuarioClient.js";
+import LinkAtualizacao from "../link_atualizacao/LinkAtualizacao.jsx";
 
 export default function AtualizacaoPerfis({usuarios, setUsuarios, id, idKey}) {
 
@@ -66,15 +66,9 @@ export default function AtualizacaoPerfis({usuarios, setUsuarios, id, idKey}) {
 
     return (
         <>
-            <a
-                href="#"
-                onClick={() => setStatusModal(true)}
-                className={Styles.linkAtualizacao}
-            >
-                <img src={Edit} alt="Atualizar Perfis"/>
-            </a>
+            <LinkAtualizacao setStatusModal={setStatusModal} altLink="Atualizar Perfis"/>
             <Modal abrir={statusModal} fechar={() => setStatusModal(false)} titulo="Atualizar Perfis">
-                <div className={Styles.formPerfis}>
+                <div className={Styles.form}>
                     <InputPerfis perfis={perfis} setPerfis={setPerfis}/>
                     <BotoesModal confirmar={atualizarPerfis} cancelar={() => setStatusModal(false)}/>
                 </div>

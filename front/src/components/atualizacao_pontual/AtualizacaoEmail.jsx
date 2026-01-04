@@ -1,11 +1,11 @@
 import {useContext, useRef, useState} from 'react'
-import GlobalContext from '../../context/GlobalContext'
-import Modal from '../modal/Modal'
-import BotoesModal from '../modal/BotoesModal'
-import Edit from './assets/edit.png'
+import GlobalContext from '../../context/GlobalContext.jsx'
+import Modal from '../modal/Modal.jsx'
+import BotoesModal from '../modal/BotoesModal.jsx'
 import Styles from './styles.module.css'
 import UsuarioClient from "../../clients/UsuarioClient.js";
 import InputEmail from "../input_email/InputEmail.jsx";
+import LinkAtualizacao from "../link_atualizacao/LinkAtualizacao.jsx";
 
 export default function AtualizacaoEmail({email, setEmail}) {
 
@@ -58,15 +58,9 @@ export default function AtualizacaoEmail({email, setEmail}) {
 
     return (
         <>
-            <a
-                href="#"
-                onClick={() => setStatusModal(true)}
-                className={Styles.linkAtualizacao}
-            >
-                <img src={Edit} alt="Atualizar Email"/>
-            </a>
+            <LinkAtualizacao setStatusModal={setStatusModal} altLink="Atualizar Email"/>
             <Modal abrir={statusModal} fechar={() => setStatusModal(false)} titulo="Atualizar Email">
-                <div className={Styles.formEmail}>
+                <div className={Styles.form}>
                     <InputEmail email={inputEmail} setEmail={setInputEmail}/>
                     <InputEmail email={inputConfirmacaoEmail} setEmail={setInputConfirmacaoEmail}
                                 label="Confirmação Email:"/>
