@@ -4,7 +4,7 @@ import GlobalContext from '../../context/GlobalContext'
 import BotaoRemover from '../botao_remover/BotaoRemover'
 import {formatarData} from '../../utils/formatarData'
 
-export default function TabelaMilitares({militaresTabela, tabela, setTabela}) {
+export default function TabelaMilitares({militaresTabela, tabela, setTabela, removerMilitar}) {
 
     const camposMilitar = {
         antiguidade: 'ANTIGUIDADE',
@@ -51,6 +51,7 @@ export default function TabelaMilitares({militaresTabela, tabela, setTabela}) {
                                 tabela={lista}
                                 setTabela={sourceSetTabela}
                                 campos={Object.values(camposMilitar)}
+                                apiRemover={removerMilitar}
                             />
                         </td>
                     </tr>
@@ -64,7 +65,7 @@ export default function TabelaMilitares({militaresTabela, tabela, setTabela}) {
     }
 
     const listarDadosMilitar = militar => {
-        const m = { ...militar, nascimento: formatarData(militar.nascimento) }
+        const m = {...militar, nascimento: formatarData(militar.nascimento)}
         return Object.keys(camposMilitar).map((campo) => {
             if (campo === 'cov') return <td key={campo}>{checkboxCov(militar)}</td>
             return <td key={campo}>{m[campo] ?? "-"}</td>

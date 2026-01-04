@@ -7,6 +7,7 @@ import TabelaMilitares from '../../components/tabela_militares/TabelaMilitares'
 import MilitarClient from '../../clients/MilitarClient'
 import CadastroListaMilitares from '../../components/cadastro_militares/CadastroListaMilitares.jsx'
 import AcoesMilitares from "../../components/acoes/AcoesMilitares.jsx";
+import UsuarioClient from "../../clients/UsuarioClient.js";
 
 export default function Militares() {
 
@@ -20,6 +21,13 @@ export default function Militares() {
 
     const abortControllerRef = useRef(null)
 
+    const criarAbortController = () => {
+        abortControllerRef.current?.abort()
+        const controller = new AbortController()
+        abortControllerRef.current = controller
+        return controller
+    }
+
     const camposPesquisa = [
         {value: 'nome', label: 'Nome de Paz'},
         {value: 'matricula', label: 'Matrícula'},
@@ -29,9 +37,7 @@ export default function Militares() {
     const normalize = v => String(v ?? '').toLowerCase()
 
     const carregarMilitares = useCallback(() => {
-        abortControllerRef.current?.abort()
-        const controller = new AbortController()
-        abortControllerRef.current = controller
+        const controller = criarAbortController()
 
         if (!token) {
             setMilitares([])
@@ -125,6 +131,20 @@ export default function Militares() {
         carregarMilitares()
     }
 
+    const removerMilitar = matricula => {
+
+        const controller = criarAbortController()
+
+        return MilitarClient.deletarMilitar(matricula, token, controller.signal)
+            .catch(error => {
+                return Promise.reject(error)
+            })
+            .finally(() => {
+                if (abortControllerRef.current === controller)
+                    abortControllerRef.current = null
+            })
+    }
+
     return (
         <div className={Styles.main}>
             <h2>Militares Escalaveis</h2>
@@ -148,7 +168,8 @@ export default function Militares() {
             />
 
             {carregando && <p>Carregando militares...</p>}
-            <TabelaMilitares militaresTabela={militaresTabela}/>
+
+            <TabelaMilitares militaresTabela={militaresTabela} removerMilitar={removerMilitar}/>
 
             <CadastroListaMilitares
                 abrir={abrirModalImportacao}
