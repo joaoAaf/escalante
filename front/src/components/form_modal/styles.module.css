@@ -1,16 +1,16 @@
-.cadastro {
+.form {
     display: flex;
     flex-direction: column;
     gap: 15px;
 }
 
-.cadastro label {
+.form label {
     font-weight: bold;
     margin-bottom: -10px;
 }
 
-.cadastro input,
-.cadastro select {
+.form input,
+.form select {
     padding: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
