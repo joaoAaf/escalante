@@ -14,7 +14,7 @@ public class Militar {
     @Id
     private String matricula;
 
-    @Column(nullable = false, length = 30)
+    @Column(nullable = false, length = 40)
     private String nomePaz;
 
     @Column(nullable = false)
