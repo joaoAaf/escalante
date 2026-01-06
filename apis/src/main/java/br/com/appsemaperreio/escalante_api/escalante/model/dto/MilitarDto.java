@@ -6,7 +6,8 @@ import jakarta.validation.constraints.*;
 
 public record MilitarDto(
         @NotNull(message = "A antiguidade do militar não pode ser nula.")
-        @Positive(message = "A antiguidade do militar deve ser um valor positivo.")
+        @PositiveOrZero(message = "A antiguidade do militar deve ser um valor positivo.")
+        @Max(value = 999, message = "A antiguidade do militar não pode ser maior que 999.")
         Integer antiguidade,
         @NotBlank(message = "A matrícula do militar não pode estar em branco.")
         @Size(min = 8, max = 8, message = "A matrícula do militar deve ter exatamente 8 caracteres.")
