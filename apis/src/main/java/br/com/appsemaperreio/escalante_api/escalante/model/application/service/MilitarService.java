@@ -15,6 +15,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -105,8 +106,12 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
         var prontosParaSalvar = new ArrayList<Militar>(veteranos);
 
         if (!novatos.isEmpty()) {
-            var maiorAntiguidade = militarRepository.maxAntiguidade();
-            for (var novato : novatos) novato.setAntiguidade(maiorAntiguidade++);
+            var maiorAntiguidadeBanco = militarRepository.maxAntiguidade();
+            var maiorAntiguidadeVeteranos = antiguidades.stream()
+                    .max(Comparator.comparingInt(Integer::intValue))
+                    .orElse(0);
+            var maiorAntiguidade = Math.max(maiorAntiguidadeBanco, maiorAntiguidadeVeteranos);
+            for (var novato : novatos) novato.setAntiguidade(++maiorAntiguidade);
             prontosParaSalvar.addAll(novatos);
         }
 
