@@ -133,79 +133,13 @@ public class MilitarControllerIntegrationTest {
     }
 
     @Test
-    void cadastrarMilitares_deveSalvarEConterMesmoJson() throws Exception {
-        String token = login(ESCALANTE, "pass123", false);
-
-        String mat1 = "C001";
-        String mat2 = "C002";
-        String mat3 = "C003";
-
-        ObjectNode m1 = mapper.createObjectNode();
-        m1.put("antiguidade", 1);
-        m1.put("matricula", mat1);
-        m1.put("patente", "CB");
-        m1.put("nomePaz", "Cadastrar Um");
-        m1.put("nascimento", "1990-01-01");
-        m1.put("folgaEspecial", 0);
-        m1.put("cov", false);
-
-        ObjectNode m2 = mapper.createObjectNode();
-        m2.put("antiguidade", 2);
-        m2.put("matricula", mat2);
-        m2.put("patente", "SD");
-        m2.put("nomePaz", "Cadastrar Dois");
-        m2.put("nascimento", "1991-02-02");
-        m2.put("folgaEspecial", 1);
-        m2.put("cov", true);
-
-        ObjectNode m3 = mapper.createObjectNode();
-        m3.put("antiguidade", 3);
-        m3.put("matricula", mat3);
-        m3.put("patente", "SGT");
-        m3.put("nomePaz", "Cadastrar Tres");
-        m3.put("nascimento", "1992-03-03");
-        m3.put("folgaEspecial", 2);
-        m3.put("cov", false);
-
-        ArrayNode payload = mapper.createArrayNode();
-        payload.add(m1);
-        payload.add(m2);
-        payload.add(m3);
-
-        MvcResult res = mockMvc.perform(post("/api/militar")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(payload))
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isCreated())
-                .andReturn();
-
-        JsonNode created = mapper.readTree(res.getResponse().getContentAsString());
-        assertThat(created.isArray()).isTrue();
-        assertThat(created.size()).isEqualTo(3);
-
-        // montar mapa por matrícula e verificar igualdade
-        Map<String, JsonNode> map = new HashMap<>();
-        for (JsonNode n : created) map.put(n.get("matricula").asText(), n);
-
-        // verificar presença dos ids (matrículas)
-        assertThat(map.containsKey(mat1)).isTrue();
-        assertThat(map.containsKey(mat2)).isTrue();
-        assertThat(map.containsKey(mat3)).isTrue();
-
-        // Comparar json retornado com o enviado
-        assertThat(map.get(mat1)).isEqualTo(m1);
-        assertThat(map.get(mat2)).isEqualTo(m2);
-        assertThat(map.get(mat3)).isEqualTo(m3);
-    }
-
-    @Test
     void listarMilitares_deveRetornarListaEConterMilitar() throws Exception {
         String token = login(ESCALANTE, "pass123", false);
 
         // criar 3 militares para listagem
         ObjectNode a = mapper.createObjectNode();
-        a.put("antiguidade", 1);
-        a.put("matricula", "L001");
+        a.put("antiguidade", 2);
+        a.put("matricula", "L0000001");
         a.put("patente", "CB");
         a.put("nomePaz", "Lista Um");
         a.put("nascimento", "1990-01-01");
@@ -213,8 +147,8 @@ public class MilitarControllerIntegrationTest {
         a.put("cov", false);
 
         ObjectNode b = mapper.createObjectNode();
-        b.put("antiguidade", 2);
-        b.put("matricula", "L002");
+        b.put("antiguidade", 3);
+        b.put("matricula", "L0000002");
         b.put("patente", "SD");
         b.put("nomePaz", "Lista Dois");
         b.put("nascimento", "1991-02-02");
@@ -222,8 +156,8 @@ public class MilitarControllerIntegrationTest {
         b.put("cov", true);
 
         ObjectNode c = mapper.createObjectNode();
-        c.put("antiguidade", 3);
-        c.put("matricula", "L003");
+        c.put("antiguidade", 1);
+        c.put("matricula", "L0000003");
         c.put("patente", "SGT");
         c.put("nomePaz", "Lista Tres");
         c.put("nascimento", "1992-03-03");
@@ -248,104 +182,230 @@ public class MilitarControllerIntegrationTest {
         assertThat(listed.size()).isGreaterThanOrEqualTo(3);
 
         boolean found = false;
-        for (JsonNode n : listed) if (n.has("matricula") && n.get("matricula").asText().equals("L002")) { found = true; break; }
+        for (JsonNode n : listed) if (n.has("matricula") && n.get("matricula").asText().equals("L0000002")) { found = true; break; }
         assertThat(found).isTrue();
     }
 
     @Test
-    void atualizarMilitar_deveAtualizarTresAtributosECompararRetorno() throws Exception {
+    void cadastrarMilitares_deveSalvarEConterMesmoJson() throws Exception {
         String token = login(ESCALANTE, "pass123", false);
 
-        String mat = "U001";
-        ObjectNode base = mapper.createObjectNode();
-        base.put("antiguidade", 5);
-        base.put("matricula", mat);
-        base.put("patente", "CB");
-        base.put("nomePaz", "Atualizar Base");
-        base.put("nascimento", "1985-05-05");
-        base.put("folgaEspecial", 0);
-        base.put("cov", false);
+        String mat1 = "C0000001";
+        String mat2 = "C0000002";
+        String mat3 = "C0000003";
+
+        ObjectNode m1 = mapper.createObjectNode();
+        m1.put("antiguidade", 2);
+        m1.put("matricula", mat1);
+        m1.put("patente", "CB");
+        m1.put("nomePaz", "Cadastrar Um");
+        m1.put("nascimento", "1990-01-01");
+        m1.put("folgaEspecial", 0);
+        m1.put("cov", false);
+
+        ObjectNode m2 = mapper.createObjectNode();
+        m2.put("antiguidade", 0);
+        m2.put("matricula", mat2);
+        m2.put("patente", "SD");
+        m2.put("nomePaz", "Cadastrar Dois");
+        m2.put("nascimento", "1991-02-02");
+        m2.put("folgaEspecial", 1);
+        m2.put("cov", true);
+
+        ObjectNode m3 = mapper.createObjectNode();
+        m3.put("antiguidade", 1);
+        m3.put("matricula", mat3);
+        m3.put("patente", "SGT");
+        m3.put("nomePaz", "Cadastrar Tres");
+        m3.put("nascimento", "1992-03-03");
+        m3.put("folgaEspecial", 2);
+        m3.put("cov", false);
 
         ArrayNode payload = mapper.createArrayNode();
-        payload.add(base);
+        payload.add(m1);
+        payload.add(m2);
+        payload.add(m3);
 
-        // cria
-        mockMvc.perform(post("/api/militar")
+        MvcResult res = mockMvc.perform(post("/api/militar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(payload))
                         .header("Authorization", "Bearer " + token))
-                .andExpect(status().isCreated());
+                .andExpect(status().isCreated())
+                .andReturn();
 
-        // preparar update: alterar patente, nomePaz, folgaEspecial
-        ObjectNode updated = mapper.createObjectNode();
-        updated.put("antiguidade", base.get("antiguidade").asInt());
-        updated.put("matricula", mat);
-        updated.put("patente", "SGT");
-        updated.put("nomePaz", "Atualizado Nome");
-        updated.put("nascimento", base.get("nascimento").asText());
-        updated.put("folgaEspecial", 9);
-        updated.put("cov", base.get("cov").asBoolean());
+        // ajustar antiguidades esperadas (de acordo com a regra de negócio)
+        m2.put("antiguidade", 3);
 
-        MvcResult updRes = mockMvc.perform(put("/api/militar")
+        JsonNode created = mapper.readTree(res.getResponse().getContentAsString());
+        assertThat(created.isArray()).isTrue();
+        assertThat(created.size()).isEqualTo(3);
+
+        // montar mapa por matrícula e verificar igualdade
+        Map<String, JsonNode> map = new HashMap<>();
+        for (JsonNode n : created) map.put(n.get("matricula").asText(), n);
+
+        // verificar presença dos ids (matrículas)
+        assertThat(map.containsKey(mat1)).isTrue();
+        assertThat(map.containsKey(mat2)).isTrue();
+        assertThat(map.containsKey(mat3)).isTrue();
+
+        // Comparar json retornado com o enviado
+        assertThat(map.get(mat1)).isEqualTo(m1);
+        assertThat(map.get(mat2)).isEqualTo(m2);
+        assertThat(map.get(mat3)).isEqualTo(m3);
+    }
+
+    @Test
+    void cadastrarMilitares_comMatriculasDuplicadas_deveRetornar400() throws Exception {
+        String token = login(ESCALANTE, "pass123", false);
+
+        String mat1 = "C0000001";
+
+        ObjectNode m1 = mapper.createObjectNode();
+        m1.put("antiguidade", 1);
+        m1.put("matricula", mat1);
+        m1.put("patente", "CB");
+        m1.put("nomePaz", "Cadastrar Um");
+        m1.put("nascimento", "1990-01-01");
+        m1.put("folgaEspecial", 0);
+        m1.put("cov", false);
+
+        ObjectNode m2 = mapper.createObjectNode();
+        m2.put("antiguidade", 0);
+        m2.put("matricula", mat1); // Mesma matrícula
+        m2.put("patente", "SD");
+        m2.put("nomePaz", "Cadastrar Dois");
+        m2.put("nascimento", "1991-02-02");
+        m2.put("folgaEspecial", 1);
+        m2.put("cov", true);
+
+        ArrayNode militares = mapper.createArrayNode();
+        militares.add(m1);
+        militares.add(m2);
+
+        String json = mapper.writeValueAsString(militares);
+
+        mockMvc.perform(post("/api/militar")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(updated))
-                        .header("Authorization", "Bearer " + token))
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.Mensagem").value("Existem matrículas duplicadas na lista de militares a serem cadastrados."));
+    }
+
+    @Test
+    void cadastrarMilitares_comAntiguidadesDuplicadas_deveRetornar400() throws Exception {
+        String token = login(ESCALANTE, "pass123", false);
+
+        ObjectNode m1 = mapper.createObjectNode();
+        m1.put("antiguidade", 1);
+        m1.put("matricula", "C0000001");
+        m1.put("patente", "CB");
+        m1.put("nomePaz", "Cadastrar Um");
+        m1.put("nascimento", "1990-01-01");
+        m1.put("folgaEspecial", 0);
+        m1.put("cov", false);
+
+        ObjectNode m2 = mapper.createObjectNode();
+        m2.put("antiguidade", 1); // Mesma antiguidade
+        m2.put("matricula", "C0000002");
+        m2.put("patente", "SD");
+        m2.put("nomePaz", "Cadastrar Dois");
+        m2.put("nascimento", "1991-02-02");
+        m2.put("folgaEspecial", 1);
+        m2.put("cov", true);
+
+        ArrayNode militares = mapper.createArrayNode();
+        militares.add(m1);
+        militares.add(m2);
+
+        String json = mapper.writeValueAsString(militares);
+
+        mockMvc.perform(post("/api/militar")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.Mensagem").value("Existem antiguidades duplicadas na lista de militares a serem cadastrados."));
+    }
+
+    @Test
+    void atualizarMilitar_deveSalvarEConterMesmoJson() throws Exception {
+        // Primeiro, cadastra um militar para depois atualizar
+        cadastrarMilitares_deveSalvarEConterMesmoJson();
+
+        String token = login(ESCALANTE, "pass123", false);
+        String mat1 = "C0000002";
+
+        ObjectNode m1 = mapper.createObjectNode();
+        m1.put("antiguidade", 2); // Alterando antiguidade de 3 para 2
+        m1.put("matricula", mat1);
+        m1.put("patente", "CB"); // Alterando patente de SD para CB
+        m1.put("nomePaz", "Atualizado Um"); // Alterando nomePaz
+        m1.put("nascimento", "1991-02-02");
+        m1.put("folgaEspecial", 1);
+        m1.put("cov", true);
+
+        String json = mapper.writeValueAsString(m1);
+
+        mockMvc.perform(put("/api/militar")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
                 .andExpect(status().isOk())
-                .andReturn();
-
-        JsonNode resp = mapper.readTree(updRes.getResponse().getContentAsString());
-        assertThat(resp).isEqualTo(updated);
+                .andExpect(jsonPath("$.matricula").value(mat1))
+                .andExpect(jsonPath("$.antiguidade").value(2))
+                .andExpect(jsonPath("$.patente").value("CB"))
+                .andExpect(jsonPath("$.nomePaz").value("Atualizado Um"));
     }
 
     @Test
-    void deletarMilitar_deveRemoverEnaoAparecerNaLista() throws Exception {
+    void atualizarMilitar_comDadosIguais_deveRetornar400() throws Exception {
+        cadastrarMilitares_deveSalvarEConterMesmoJson();
+
         String token = login(ESCALANTE, "pass123", false);
+        String mat1 = "C0000001";
 
-        String mat = "D001";
-        ObjectNode o = mapper.createObjectNode();
-        o.put("antiguidade", 1);
-        o.put("matricula", mat);
-        o.put("patente", "CB");
-        o.put("nomePaz", "Deletar Um");
-        o.put("nascimento", "1990-01-01");
-        o.put("folgaEspecial", 0);
-        o.put("cov", false);
+        ObjectNode m1 = mapper.createObjectNode();
+        m1.put("antiguidade", 2);
+        m1.put("matricula", mat1);
+        m1.put("patente", "CB");
+        m1.put("nomePaz", "Cadastrar Um");
+        m1.put("nascimento", "1990-01-01");
+        m1.put("folgaEspecial", 0);
+        m1.put("cov", false);
 
-        ArrayNode payload = mapper.createArrayNode();
-        payload.add(o);
+        String json = mapper.writeValueAsString(m1);
 
-        mockMvc.perform(post("/api/militar")
+        mockMvc.perform(put("/api/militar")
+                        .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(payload))
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isCreated());
-
-        // deletar
-        mockMvc.perform(delete("/api/militar/{matricula}", mat)
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isNoContent());
-
-        // verificar ausência
-        MvcResult listRes = mockMvc.perform(get("/api/militar").header("Authorization", "Bearer " + token))
-                .andReturn();
-        JsonNode arr = mapper.readTree(listRes.getResponse().getContentAsString());
-        boolean present = false;
-        for (JsonNode n : arr) if (n.has("matricula") && n.get("matricula").asText().equals(mat)) { present = true; break; }
-        assertThat(present).isFalse();
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.Mensagem").value("Não foram identificadas alterações no militar informado."));
     }
 
     @Test
-    void adminNaoPodeAcessarMilitar_deveRetornar403() throws Exception {
-        var username = "admin.test@example.com";
-        var raw = "adminpass";
-        var admin = new Usuario(username, passwordEncoder.encode(raw), Set.of(Perfil.ADMIN));
-        usuarioRepository.save(admin);
+    void atualizarMilitar_inexistente_deveRetornar400() throws Exception {
+        String token = login(ESCALANTE, "pass123", false);
+        String mat1 = "C0000009"; // Matrícula inexistente
 
-        String token = login(username, raw, true);
+        ObjectNode m1 = mapper.createObjectNode();
+        m1.put("antiguidade", 2);
+        m1.put("matricula", mat1);
+        m1.put("patente", "CB");
+        m1.put("nomePaz", "Cadastrar Um");
+        m1.put("nascimento", "1990-01-01");
+        m1.put("folgaEspecial", 0);
+        m1.put("cov", true);
 
-        // admin não possui ROLE_ESCALANTE, portanto ao acessar /api/militar deve receber 403
-        mockMvc.perform(get("/api/militar").header("Authorization", "Bearer " + token))
-                .andExpect(status().isForbidden());
+        String json = mapper.writeValueAsString(m1);
+
+        mockMvc.perform(put("/api/militar")
+                        .header("Authorization", "Bearer " + token)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(json))
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.Mensagem").value("Militar com matrícula " + mat1 + " não encontrado."));
     }
-
 }

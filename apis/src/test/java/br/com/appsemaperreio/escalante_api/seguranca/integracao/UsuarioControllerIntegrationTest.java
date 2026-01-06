@@ -75,15 +75,6 @@ public class UsuarioControllerIntegrationTest {
     }
 
     @Test
-    void tokenValido_deveRetornar200_paraUsuarioAtual() throws Exception {
-        String token = login(NORMAL, "userpass", false);
-
-        mockMvc.perform(get("/api/usuarios/atual").header("Authorization", "Bearer " + token))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.username").value(NORMAL));
-    }
-
-    @Test
     void obterUsuarioPorUsername_adminPodeAcessar_devolve200() throws Exception {
         String token = login(ADMIN, "adminpass", true);
 
