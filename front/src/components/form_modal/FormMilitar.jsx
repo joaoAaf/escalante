@@ -73,10 +73,10 @@ export default function FormMilitar({militar, setMilitar, fechar, acao}) {
                     setMilitar({...militar, antiguidade: e.target.value})
                 }}
                 required
-                min="1"
+                min="0"
                 max="999"
                 step="1"
-                title="A antiguidade deve ser um número inteiro positivo."
+                title="A antiguidade deve ser um número inteiro positivo ou zero no caso de novato."
                 onInvalid={e => e.target.setCustomValidity('Por favor, digite uma antiguidade válida.')}
             />
 
