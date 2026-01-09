@@ -118,6 +118,14 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
         return militarMapper.toListMilitarDto(militarRepository.saveAll(prontosParaSalvar));
     }
 
+    @Override
+    public MilitarDto obterMilitarPorMatricula(String matricula) {
+        var militar = militarRepository.findById(matricula)
+                .orElseThrow(() -> new IllegalArgumentException("Militar com matrícula "
+                        + matricula + " não encontrado."));
+        return militarMapper.toMilitarDto(militar);
+    }
+
     @Transactional(readOnly = true)
     @Override
     public List<MilitarDto> listarMilitares() {
@@ -126,7 +134,7 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
 
     @Transactional
     @Override
-    public MilitarDto atualizarMilitar(MilitarDto militarDto) {
+    public void atualizarMilitar(MilitarDto militarDto) {
         var militarExistente = militarRepository.findById(militarDto.matricula())
                 .orElseThrow(() -> new IllegalArgumentException("Militar com matrícula "
                         + militarDto.matricula() + " não encontrado."));
@@ -138,7 +146,7 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
 
         deslocarAntiguidades(List.of(militarAtualizado.getAntiguidade()));
 
-        return militarMapper.toMilitarDto(militarRepository.save(militarAtualizado));
+        militarMapper.toMilitarDto(militarRepository.save(militarAtualizado));
     }
 
     @Transactional

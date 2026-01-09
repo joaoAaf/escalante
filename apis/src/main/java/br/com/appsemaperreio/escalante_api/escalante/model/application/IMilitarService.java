@@ -15,9 +15,11 @@ public interface IMilitarService {
 
     List<MilitarDto> cadastrarMilitares(List<MilitarDto> militares);
 
+    MilitarDto obterMilitarPorMatricula(String matricula);
+
     List<MilitarDto> listarMilitares();
 
-    MilitarDto atualizarMilitar(MilitarDto militarDto);
+    void atualizarMilitar(MilitarDto militarDto);
 
     void deletarMilitar(String matricula);
 

@@ -165,7 +165,9 @@ public class MilitarControllerIntegrationTest {
         c.put("cov", false);
 
         ArrayNode payload = mapper.createArrayNode();
-        payload.add(a); payload.add(b); payload.add(c);
+        payload.add(a);
+        payload.add(b);
+        payload.add(c);
 
         mockMvc.perform(post("/api/militar")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -182,7 +184,11 @@ public class MilitarControllerIntegrationTest {
         assertThat(listed.size()).isGreaterThanOrEqualTo(3);
 
         boolean found = false;
-        for (JsonNode n : listed) if (n.has("matricula") && n.get("matricula").asText().equals("L0000002")) { found = true; break; }
+        for (JsonNode n : listed)
+            if (n.has("matricula") && n.get("matricula").asText().equals("L0000002")) {
+                found = true;
+                break;
+            }
         assertThat(found).isTrue();
     }
 
@@ -352,6 +358,10 @@ public class MilitarControllerIntegrationTest {
                         .header("Authorization", "Bearer " + token)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
+                .andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/api/militar/" + mat1)
+                        .header("Authorization", "Bearer " + token))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.matricula").value(mat1))
                 .andExpect(jsonPath("$.antiguidade").value(2))

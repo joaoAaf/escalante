@@ -30,12 +30,12 @@ public class MilitarController {
 
     @GetMapping("/modelo/xlsx")
     public ResponseEntity<byte[]> obterPlanilhaModeloMilitares() {
-    var planilhaModelo = service.obterPlanilhaModeloMilitares();
-    return ResponseEntity.ok()
-        .header("Content-Disposition", "attachment; filename=modelo_importacao_militares.xlsx")
-        .contentType(MediaType
-            .parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
-        .body(planilhaModelo);
+        var planilhaModelo = service.obterPlanilhaModeloMilitares();
+        return ResponseEntity.ok()
+                .header("Content-Disposition", "attachment; filename=modelo_importacao_militares.xlsx")
+                .contentType(MediaType
+                        .parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
+                .body(planilhaModelo);
     }
 
     @PostMapping("/importar/xlsx")
@@ -53,6 +53,13 @@ public class MilitarController {
         return ResponseEntity.status(HttpStatus.CREATED).body(militaresCadastrados);
     }
 
+    @GetMapping("/{matricula}")
+    public ResponseEntity<MilitarDto> obterMilitarPorMatricula(
+            @PathVariable @NotBlank(message = "A matrícula do militar não pode ser nula ou vazia.") String matricula) {
+        MilitarDto militarDto = service.obterMilitarPorMatricula(matricula);
+        return ResponseEntity.ok(militarDto);
+    }
+
     @GetMapping
     public ResponseEntity<List<MilitarDto>> listarMilitares() {
         List<MilitarDto> militares = service.listarMilitares();
@@ -61,10 +68,10 @@ public class MilitarController {
     }
 
     @PutMapping
-    public ResponseEntity<MilitarDto> atualizarMilitar(
+    public ResponseEntity<Void> atualizarMilitar(
             @RequestBody @NotNull(message = "O militar não pode ser nulo.") @Valid MilitarDto militarDto) {
-        MilitarDto militarAtualizado = service.atualizarMilitar(militarDto);
-        return ResponseEntity.ok(militarAtualizado);
+        service.atualizarMilitar(militarDto);
+        return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/{matricula}")
