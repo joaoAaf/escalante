@@ -47,9 +47,7 @@ export default function CadastroListaMilitares({abrir, fechar, militaresImportad
                 <TabelaMilitares tabela={listaEditavel} setTabela={setListaEditavel}/>
             </div>
 
-            <BotoesModal confirmar={salvar} cancelar={fechar} textoConfirmar="Salvar"/>
-
-            {salvando && <span className={Styles.status}>Salvando...</span>}
+            <BotoesModal confirmar={salvar} cancelar={fechar} textoConfirmar="Salvar" carregando={salvando}/>
         </ModalLargo>
     )
 }

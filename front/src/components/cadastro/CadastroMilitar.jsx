@@ -1,10 +1,11 @@
-import {useContext, useState} from 'react'
+import {useContext, useRef, useState} from 'react'
 import GlobalContext from '../../context/GlobalContext.jsx'
 import Modal from '../modal/Modal.jsx'
 import FormMilitar from "../form_modal/FormMilitar.jsx";
+import MilitarClient from "../../clients/MilitarClient.js";
 
 export default function CadastroMilitar({abrir, fechar}) {
-    const {setMilitares, setFeedback} = useContext(GlobalContext)
+    const {token, setReload, setFeedback} = useContext(GlobalContext)
 
     const militarModelo = {
         antiguidade: '',
@@ -17,6 +18,16 @@ export default function CadastroMilitar({abrir, fechar}) {
     }
 
     const [militar, setMilitar] = useState(militarModelo)
+    const [salvando, setSalvando] = useState(false)
+
+    const abortControllerRef = useRef(null)
+
+    const criarAbortController = () => {
+        abortControllerRef.current?.abort()
+        const controller = new AbortController()
+        abortControllerRef.current = controller
+        return controller
+    }
 
     const cadastrarMilitar = evento => {
         evento.preventDefault()
@@ -31,18 +42,32 @@ export default function CadastroMilitar({abrir, fechar}) {
         }
 
         const novoMilitar = {...militar}
-        novoMilitar.antiguidade = novoMilitar.antiguidade ? Number(novoMilitar.antiguidade) : undefined
+        novoMilitar.antiguidade = novoMilitar.antiguidade ? Number(novoMilitar.antiguidade) : 0
         novoMilitar.folgaEspecial = novoMilitar.folgaEspecial ? Number(novoMilitar.folgaEspecial) : 0
 
-        setMilitares(prev => [...(prev || []), novoMilitar])
-        setMilitar(militarModelo)
-        fechar()
-        setFeedback({type: 'success', mensagem: 'Militar cadastrado com sucesso.'})
+        const controller = criarAbortController()
+        setSalvando(true)
+        MilitarClient.cadastrarMilitares([novoMilitar], token, controller.signal)
+            .then(() => {
+                setReload(true)
+                fechar()
+                setFeedback({type: 'success', mensagem: 'Militar cadastrado com sucesso.'})
+            })
+            .catch(error => {
+                if (error.name === 'AbortError') return
+                setFeedback({type: 'error', mensagem: error.message})
+            })
+            .finally(() => {
+                setSalvando(false)
+                if (abortControllerRef.current === controller)
+                    abortControllerRef.current = null
+            })
     }
 
     return (
         <Modal abrir={abrir} fechar={fechar} titulo="Adicionar Militar">
-            <FormMilitar militar={militar} setMilitar={setMilitar} fechar={fechar} acao={cadastrarMilitar}/>
+            <FormMilitar militar={militar} setMilitar={setMilitar} fechar={fechar} acao={cadastrarMilitar}
+                         salvando={salvando}/>
         </Modal>
     )
 }

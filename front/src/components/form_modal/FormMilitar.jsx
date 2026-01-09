@@ -1,7 +1,7 @@
 import Styles from './styles.module.css'
 import BotoesModal from "../modal/BotoesModal.jsx";
 
-export default function FormMilitar({militar, setMilitar, fechar, acao}) {
+export default function FormMilitar({militar, setMilitar, fechar, acao, salvando}) {
 
     const converterMaiusculas = nome => nome.toUpperCase()
     const removerEspacosExtras = nome => nome.trim().replace(/\s+/g, ' ')
@@ -67,7 +67,7 @@ export default function FormMilitar({militar, setMilitar, fechar, acao}) {
             <input
                 type="number"
                 placeholder="Ex: 1"
-                value={militar.antiguidade}
+                value={militar.antiguidade || 0}
                 onChange={e => {
                     e.target.setCustomValidity('');
                     setMilitar({...militar, antiguidade: e.target.value})
@@ -118,7 +118,7 @@ export default function FormMilitar({militar, setMilitar, fechar, acao}) {
                     C.O.V.
             </span>
 
-            <BotoesModal typeConfirmar="submit" cancelar={fechar}/>
+            <BotoesModal typeConfirmar="submit" cancelar={fechar} carregando={salvando}/>
         </form>
     )
 }
