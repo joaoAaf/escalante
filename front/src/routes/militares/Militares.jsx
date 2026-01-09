@@ -47,7 +47,10 @@ export default function Militares() {
         setCarregando(true)
         MilitarClient.listarMilitares(token, controller.signal)
             .then(lista => {
-                setMilitares(Array.isArray(lista) ? lista : [])
+                const listaOrdenada = lista.sort((a, b) => {
+                    if (a.antiguidade !== b.antiguidade) return a.antiguidade - b.antiguidade
+                    })
+                setMilitares(listaOrdenada || [])
                 setReload(false)
             })
             .catch(error => {
