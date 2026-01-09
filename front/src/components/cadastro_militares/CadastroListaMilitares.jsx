@@ -26,7 +26,7 @@ export default function CadastroListaMilitares({abrir, fechar, militaresImportad
 
         try {
             setSalvando(true)
-            await MilitarClient.cadastrarListaMilitares(listaEditavel, token)
+            await MilitarClient.cadastrarMilitares(listaEditavel, token)
             setFeedback({type: 'success', mensagem: 'Militares cadastrados com sucesso.'})
             fechar()
             onSucesso?.()
