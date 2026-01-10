@@ -30,7 +30,7 @@ class ImportadorXLSXTest {
 	public void deveImportarMilitaresXLSXQuandoPlanilhaPresenteEValida() throws Exception {
 		// Dados
 		final int QUANTIDADE_MILITARES_ESCALAVEIS = 25;
-		final String MATRICULA_MILITAR_FOLGA_ESPECIAL = "REG835";
+		final String MATRICULA_MILITAR_FOLGA_ESPECIAL = "REG00011";
 		final int FOLGA_ESPECIAL = 7;
 
 		var inputStream = getClass().getResourceAsStream("/samples/modelo_importacao_militares.xlsx");

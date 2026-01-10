@@ -232,11 +232,16 @@ public class MilitarControllerIntegrationTest {
         payload.add(m2);
         payload.add(m3);
 
-        MvcResult res = mockMvc.perform(post("/api/militar")
+        mockMvc.perform(post("/api/militar")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(mapper.writeValueAsString(payload))
                         .header("Authorization", "Bearer " + token))
                 .andExpect(status().isCreated())
+                .andReturn();
+
+        MvcResult res = mockMvc.perform(get("/api/militar")
+                        .header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
                 .andReturn();
 
         // ajustar antiguidades esperadas (de acordo com a regra de negócio)
