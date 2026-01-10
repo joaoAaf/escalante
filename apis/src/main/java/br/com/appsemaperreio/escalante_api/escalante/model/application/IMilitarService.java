@@ -1,11 +1,9 @@
 package br.com.appsemaperreio.escalante_api.escalante.model.application;
 
-import java.util.List;
-
-import br.com.appsemaperreio.escalante_api.escalante.model.domain.Militar;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.MilitarDto;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.appsemaperreio.escalante_api.escalante.model.dto.MilitarDto;
+import java.util.List;
 
 public interface IMilitarService {
 
@@ -13,7 +11,7 @@ public interface IMilitarService {
 
     byte[] obterPlanilhaModeloMilitares();
 
-    List<MilitarDto> cadastrarMilitares(List<MilitarDto> militares);
+    void cadastrarMilitares(List<MilitarDto> militares);
 
     MilitarDto obterMilitarPorMatricula(String matricula);
 

@@ -1,20 +1,18 @@
 package br.com.appsemaperreio.escalante_api.escalante.controller;
 
+import br.com.appsemaperreio.escalante_api.escalante.model.application.IMilitarService;
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.MilitarDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
+import jakarta.validation.constraints.NotNull;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import br.com.appsemaperreio.escalante_api.escalante.model.application.IMilitarService;
-import jakarta.validation.constraints.NotNull;
-
+import java.net.URI;
 import java.util.List;
 
 @Validated
@@ -45,12 +43,12 @@ public class MilitarController {
     }
 
     @PostMapping
-    public ResponseEntity<List<MilitarDto>> cadastrarMilitares(
+    public ResponseEntity<Void> cadastrarMilitares(
             @RequestBody
             @NotEmpty(message = "A lista de militares não pode estar vazia.")
             List<@Valid MilitarDto> militaresDto) {
-        List<MilitarDto> militaresCadastrados = service.cadastrarMilitares(militaresDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(militaresCadastrados);
+        service.cadastrarMilitares(militaresDto);
+        return ResponseEntity.created(URI.create("/api/militar")).build();
     }
 
     @GetMapping("/{matricula}")

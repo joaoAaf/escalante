@@ -64,7 +64,7 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
 
     @Transactional
     @Override
-    public List<MilitarDto> cadastrarMilitares(List<MilitarDto> militaresDto) {
+    public void cadastrarMilitares(List<MilitarDto> militaresDto) {
         var novosMilitares = militarMapper.toListMilitar(militaresDto);
 
         var matriculas = novosMilitares.stream()
@@ -115,7 +115,7 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
             prontosParaSalvar.addAll(novatos);
         }
 
-        return militarMapper.toListMilitarDto(militarRepository.saveAll(prontosParaSalvar));
+        militarMapper.toListMilitarDto(militarRepository.saveAll(prontosParaSalvar));
     }
 
     @Override
