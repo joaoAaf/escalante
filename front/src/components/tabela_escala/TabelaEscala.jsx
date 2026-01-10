@@ -1,16 +1,16 @@
-import { useContext } from 'react'
-import { GlobalContext } from '../../context/GlobalContext'
 import Styles from './styles.module.css'
+import {useContext} from 'react'
+import GlobalContext from '../../context/GlobalContext'
 import BotaoRemover from '../botao_remover/BotaoRemover'
-import { ordenarEscala } from '../../utils/ordenacaoEscala'
+import {ordenarEscala} from '../../utils/ordenacaoEscala'
 
-export default function TabelaEscala({ escalaTabela }) {
+export default function TabelaEscala({escalaTabela}) {
 
-    const { militares, escala, setEscala } = useContext(GlobalContext)
+    const {militares, escala, setEscala} = useContext(GlobalContext)
 
     const campos = ["DATA", "MATRÍCULA", "MILITAR ESCALADO", "POST./GRAD.", "ANTIGUIDADE", "FUNÇÃO", "FOLGA"]
-    
-    const criarCabeçalho = () => (
+
+    const criarCabecalho = () => (
         <tr>
             {campos.map(campo => (
                 <th key={campo}>{campo}</th>
@@ -23,7 +23,9 @@ export default function TabelaEscala({ escalaTabela }) {
         if (!militares || militares.length === 0)
             return (
                 <tr>
-                    <td colSpan="7">Vá para a aba <b>Militares</b> e importe a planilha de militares.</td>
+                    <td colSpan="7">
+                        Não há militares disponiveis. Vá para a aba <b>Militares</b> e importe ou cadastre os militares.
+                    </td>
                 </tr>
             )
         if (!escalaTabela || escalaTabela.length === 0)
@@ -32,7 +34,7 @@ export default function TabelaEscala({ escalaTabela }) {
                     <td colSpan="7">Importe a escala anterior e preencha os dados para criação da escala.</td>
                 </tr>
             )
-            
+
         const grupos = separarGruposPorData(escalaTabela)
 
         return escalaTabela.length > 0 ? (
@@ -116,7 +118,10 @@ export default function TabelaEscala({ escalaTabela }) {
     const alterarData = (id, novaData) => setEscala(
         escala => {
             if (id == null) return escala
-            const novaEscala = escala.map((servico) => servico.id === id ? { ...servico, dataServico: novaData } : servico)
+            const novaEscala = escala.map((servico) => servico.id === id ? {
+                ...servico,
+                dataServico: novaData
+            } : servico)
             return ordenarEscala(novaEscala)
         }
     )
@@ -124,7 +129,7 @@ export default function TabelaEscala({ escalaTabela }) {
     const alterarFuncao = (id, novaFuncao) => setEscala(
         escala => {
             if (id == null) return escala
-            const novaEscala = escala.map((servico) => servico.id === id ? { ...servico, funcao: novaFuncao } : servico)
+            const novaEscala = escala.map((servico) => servico.id === id ? {...servico, funcao: novaFuncao} : servico)
             return ordenarEscala(novaEscala)
         }
     )
@@ -132,10 +137,10 @@ export default function TabelaEscala({ escalaTabela }) {
     return (
         <table className={Styles.table}>
             <thead>
-                {criarCabeçalho()}
+            {criarCabecalho()}
             </thead>
             <tbody>
-                {listarEscala()}
+            {listarEscala()}
             </tbody>
         </table>
     )

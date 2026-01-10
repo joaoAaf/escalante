@@ -3,6 +3,7 @@ package br.com.appsemaperreio.escalante_api.escalante.model.application.service;
 import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorMilitaresXLSXAdapter;
 import br.com.appsemaperreio.escalante_api.escalante.model.application.IMilitarService;
 import br.com.appsemaperreio.escalante_api.escalante.model.application.mappers.MilitarMapper;
+import br.com.appsemaperreio.escalante_api.escalante.model.domain.Militar;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.exceptions.ErroLeituraPlanilhaModeloException;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.exceptions.PlanilhaModeloNaoEncontradaException;
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.MilitarDto;
@@ -12,7 +13,11 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MilitarService extends MetodosCompartilhados implements IMilitarService {
@@ -29,6 +34,15 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
         this.importadorMilitaresXLSXAdapter = importadorMilitaresXLSXAdapter;
         this.militarMapper = militarMapper;
         this.militarRepository = militarRepository;
+    }
+
+    private void deslocarAntiguidades(Collection<Integer> antiguidades) {
+        if (militarRepository.existsByAntiguidadeIn(antiguidades)) {
+            var antiguidadesOrdenadas = antiguidades.stream().sorted().toList();
+            for (var antiguidade : antiguidadesOrdenadas) {
+                militarRepository.increaseAntiguidadeFrom(antiguidade);
+            }
+        }
     }
 
     @Override
@@ -51,9 +65,65 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
     @Transactional
     @Override
     public List<MilitarDto> cadastrarMilitares(List<MilitarDto> militaresDto) {
-        var militares = militarMapper.toListMilitar(militaresDto);
-        var militaresCadastrados = militarRepository.saveAll(militares);
-        return militarMapper.toListMilitarDto(militaresCadastrados);
+        var novosMilitares = militarMapper.toListMilitar(militaresDto);
+
+        var matriculas = novosMilitares.stream()
+                .map(Militar::getMatricula)
+                .collect(Collectors.toSet());
+
+        if (matriculas.size() < novosMilitares.size()) {
+            throw new IllegalArgumentException("Existem matrículas duplicadas na lista de militares a serem cadastrados.");
+        }
+
+        var matriculasExistentes = militarRepository.findMatriculasByIdIn(matriculas);
+
+        if (!matriculasExistentes.isEmpty()) {
+            var matriculasString = String.join(", ", matriculasExistentes);
+            throw new IllegalArgumentException(String.format("As seguintes matrículas já estão cadastradas: %s.", matriculasString));
+        }
+
+        var novatos = new ArrayList<Militar>();
+        var veteranos = new ArrayList<Militar>();
+
+        for (var militar : novosMilitares) {
+            if (militar.getAntiguidade() == 0) {
+                novatos.add(militar);
+            } else {
+                veteranos.add(militar);
+            }
+        }
+
+        var antiguidades = veteranos.stream()
+                .map(Militar::getAntiguidade)
+                .collect(Collectors.toSet());
+
+        if (antiguidades.size() < veteranos.size()) {
+            throw new IllegalArgumentException("Existem antiguidades duplicadas na lista de militares a serem cadastrados.");
+        }
+
+        deslocarAntiguidades(antiguidades);
+
+        var prontosParaSalvar = new ArrayList<Militar>(veteranos);
+
+        if (!novatos.isEmpty()) {
+            var maiorAntiguidadeBanco = militarRepository.maxAntiguidade();
+            var maiorAntiguidadeVeteranos = antiguidades.stream()
+                    .max(Comparator.comparingInt(Integer::intValue))
+                    .orElse(0);
+            var maiorAntiguidade = Math.max(maiorAntiguidadeBanco, maiorAntiguidadeVeteranos);
+            for (var novato : novatos) novato.setAntiguidade(++maiorAntiguidade);
+            prontosParaSalvar.addAll(novatos);
+        }
+
+        return militarMapper.toListMilitarDto(militarRepository.saveAll(prontosParaSalvar));
+    }
+
+    @Override
+    public MilitarDto obterMilitarPorMatricula(String matricula) {
+        var militar = militarRepository.findById(matricula)
+                .orElseThrow(() -> new IllegalArgumentException("Militar com matrícula "
+                        + matricula + " não encontrado."));
+        return militarMapper.toMilitarDto(militar);
     }
 
     @Transactional(readOnly = true)
@@ -64,7 +134,7 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
 
     @Transactional
     @Override
-    public MilitarDto atualizarMilitar(MilitarDto militarDto) {
+    public void atualizarMilitar(MilitarDto militarDto) {
         var militarExistente = militarRepository.findById(militarDto.matricula())
                 .orElseThrow(() -> new IllegalArgumentException("Militar com matrícula "
                         + militarDto.matricula() + " não encontrado."));
@@ -74,7 +144,9 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
         if (militarExistente.equals(militarAtualizado))
             throw new IllegalArgumentException("Não foram identificadas alterações no militar informado.");
 
-        return militarMapper.toMilitarDto(militarRepository.save(militarAtualizado));
+        deslocarAntiguidades(List.of(militarAtualizado.getAntiguidade()));
+
+        militarMapper.toMilitarDto(militarRepository.save(militarAtualizado));
     }
 
     @Transactional

@@ -74,7 +74,6 @@ public class SecurityConfig {
                 })
                 .authorizeHttpRequests(auth -> {
                     if (devProfileActive) auth.requestMatchers("/h2/**").permitAll();
-                    auth.requestMatchers(HttpMethod.GET, "/api/usuarios/atual").authenticated();
                     auth.requestMatchers(HttpMethod.POST, "/api/usuarios").hasRole("ADMIN")
                             .requestMatchers(HttpMethod.GET, "/api/usuarios/**").hasRole("ADMIN")
                             .requestMatchers(HttpMethod.PATCH, "/api/usuarios/username",

@@ -1,12 +1,12 @@
-import { useState, useContext, useRef, useEffect } from 'react'
-import { GlobalContext } from '../../context/GlobalContext'
+import {useContext, useEffect, useRef, useState} from 'react'
+import GlobalContext from '../../context/GlobalContext'
 import Styles from './styles.module.css'
 import EscalaClient from '../../clients/EscalaClient'
-import { inserirIds } from '../../utils/geradorIds'
+import {inserirIds} from '../../utils/geradorIds'
 
-export default function FormCriarEscala({ servicosAnteriores }) {
+export default function FormCriarEscala({servicosAnteriores}) {
 
-    const { militares, setEscala, setFeedback } = useContext(GlobalContext)
+    const {token, militares, setEscala, setFeedback} = useContext(GlobalContext)
 
     const [dataInicio, setDataInicio] = useState('')
     const [dataFim, setDataFim] = useState('')
@@ -37,7 +37,7 @@ export default function FormCriarEscala({ servicosAnteriores }) {
         if (!form.checkValidity()) {
             for (const element of form.elements) {
                 if (element.willValidate && !element.checkValidity()) {
-                    return setFeedback({ type: 'info', mensagem: element.validationMessage })
+                    return setFeedback({type: 'info', mensagem: element.validationMessage})
                 }
             }
         }
@@ -47,27 +47,30 @@ export default function FormCriarEscala({ servicosAnteriores }) {
             const fim = new Date(dataFim)
 
             if (fim <= inicio)
-                return setFeedback({ type: 'info', mensagem: 'A data final não pode ser anterior à data inicial.' })
+                return setFeedback({type: 'info', mensagem: 'A data final não pode ser anterior à data inicial.'})
 
             const diffTime = fim - inicio
             const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
 
             if (diffDays > 35) {
-                return setFeedback({ type: 'info', mensagem: 'O intervalo entre as datas não pode ser maior que 35 dias.' })
+                return setFeedback({
+                    type: 'info',
+                    mensagem: 'O intervalo entre as datas não pode ser maior que 35 dias.'
+                })
             }
 
-        } catch (err) {
-            return setFeedback({ type: 'info', mensagem: 'Por favor, verifique as datas informadas.' })
+        } catch {
+            return setFeedback({type: 'info', mensagem: 'Por favor, verifique as datas informadas.'})
         }
 
         if (!militares || militares.length === 0)
-            return setFeedback({ type: 'info', mensagem: 'Não é possível criar a escala sem militares cadastrados.' })
+            return setFeedback({type: 'info', mensagem: 'Não é possível criar a escala sem militares cadastrados.'})
 
         if (militares.length > 100)
-            return setFeedback({ type: 'info', mensagem: 'O número de militares não pode ser maior que 100.' })
+            return setFeedback({type: 'info', mensagem: 'O número de militares não pode ser maior que 100.'})
 
         if (servicosAnteriores?.length > 210)
-            return setFeedback({ type: 'info', mensagem: 'A escala anterior não pode conter mais que 210 serviços.' })
+            return setFeedback({type: 'info', mensagem: 'A escala anterior não pode conter mais que 210 serviços.'})
 
         const controller = criarAbortController()
 
@@ -81,17 +84,17 @@ export default function FormCriarEscala({ servicosAnteriores }) {
             servicosAnteriores: servicosAnteriores || []
         }
 
-        EscalaClient.criarEscalaAutomatica(dadosEscala, controller.signal)
+        EscalaClient.criarEscalaAutomatica(dadosEscala, token, controller.signal)
             .then(escala => {
                 const escalaResponse = (escala || [])
                 const escalaComIds = inserirIds(escalaResponse)
                 setEscala(escalaComIds)
-                setFeedback({ type: 'success', mensagem: 'Escala criada com sucesso.' })
+                setFeedback({type: 'success', mensagem: 'Escala criada com sucesso.'})
             })
             .catch(error => {
 
                 if (error.name === 'AbortError') return
-                setFeedback({ type: 'error', mensagem: error.message })
+                setFeedback({type: 'error', mensagem: error.message})
             })
             .finally(() => {
                 setCarregandoEscala(false)
@@ -104,7 +107,7 @@ export default function FormCriarEscala({ servicosAnteriores }) {
         <div className={Styles.criar_escala}>
             <h3>Dados para Criação da Escala</h3>
             {servicosAnteriores?.length > 0 && (
-                <div style={{ marginBottom: '15px', color: 'green', fontSize: '0.9em' }}>
+                <div style={{marginBottom: '15px', color: 'green', fontSize: '0.9em'}}>
                     ✓ Escala anterior carregada: {servicosAnteriores.length} serviços importados.
                 </div>
             )}

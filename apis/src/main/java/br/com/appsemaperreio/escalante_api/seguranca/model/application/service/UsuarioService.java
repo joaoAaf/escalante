@@ -32,7 +32,7 @@ public class UsuarioService implements IUsuarioService {
     private static final Logger logger = LoggerFactory.getLogger(UsuarioService.class);
 
     public UsuarioService(UsuarioRepository usuarioRepository, UsuarioMapper usuarioMapper, PerfilMapper perfilMapper,
-            PasswordEncoder passwordEncoder, @Value("${env.usuario.inicial.username}") String usernameInicial) {
+                          PasswordEncoder passwordEncoder, @Value("${env.usuario.inicial.username}") String usernameInicial) {
         this.usuarioRepository = usuarioRepository;
         this.usuarioMapper = usuarioMapper;
         this.perfilMapper = perfilMapper;
@@ -67,9 +67,9 @@ public class UsuarioService implements IUsuarioService {
 
             usuarioRepository.findByUsername(username)
                     .ifPresentOrElse(usuario -> {
-                        usuario.getPerfis().add(Perfil.ADMIN);
-                        usuarioRepository.save(usuario);
-                    },
+                                usuario.getPerfis().add(Perfil.ADMIN);
+                                usuarioRepository.save(usuario);
+                            },
                             () -> {
                                 var rawPassword = gerarSenha();
                                 var password = passwordEncoder.encode(rawPassword);
@@ -175,9 +175,8 @@ public class UsuarioService implements IUsuarioService {
         if (!usuario.getPerfis().containsAll(perfis))
             throw new IllegalArgumentException("Usuário não possui todos os perfis informados");
 
-        if (usuario.getPerfis().stream().anyMatch(
-                p -> p.equals(Perfil.ADMIN)
-                        && usuarioRepository.isOnlyUserWithPerfil(usuarioRequest.username(), Perfil.ADMIN)))
+        if (perfis.contains(Perfil.ADMIN)
+                && usuarioRepository.isOnlyUserWithPerfil(usuarioRequest.username(), Perfil.ADMIN))
             throw new IllegalArgumentException("Não é possível remover o perfil ADMIN do único usuário que o possui");
 
         usuario.getPerfis().removeAll(perfis);
@@ -196,9 +195,8 @@ public class UsuarioService implements IUsuarioService {
         usuarioRepository.findByUsername(username)
                 .ifPresentOrElse(
                         usuario -> {
-                            if (usuario.getPerfis().stream().anyMatch(
-                                    p -> p.equals(Perfil.ADMIN)
-                                            && usuarioRepository.isOnlyUserWithPerfil(username, Perfil.ADMIN)))
+                            if (usuario.getPerfis().contains(Perfil.ADMIN)
+                                    && usuarioRepository.isOnlyUserWithPerfil(username, Perfil.ADMIN))
                                 throw new IllegalArgumentException(
                                         "Não é possível deletar o único usuário com o perfil ADMIN");
                             usuarioRepository.delete(usuario);

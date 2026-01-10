@@ -2,21 +2,20 @@ package br.com.appsemaperreio.escalante_api.escalante.model.dto;
 
 import java.time.LocalDate;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
 
 public record MilitarDto(
         @NotNull(message = "A antiguidade do militar não pode ser nula.")
-        @Positive(message = "A antiguidade do militar deve ser um valor positivo.")
+        @PositiveOrZero(message = "A antiguidade do militar deve ser um valor positivo.")
+        @Max(value = 999, message = "A antiguidade do militar não pode ser maior que 999.")
         Integer antiguidade,
         @NotBlank(message = "A matrícula do militar não pode estar em branco.")
+        @Size(min = 8, max = 8, message = "A matrícula do militar deve ter exatamente 8 caracteres.")
         String matricula,
         @NotBlank(message = "A patente do militar não pode estar em branco.")
         String patente,
         @NotBlank(message = "O nome de paz do militar não pode estar em branco.")
+        @Size(min = 3, max = 40, message = "O nome de paz do militar deve ter entre 3 e 40 caracteres.")
         String nomePaz,
         @NotNull(message = "A data de nascimento do militar não pode ser nula.")
         LocalDate nascimento,

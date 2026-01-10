@@ -1,39 +1,84 @@
 import Styles from './styles.module.css'
-import { useEffect, useState, useCallback, useContext } from 'react'
-import { GlobalContext } from '../../context/GlobalContext'
+import {useCallback, useContext, useEffect, useRef, useState} from 'react'
+import GlobalContext from '../../context/GlobalContext'
 import BarraPesquisa from '../../components/barra_pesquisa/BarraPesquisa'
 import InputUpload from '../../components/input_upload/InputUpload'
 import TabelaMilitares from '../../components/tabela_militares/TabelaMilitares'
 import MilitarClient from '../../clients/MilitarClient'
+import CadastroListaMilitares from '../../components/cadastro_militares/CadastroListaMilitares.jsx'
+import AcoesMilitares from "../../components/acoes/AcoesMilitares.jsx";
 
 export default function Militares() {
 
-    const { militares, setMilitares } = useContext(GlobalContext)
+    const {militares, setMilitares, token, setFeedback, reload, setReload} = useContext(GlobalContext)
 
     const [militaresFiltrados, setMilitaresFiltrados] = useState(null)
     const [ultimaPesquisa, setUltimaPesquisa] = useState(null)
+    const [carregando, setCarregando] = useState(false)
+    const [abrirModalImportacao, setAbrirModalImportacao] = useState(false)
+    const [militaresImportados, setMilitaresImportados] = useState(null)
+
+    const abortControllerRef = useRef(null)
+
+    const criarAbortController = () => {
+        abortControllerRef.current?.abort()
+        const controller = new AbortController()
+        abortControllerRef.current = controller
+        return controller
+    }
 
     const camposPesquisa = [
-        { value: 'nome', label: 'Nome de Paz' },
-        { value: 'matricula', label: 'Matrícula' },
-        { value: 'cov', label: 'C.O.V.', disableInput: true }
+        {value: 'nome', label: 'Nome de Paz'},
+        {value: 'matricula', label: 'Matrícula'},
+        {value: 'cov', label: 'C.O.V.', disableInput: true}
     ]
 
     const normalize = v => String(v ?? '').toLowerCase()
 
-    const gerenciarPesquisa = useCallback(({ campo, consulta }) => {
+    const carregarMilitares = useCallback(() => {
+        const controller = criarAbortController()
+
+        if (!token) {
+            setMilitares([])
+            return
+        }
+
+        setCarregando(true)
+        MilitarClient.listarMilitares(token, controller.signal)
+            .then(lista => {
+                const listaOrdenada = lista.sort((a, b) => a.antiguidade - b.antiguidade)
+                setMilitares(listaOrdenada || [])
+                setReload(false)
+            })
+            .catch(error => {
+                if (error.name === 'AbortError') return
+                setMilitares([])
+                setFeedback?.({type: 'error', mensagem: error.message})
+            })
+            .finally(() => {
+                setCarregando(false)
+                if (abortControllerRef.current === controller)
+                    abortControllerRef.current = null
+            })
+    }, [token, setMilitares, setReload, setFeedback])
+
+    useEffect(() => {
+        if (reload) carregarMilitares()
+        return () => abortControllerRef.current?.abort()
+    }, [carregarMilitares, reload])
+
+    const gerenciarPesquisa = useCallback(({campo, consulta}) => {
         setUltimaPesquisa(pesquisa => {
             if (pesquisa && pesquisa.campo === campo && pesquisa.consulta === consulta) return pesquisa
-            return { campo, consulta }
+            return {campo, consulta}
         })
 
         const q = String(consulta ?? '').trim().toLowerCase()
 
-        if (!militares) return
+        if (!Array.isArray(militares)) return
 
         if (campo === 'cov') {
-            const resultadosCov = militares.filter(m => m.cov === true)
-            setMilitaresFiltrados(resultadosCov)
+            setMilitaresFiltrados(militares.filter(m => m.cov === true))
             return
         }
 
@@ -66,24 +111,88 @@ export default function Militares() {
 
     const militaresTabela = militaresFiltrados ?? militares
 
+    const iniciarRevisaoImportacao = listaImportada => {
+        if (!Array.isArray(listaImportada) || listaImportada.length === 0) {
+            setFeedback?.({type: 'info', mensagem: 'A planilha não retornou militares para revisão.'})
+            return
+        }
+
+        setMilitaresImportados(listaImportada)
+        setAbrirModalImportacao(true)
+    }
+
+    const cancelarImportacao = () => {
+        setAbrirModalImportacao(false)
+        setMilitaresImportados(null)
+    }
+
+    const sucessoCadastro = () => {
+        cancelarImportacao()
+        carregarMilitares()
+    }
+
+    const atualizarMilitar = militar => {
+
+        const controller = criarAbortController()
+
+        return MilitarClient.atualizarMilitar(militar, token, controller.signal)
+            .then(() => setReload(true))
+            .catch(error => {
+                return Promise.reject(error)
+            })
+            .finally(() => {
+                if (abortControllerRef.current === controller)
+                    abortControllerRef.current = null
+            })
+    }
+
+    const removerMilitar = matricula => {
+
+        const controller = criarAbortController()
+
+        return MilitarClient.deletarMilitar(matricula, token, controller.signal)
+            .catch(error => {
+                return Promise.reject(error)
+            })
+            .finally(() => {
+                if (abortControllerRef.current === controller)
+                    abortControllerRef.current = null
+            })
+    }
+
     return (
         <div className={Styles.main}>
             <h2>Militares Escalaveis</h2>
+
             <div className={Styles.upload}>
                 <label htmlFor="input_upload" className={Styles.label_upload}>Importe a Planilha dos Militares</label>
                 <InputUpload
-                    funcaoDownload={(signal) => MilitarClient.obterPlanilhaModeloMilitares(signal)}
-                    funcaoUpload={(arquivo, signal) => MilitarClient.importarMilitaresXLSX(arquivo, signal)}
+                    funcaoDownload={(t, signal) => MilitarClient.obterPlanilhaModeloMilitares(t, signal)}
+                    funcaoUpload={(arquivo, t, signal) => MilitarClient.importarMilitaresXLSX(arquivo, t, signal)}
                     nomeModelo="modelo_militares.xlsx"
-                    setDados={setMilitares}
+                    setDados={iniciarRevisaoImportacao}
                 />
             </div>
+
+            <AcoesMilitares/>
+
             <BarraPesquisa
                 campos={camposPesquisa}
                 placeholder="Pesquisar militares..."
                 pesquisar={gerenciarPesquisa}
             />
-            <TabelaMilitares militaresTabela={militaresTabela} />
+
+            {carregando && <p>Carregando militares...</p>}
+
+            <TabelaMilitares militaresTabela={militaresTabela} removerMilitar={removerMilitar}
+                             atualizarMilitar={atualizarMilitar}/>
+
+            <CadastroListaMilitares
+                abrir={abrirModalImportacao}
+                fechar={cancelarImportacao}
+                militaresImportados={militaresImportados}
+                onSucesso={sucessoCadastro}
+            />
         </div>
     )
 }

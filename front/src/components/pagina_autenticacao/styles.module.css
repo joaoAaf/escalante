@@ -1,0 +1,64 @@
+:root{
+  --faded-red: #f5a2a2;
+  --container-bg: #ffffff;
+  --container-shadow: rgba(0,0,0,0.08);
+}
+
+.page{
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, var(--faded-red), #fff5f5);
+  padding: 20px;
+}
+
+.title{
+  font-size: 2rem;
+  margin: 0 0 20px 0;
+  color: #a22222;
+  text-align: center;
+}
+
+.container{
+  width: 360px;
+  background: var(--container-bg);
+  border-radius: 8px;
+  box-shadow: 0 6px 20px var(--container-shadow);
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.container form{
+  display: flex;
+  flex-direction: column;
+}
+
+.container form label{
+  margin-top: 12px;
+  margin-bottom: 6px;
+  font-size: 0.9rem;
+}
+
+.container form button{
+  margin-top: 18px;
+  padding: 10px 12px;
+  background-color: #a22222;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-weight: normal;
+  color: white;
+  font-size: 16px;
+  align-items: center;
+}
+
+.container form button:hover{
+  background: #7a1616;
+}
+
+.container form button:disabled{
+  opacity: 0.7;
+  cursor: not-allowed;
+}

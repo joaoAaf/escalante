@@ -11,7 +11,8 @@
     z-index: 1000;
 }
 
-.modal div {
+.dialog {
+    position: relative;
     background: #fff;
     padding: 25px;
     border-radius: 8px;
@@ -23,9 +24,33 @@
     max-height: calc(100vh - 40px);
     overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    color: #000;
+    text-align: left;
 }
 
-.modal div h2 {
+.dialogWide {
+    position: relative;
+    background: #fff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+    width: 95%;
+    max-width: 1100px;
+    display: flex;
+    flex-direction: column;
+    max-height: calc(100vh - 40px);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    color: #000;
+}
+
+.dialog h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-size: 24px;
+}
+
+.dialogWide h2 {
     margin-top: 0;
     margin-bottom: 20px;
     font-size: 24px;
@@ -49,7 +74,7 @@
 
 .confirmar {
     padding: 8px 20px;
-    background-color: tomato;
+    background-color: #ef5c41;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -83,5 +108,3 @@
 .cancelar:hover {
     background-color: #e0e0e0;
 }
-
-

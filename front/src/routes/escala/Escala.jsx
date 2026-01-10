@@ -1,27 +1,25 @@
 import Styles from './styles.module.css'
-import { useState, useEffect, useCallback, useContext } from 'react'
-import { GlobalContext } from '../../context/GlobalContext'
-import { CadastroServicoContextProvider } from '../../context/CadastroServicoContext'
+import {useCallback, useContext, useEffect, useState} from 'react'
+import GlobalContext from '../../context/GlobalContext'
 import BarraPesquisa from '../../components/barra_pesquisa/BarraPesquisa'
 import TabelaEscala from '../../components/tabela_escala/TabelaEscala'
-import CadastroServico from '../../components/cadastro_servico/CadastroServico'
-import AcoesEscala from '../../components/acoes_escala/AcoesEscala'
+import AcoesEscala from '../../components/acoes/AcoesEscala'
 import EscalaClient from '../../clients/EscalaClient'
 import InputUpload from '../../components/input_upload/InputUpload'
 import FormCriarEscala from '../../components/form_criar_escala/FormCriarEscala'
 
 export default function Escala() {
 
-    const { escala } = useContext(GlobalContext)
+    const {escala} = useContext(GlobalContext)
 
     const [servicosAnteriores, setServicosAnteriores] = useState([])
     const [escalaFiltrada, setEscalaFiltrada] = useState(null)
     const [ultimaPesquisa, setUltimaPesquisa] = useState(null)
 
     const camposPesquisa = [
-        { value: 'data', label: 'Data', inputType: 'date' },
-        { value: 'matricula', label: 'Matrícula' },
-        { value: 'militar', label: 'Militar Escalado' },
+        {value: 'data', label: 'Data', inputType: 'date'},
+        {value: 'matricula', label: 'Matrícula'},
+        {value: 'militar', label: 'Militar Escalado'},
         {
             value: 'funcao',
             label: 'Função',
@@ -37,10 +35,10 @@ export default function Escala() {
 
     const normalize = v => String(v ?? '').toLowerCase()
 
-    const gerenciarPesquisa = useCallback(({ campo, consulta }) => {
+    const gerenciarPesquisa = useCallback(({campo, consulta}) => {
         setUltimaPesquisa(pesquisa => {
             if (pesquisa && pesquisa.campo === campo && pesquisa.consulta === consulta) return pesquisa
-            return { campo, consulta }
+            return {campo, consulta}
         })
         const q = String(consulta ?? '').trim().toLowerCase()
 
@@ -95,23 +93,20 @@ export default function Escala() {
             <div className={Styles.upload}>
                 <label htmlFor="input_upload" className={Styles.label_upload}>Importe a Escala Anterior</label>
                 <InputUpload
-                    funcaoDownload={(signal) => EscalaClient.obterPlanilhaModeloEscala(signal)}
-                    funcaoUpload={(arquivo, signal) => EscalaClient.importarEscalaXLSX(arquivo, signal)}
+                    funcaoDownload={(token, signal) => EscalaClient.obterPlanilhaModeloEscala(token, signal)}
+                    funcaoUpload={(arquivo, token, signal) => EscalaClient.importarEscalaXLSX(arquivo, token, signal)}
                     nomeModelo="modelo_escala.xlsx"
                     setDados={setServicosAnteriores}
                 />
             </div>
-            <FormCriarEscala servicosAnteriores={servicosAnteriores} />
-            <CadastroServicoContextProvider>
-                <AcoesEscala />
-                <CadastroServico />
-            </CadastroServicoContextProvider>
+            <FormCriarEscala servicosAnteriores={servicosAnteriores}/>
+            <AcoesEscala/>
             <BarraPesquisa
                 campos={camposPesquisa}
                 placeholder="Pesquisar na escala..."
                 pesquisar={gerenciarPesquisa}
             />
-            <TabelaEscala escalaTabela={escalaTabela} />
+            <TabelaEscala escalaTabela={escalaTabela}/>
         </div>
     )
 }
