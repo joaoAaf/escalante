@@ -121,7 +121,7 @@ export default class MilitarClient {
 
     static async atualizarMilitar(militar, token, signal) {
         try {
-            const response = await fetch(`${this.baseUrl}/${encodeURIComponent(militar.matricula)}`, {
+            const response = await fetch(`${this.baseUrl}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,

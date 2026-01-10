@@ -5,7 +5,7 @@ import BotaoRemover from '../botao_remover/BotaoRemover'
 import {formatarData} from '../../utils/formatarData'
 import AtualizacaoMilitar from "../atualizacao_form/AtualizacaoMilitar.jsx";
 
-export default function TabelaMilitares({militaresTabela, tabela, setTabela, removerMilitar}) {
+export default function TabelaMilitares({militaresTabela, tabela, setTabela, removerMilitar, atualizarMilitar}) {
 
     const camposMilitar = {
         antiguidade: 'ANTIGUIDADE',
@@ -49,6 +49,9 @@ export default function TabelaMilitares({militaresTabela, tabela, setTabela, rem
                             <AtualizacaoMilitar
                                 matricula={militar?.matricula}
                                 matriculaKey={'matricula'}
+                                militares={lista}
+                                setMilitares={sourceSetTabela}
+                                apiAtualizar={atualizarMilitar}
                             />
                             {' '}
                             <BotaoRemover

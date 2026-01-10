@@ -7,7 +7,6 @@ import TabelaMilitares from '../../components/tabela_militares/TabelaMilitares'
 import MilitarClient from '../../clients/MilitarClient'
 import CadastroListaMilitares from '../../components/cadastro_militares/CadastroListaMilitares.jsx'
 import AcoesMilitares from "../../components/acoes/AcoesMilitares.jsx";
-import UsuarioClient from "../../clients/UsuarioClient.js";
 
 export default function Militares() {
 
@@ -47,9 +46,7 @@ export default function Militares() {
         setCarregando(true)
         MilitarClient.listarMilitares(token, controller.signal)
             .then(lista => {
-                const listaOrdenada = lista.sort((a, b) => {
-                    if (a.antiguidade !== b.antiguidade) return a.antiguidade - b.antiguidade
-                    })
+                const listaOrdenada = lista.sort((a, b) => a.antiguidade - b.antiguidade)
                 setMilitares(listaOrdenada || [])
                 setReload(false)
             })
@@ -134,6 +131,21 @@ export default function Militares() {
         carregarMilitares()
     }
 
+    const atualizarMilitar = militar => {
+
+        const controller = criarAbortController()
+
+        return MilitarClient.atualizarMilitar(militar, token, controller.signal)
+            .then(() => setReload(true))
+            .catch(error => {
+                return Promise.reject(error)
+            })
+            .finally(() => {
+                if (abortControllerRef.current === controller)
+                    abortControllerRef.current = null
+            })
+    }
+
     const removerMilitar = matricula => {
 
         const controller = criarAbortController()
@@ -172,7 +184,8 @@ export default function Militares() {
 
             {carregando && <p>Carregando militares...</p>}
 
-            <TabelaMilitares militaresTabela={militaresTabela} removerMilitar={removerMilitar}/>
+            <TabelaMilitares militaresTabela={militaresTabela} removerMilitar={removerMilitar}
+                             atualizarMilitar={atualizarMilitar}/>
 
             <CadastroListaMilitares
                 abrir={abrirModalImportacao}

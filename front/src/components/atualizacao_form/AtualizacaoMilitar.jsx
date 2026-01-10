@@ -4,16 +4,16 @@ import Modal from '../modal/Modal.jsx'
 import FormMilitar from "../form_modal/FormMilitar.jsx";
 import LinkAtualizacao from "../link_atualizacao/LinkAtualizacao.jsx";
 
-export default function AtualizacaoMilitar({matricula, matriculaKey}) {
+export default function AtualizacaoMilitar({militares, setMilitares, matricula, matriculaKey, apiAtualizar}) {
 
-    const {militares, setMilitares, setFeedback} = useContext(GlobalContext)
+    const {setFeedback} = useContext(GlobalContext)
     const [statusModal, setStatusModal] = useState(false)
 
     const militarExistente = militares.find(item => item?.[matriculaKey] === String(matricula))
 
     const [militar, setMilitar] = useState(militarExistente)
 
-    const atualizarMilitar = evento => {
+    const atualizarMilitar = async evento => {
         evento.preventDefault()
 
         const form = evento.currentTarget
@@ -29,10 +29,23 @@ export default function AtualizacaoMilitar({matricula, matriculaKey}) {
         militarAtualizado.antiguidade = militarAtualizado.antiguidade ? Number(militarAtualizado.antiguidade) : undefined
         militarAtualizado.folgaEspecial = militarAtualizado.folgaEspecial ? Number(militarAtualizado.folgaEspecial) : 0
 
-        setMilitares(prev => [...(prev || []), militarAtualizado])
-        setMilitar(militarExistente)
+        if (apiAtualizar) {
+            try {
+                await apiAtualizar(militarAtualizado)
+                setStatusModal(false)
+                setFeedback({type: 'success', mensagem: 'Militar atualizado com sucesso.'})
+                return
+            } catch (error) {
+                if (error.name === 'AbortError') return
+                setFeedback({type: 'error', mensagem: error.message})
+                return
+            }
+        }
+
+        const militaresAtualizados = (militares || []).filter(item => String(item?.[matriculaKey]) !== String(matricula))
+        setMilitares([...militaresAtualizados, militarAtualizado].sort((a, b) => a.antiguidade - b.antiguidade))
         setStatusModal(false)
-        setFeedback({type: 'success', mensagem: 'Militar cadastrado com sucesso.'})
+        setFeedback({type: 'success', mensagem: 'Militar atualizado com sucesso.'})
     }
 
     return (
