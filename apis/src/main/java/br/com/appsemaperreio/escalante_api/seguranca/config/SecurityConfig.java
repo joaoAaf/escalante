@@ -22,6 +22,7 @@ import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtEncoder;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.oauth2.server.resource.authentication.JwtGrantedAuthoritiesConverter;
+import org.springframework.security.oauth2.server.resource.web.authentication.BearerTokenAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 
 import javax.crypto.spec.SecretKeySpec;
@@ -57,7 +58,7 @@ public class SecurityConfig {
     // Filtro de segurança para as demais rotas da API, com utilização exclusiva de token JWT
     @Bean
     @Order(2)
-    public SecurityFilterChain apiFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain apiFilterChain(HttpSecurity http, BlacklistFilter blacklistFilter) throws Exception {
         // Configuração necessária para converter scope (claim) em GrantedAuthority (ex: 'ADMIN' -> 'ROLE_ADMIN').
         JwtGrantedAuthoritiesConverter grantedAuthoritiesConverter = new JwtGrantedAuthoritiesConverter();
         grantedAuthoritiesConverter.setAuthorityPrefix("ROLE_");
@@ -85,10 +86,13 @@ public class SecurityConfig {
                                     "/api/escala/**").hasRole("ESCALANTE")
                             .requestMatchers(HttpMethod.PUT, "/api/militar/**").hasRole("ESCALANTE")
                             .requestMatchers(HttpMethod.DELETE, "/api/militar/**").hasRole("ESCALANTE")
+                            .requestMatchers(HttpMethod.POST, "/api/logout").authenticated()
                             .anyRequest().denyAll();
                 })
                 // Configuração do recurso OAuth2 como um Resource Server que utiliza JWT
                 .oauth2ResourceServer(oauth -> oauth.jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthConverter)))
+                // Filtro customizado para verificar tokens revogados
+                .addFilterAfter(blacklistFilter, BearerTokenAuthenticationFilter.class)
                 // Configuração de tratamento de exceções
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new AuthenticationEntryPointCustom())
                         .accessDeniedHandler(new AccessDeniedHandlerCustom()))

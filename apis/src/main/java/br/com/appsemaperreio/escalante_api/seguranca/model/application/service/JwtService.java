@@ -1,6 +1,7 @@
 package br.com.appsemaperreio.escalante_api.seguranca.model.application.service;
 
 import java.time.Instant;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
@@ -41,6 +42,7 @@ public class JwtService {
                 .issuedAt(instanteAtual)
                 .expiresAt(instanteAtual.plusSeconds(tempoExpiracao))
                 .subject(authentication.getName())
+                .id(UUID.randomUUID().toString()) // Gera um ID único para o token.
                 .claim("scope", perfis) // Adiciona os perfis do usuário no claim 'scope'.
                 .build();
 
