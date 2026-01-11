@@ -1,7 +1,46 @@
 import Styles from './styles.module.css'
 import BotoesModal from "../modal/BotoesModal.jsx";
+import GlobalContext from "../../context/GlobalContext.jsx";
+import {useContext, useRef} from "react";
+import MilitarClient from "../../clients/MilitarClient.js";
 
 export default function FormServico({servico, setServico, fechar, acao}) {
+
+    const {token, setFeedback} = useContext(GlobalContext)
+
+    const abortControllerRef = useRef(null)
+
+    const criarAbortController = () => {
+        abortControllerRef.current?.abort()
+        const controller = new AbortController()
+        abortControllerRef.current = controller
+        return controller
+    }
+
+    const mapPatentes = {'TEN': 'Tenente', 'SUBTEN': 'Subtenente', 'SGT': 'Sargento', 'CB': 'Cabo', 'SD': 'Soldado'}
+
+    const dadosMilitar = async matricula => {
+        if (!matricula || matricula.length !== 8) return
+        const controller = criarAbortController()
+        MilitarClient.obterMilitarPorMatricula(matricula, token, controller.signal)
+            .then(militar => {
+                setServico(prev => ({
+                    ...prev,
+                    nomePaz: militar.nomePaz,
+                    patente: mapPatentes[militar.patente],
+                    antiguidade: militar.antiguidade,
+                    folga: militar.folgaEspecial !== 0 ? militar.folgaEspecial : ''
+                }))
+            })
+            .catch(error => {
+                if (error.name === 'AbortError') return
+                setFeedback({type: 'error', mensagem: error.message})
+            })
+            .finally(() => {
+                if (abortControllerRef.current === controller)
+                    abortControllerRef.current = null
+            })
+    }
 
     const converterMaiusculas = nome => nome.toUpperCase()
     const removerEspacosExtras = nome => nome.trim().replace(/\s+/g, ' ')
@@ -15,7 +54,7 @@ export default function FormServico({servico, setServico, fechar, acao}) {
                 value={servico.dataServico}
                 onChange={e => {
                     e.target.setCustomValidity("")
-                    setServico({...servico, dataServico: e.target.value})
+                    setServico(prev => ({...prev, dataServico: e.target.value}))
                 }}
                 required
                 onInvalid={e => e.target.setCustomValidity("Por favor, digite uma data válida.")}
@@ -28,8 +67,9 @@ export default function FormServico({servico, setServico, fechar, acao}) {
                 value={servico.matricula}
                 onChange={e => {
                     e.target.setCustomValidity("")
-                    setServico({...servico, matricula: e.target.value})
+                    setServico(prev => ({...prev, matricula: converterMaiusculas(e.target.value)}))
                 }}
+                onBlur={e => dadosMilitar(e.target.value)}
                 required
                 pattern="[A-Z0-9]{8,8}"
                 title="A matrícula deve conter exatamente 8 caracteres, sendo apenas letras maiúsculas e números."
@@ -45,9 +85,9 @@ export default function FormServico({servico, setServico, fechar, acao}) {
                 value={servico.nomePaz}
                 onChange={e => {
                     e.target.setCustomValidity("")
-                    setServico({...servico, nomePaz: converterMaiusculas(e.target.value)})
+                    setServico(prev => ({...prev, nomePaz: converterMaiusculas(e.target.value)}))
                 }}
-                onBlur={e => setServico({...servico, nomePaz: removerEspacosExtras(e.target.value)})}
+                onBlur={e => setServico(prev => ({...prev, nomePaz: removerEspacosExtras(e.target.value)}))}
                 required
                 pattern="(?=.*[a-zA-ZáàâãéèêíóôõúçÁÀÂÃÉÈÊÍÓÔÕÚÇ])[a-zA-ZáàâãéèêíóôõúçÁÀÂÃÉÈÊÍÓÔÕÚÇ ]{3,20}"
                 title="O nome do militar deve conter apenas letras e ter entre 3 e 20 caracteres."
@@ -62,7 +102,7 @@ export default function FormServico({servico, setServico, fechar, acao}) {
                 value={servico.patente}
                 onChange={e => {
                     e.target.setCustomValidity("")
-                    setServico({...servico, patente: e.target.value})
+                    setServico(prev => ({...prev, patente: e.target.value}))
                 }}
                 required
                 onInvalid={e => e.target.setCustomValidity("Por favor, selecione um posto ou graduação.")}
@@ -82,7 +122,7 @@ export default function FormServico({servico, setServico, fechar, acao}) {
                 value={servico.antiguidade}
                 onChange={e => {
                     e.target.setCustomValidity("")
-                    setServico({...servico, antiguidade: e.target.value})
+                    setServico(prev => ({...prev, antiguidade: e.target.value}))
                 }}
                 required
                 min="1"
@@ -98,7 +138,7 @@ export default function FormServico({servico, setServico, fechar, acao}) {
                 value={servico.funcao}
                 onChange={e => {
                     e.target.setCustomValidity("")
-                    setServico({...servico, funcao: e.target.value})
+                    setServico(prev => ({...prev, funcao: e.target.value}))
                 }}
                 required
                 onInvalid={e => e.target.setCustomValidity("Por favor, selecione uma função.")}
@@ -118,7 +158,7 @@ export default function FormServico({servico, setServico, fechar, acao}) {
                 value={servico.folga}
                 onChange={e => {
                     e.target.setCustomValidity("")
-                    setServico({...servico, folga: e.target.value})
+                    setServico(prev => ({...prev, folga: e.target.value}))
                 }}
                 required
                 min="1"

@@ -72,6 +72,28 @@ export default class MilitarClient {
         }
     }
 
+    static async obterMilitarPorMatricula(matricula, token, signal) {
+        try {
+            const response = await fetch(`${this.baseUrl}/${encodeURIComponent(matricula)}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                signal
+            })
+
+            if (!response.status.toString().startsWith('2')) {
+                const erro = await response.text()
+                throw new Error(!erro ? 'Não foi possivel obter o militar.' : JSON.parse(erro)?.Mensagem || erro)
+            }
+            return await response.json()
+        } catch (error) {
+            if (error.name === 'AbortError') throw error
+            if (error instanceof TypeError || error instanceof SyntaxError)
+                throw new Error('Servidor indisponível.')
+            throw error
+        }
+    }
+
     static async listarMilitares(token, signal) {
         try {
             const response = await fetch(`${this.baseUrl}`, {
