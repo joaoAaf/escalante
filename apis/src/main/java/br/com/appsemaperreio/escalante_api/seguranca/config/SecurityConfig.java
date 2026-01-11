@@ -77,9 +77,9 @@ public class SecurityConfig {
                     if (devProfileActive) auth.requestMatchers("/h2/**").permitAll();
                     auth.requestMatchers(HttpMethod.POST, "/api/usuarios").hasRole("ADMIN")
                             .requestMatchers(HttpMethod.GET, "/api/usuarios/**").hasRole("ADMIN")
-                            .requestMatchers(HttpMethod.PATCH, "/api/usuarios/username",
-                                    "/api/usuarios/perfis/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/usuarios/perfis/**").hasRole("ADMIN")
                             .requestMatchers(HttpMethod.DELETE, "/api/usuarios/**").hasRole("ADMIN")
+                            .requestMatchers(HttpMethod.PATCH, "/api/usuarios/username").authenticated()
                             .requestMatchers(HttpMethod.POST, "/api/militar/**",
                                     "/api/escala/**").hasRole("ESCALANTE")
                             .requestMatchers(HttpMethod.GET, "/api/militar/**",

@@ -3,9 +3,14 @@ spring:
     name: escalante-api
   profiles:
     active:
-    - ${PROFILE_ACTIVE}
+      - ${PROFILE_ACTIVE}
   jpa:
     open-in-view: false
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      password: ${REDIS_PASSWORD}
+      timeout: 5s
 logging:
   level:
     org:
@@ -28,4 +33,3 @@ env:
   usuario:
     inicial:
       username: ${USUARIO_INICIAL_USERNAME}
-
