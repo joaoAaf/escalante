@@ -1,24 +1,47 @@
 import Modal from '../modal/Modal.jsx'
 import Styles from './styles.module.css'
-import {useContext, useState} from "react";
+import {useContext, useRef, useState} from "react";
 import {useNavigate} from 'react-router-dom'
 import GlobalContext from '../../context/GlobalContext'
 import AtualizacaoEmail from "../atualizacao_pontual/AtualizacaoEmail.jsx";
+import LogoutClient from "../../clients/LogoutClient.js";
 
 export default function PerfilUsuario({abrir, fechar, usuario, alterarSenha}) {
 
     const {username, perfis} = usuario || {username: "", perfis: []}
 
     const [email, setEmail] = useState(username)
-    const {setToken} = useContext(GlobalContext)
+    const [saindo, setSaindo] = useState(false)
+    const {token, setToken, setFeedback} = useContext(GlobalContext)
     const navigate = useNavigate()
+    const abortControllerRef = useRef(null)
+
+    const criarAbortController = () => {
+        abortControllerRef.current?.abort()
+        const controller = new AbortController()
+        abortControllerRef.current = controller
+        return controller
+    }
 
     if (!username || !perfis || perfis.length === 0) return
 
     const logout = () => {
-        setToken("")
-        fechar()
-        navigate('/login')
+        const controller = criarAbortController()
+        setSaindo(true)
+        LogoutClient.logout(token, controller.signal)
+            .then(() => setFeedback({type: 'success', mensagem: 'Logout realizado com sucesso.'}))
+            .catch(error => {
+                if (error.name === 'AbortError') return
+                setFeedback({type: 'error', mensagem: error.message})
+            })
+            .finally(() => {
+                setToken("")
+                setSaindo(false)
+                fechar()
+                navigate('/login')
+                if (abortControllerRef.current === controller)
+                    abortControllerRef.current = null
+            })
     }
 
     return (
@@ -33,7 +56,14 @@ export default function PerfilUsuario({abrir, fechar, usuario, alterarSenha}) {
                 <button id={Styles.alterar} className={Styles.botoes} onClick={() => alterarSenha()}>
                     Alterar senha
                 </button>
-                <button id={Styles.sair} className={Styles.botoes} onClick={logout}>Sair</button>
+                <button
+                    id={Styles.sair}
+                    className={Styles.botoes}
+                    onClick={logout}
+                    disabled={saindo}
+                >
+                    {saindo ? "Saindo..." : "Sair"}
+                </button>
             </div>
         </Modal>
     )
