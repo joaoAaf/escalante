@@ -25,13 +25,12 @@ export default function AtualizacaoMilitar({militares, setMilitares, matricula, 
             }
         }
 
-        const militarAtualizado = {...militar}
-        militarAtualizado.antiguidade = militarAtualizado.antiguidade ? Number(militarAtualizado.antiguidade) : undefined
-        militarAtualizado.folgaEspecial = militarAtualizado.folgaEspecial ? Number(militarAtualizado.folgaEspecial) : 0
+        if (!militar?.antiguidade || militar?.antiguidade === 0) setMilitar({...militar, antiguidade: null})
+        if (!militar?.folgaEspecial) setMilitar({...militar, folgaEspecial: 0})
 
         if (apiAtualizar) {
             try {
-                await apiAtualizar(militarAtualizado)
+                await apiAtualizar(militar)
                 setStatusModal(false)
                 setFeedback({type: 'success', mensagem: 'Militar atualizado com sucesso.'})
                 return
@@ -43,7 +42,7 @@ export default function AtualizacaoMilitar({militares, setMilitares, matricula, 
         }
 
         const militaresAtualizados = (militares || []).filter(item => String(item?.[matriculaKey]) !== String(matricula))
-        setMilitares([...militaresAtualizados, militarAtualizado].sort((a, b) => a.antiguidade - b.antiguidade))
+        setMilitares([...militaresAtualizados, militar].sort((a, b) => a.antiguidade - b.antiguidade))
         setStatusModal(false)
         setFeedback({type: 'success', mensagem: 'Militar atualizado com sucesso.'})
     }

@@ -64,8 +64,6 @@ export default class MilitarClient {
                 const erro = await response.text()
                 throw new Error(!erro ? 'Não foi possivel cadastrar militares.' : JSON.parse(erro)?.Mensagem || erro)
             }
-
-            return await response.json()
         } catch (error) {
             if (error.name === 'AbortError') throw error
             if (error instanceof TypeError || error instanceof SyntaxError)

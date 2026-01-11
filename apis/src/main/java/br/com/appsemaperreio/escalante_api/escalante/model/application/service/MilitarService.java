@@ -144,6 +144,9 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
         if (militarExistente.equals(militarAtualizado))
             throw new IllegalArgumentException("Não foram identificadas alterações no militar informado.");
 
+        if (militarAtualizado.getAntiguidade() == 0)
+            throw new IllegalArgumentException("A antiguidade do militar não pode ser zero.");
+
         deslocarAntiguidades(List.of(militarAtualizado.getAntiguidade()));
 
         militarMapper.toMilitarDto(militarRepository.save(militarAtualizado));

@@ -8,12 +8,12 @@ export default function CadastroMilitar({abrir, fechar}) {
     const {token, setReload, setFeedback} = useContext(GlobalContext)
 
     const militarModelo = {
-        antiguidade: '',
+        antiguidade: 0,
         matricula: '',
         patente: '',
         nomePaz: '',
         nascimento: '',
-        folgaEspecial: '',
+        folgaEspecial: 0,
         cov: false
     }
 
@@ -41,13 +41,12 @@ export default function CadastroMilitar({abrir, fechar}) {
             }
         }
 
-        const novoMilitar = {...militar}
-        novoMilitar.antiguidade = novoMilitar.antiguidade ? Number(novoMilitar.antiguidade) : 0
-        novoMilitar.folgaEspecial = novoMilitar.folgaEspecial ? Number(novoMilitar.folgaEspecial) : 0
+        if (!militar?.antiguidade) setMilitar({...militar, antiguidade: 0})
+        if (!militar?.folgaEspecial) setMilitar({...militar, folgaEspecial: 0})
 
         const controller = criarAbortController()
         setSalvando(true)
-        MilitarClient.cadastrarMilitares([novoMilitar], token, controller.signal)
+        MilitarClient.cadastrarMilitares([militar], token, controller.signal)
             .then(() => {
                 setReload(true)
                 fechar()

@@ -67,7 +67,7 @@ export default function FormMilitar({militar, setMilitar, fechar, acao, salvando
             <input
                 type="number"
                 placeholder="Ex: 1"
-                value={militar.antiguidade || 0}
+                value={militar.antiguidade}
                 onChange={e => {
                     e.target.setCustomValidity('');
                     setMilitar({...militar, antiguidade: e.target.value})
@@ -96,7 +96,7 @@ export default function FormMilitar({militar, setMilitar, fechar, acao, salvando
             <input
                 type="number"
                 placeholder="Ex: 3"
-                value={militar.folgaEspecial || 0}
+                value={militar.folgaEspecial}
                 onChange={e => {
                     e.target.setCustomValidity('');
                     setMilitar({...militar, folgaEspecial: e.target.value})

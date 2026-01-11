@@ -53,7 +53,7 @@ export default function Militares() {
             .catch(error => {
                 if (error.name === 'AbortError') return
                 setMilitares([])
-                setFeedback?.({type: 'error', mensagem: error.message})
+                setFeedback({type: 'error', mensagem: error.message})
             })
             .finally(() => {
                 setCarregando(false)
