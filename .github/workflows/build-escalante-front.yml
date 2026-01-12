@@ -36,7 +36,7 @@ jobs:
                 platforms: linux/amd64,linux/arm64
                 push: true
                 tags: |
-                    ${{ vars.DOCKERHUB_TAG_FRONT }}:0.0.4-snapshot
+                    ${{ vars.DOCKERHUB_TAG_FRONT }}:0.1.0-snapshot
                     ${{ vars.DOCKERHUB_TAG_FRONT }}:latest
                 cache-from: type=registry,ref=${{ vars.DOCKERHUB_TAG_FRONT }}:latest
                 cache-to: type=inline
