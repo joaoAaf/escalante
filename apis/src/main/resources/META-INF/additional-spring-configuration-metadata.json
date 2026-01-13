@@ -1,5 +1,32 @@
-{"properties": [{
-  "name": "env.front.url",
-  "type": "java.lang.String",
-  "description": "A description for 'env.front.url'"
-}]}
+{"properties": [
+  {
+    "name": "env.front.url",
+    "type": "java.lang.String",
+    "description": "A description for 'env.front.url'"
+  },
+  {
+    "name": "env.jwt.secret",
+    "type": "java.lang.String",
+    "description": "A description for 'env.jwt.secret'"
+  },
+  {
+    "name": "env.jwt.expiration",
+    "type": "java.lang.String",
+    "description": "A description for 'env.jwt.expiration'"
+  },
+  {
+    "name": "env.usuario.inicial.username",
+    "type": "java.lang.String",
+    "description": "A description for 'env.usuario.inicial.username'"
+  },
+  {
+    "name": "env.usuario.inicial.password",
+    "type": "java.lang.String",
+    "description": "A description for 'env.usuario.inicial.password'"
+  },
+  {
+    "name": "env.usuario.padrao.password",
+    "type": "java.lang.String",
+    "description": "A description for 'env.usuario.padrao.password'"
+  }
+]}

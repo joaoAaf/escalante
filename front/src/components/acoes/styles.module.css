@@ -1,0 +1,30 @@
+.acoes {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+.acoes div {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.acoes button {
+    padding: 8px 20px;
+    background-color: #ef5c41;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: normal;
+    color: #333;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.acoes button:hover {
+    background-color: rgba(255, 99, 71, 0.625);
+}

@@ -1,9 +1,16 @@
 spring:
   application:
-    name: escalante
+    name: escalante-api
   profiles:
     active:
-    - ${PROFILE_ACTIVE:dev}
+      - ${PROFILE_ACTIVE}
+  jpa:
+    open-in-view: false
+  data:
+    redis:
+      host: ${REDIS_HOST}
+      password: ${REDIS_PASSWORD}
+      timeout: 5s
 logging:
   level:
     org:
@@ -19,4 +26,10 @@ logging:
                   ExceptionHandlerExceptionResolver: OFF
 env:
   front:
-    url: ${FRONT_URL:http://localhost:*}
+    url: ${FRONT_URL}
+  jwt:
+    secret: ${JWT_SECRET}
+    expiration: ${JWT_EXPIRATION}
+  usuario:
+    inicial:
+      username: ${USUARIO_INICIAL_USERNAME}
