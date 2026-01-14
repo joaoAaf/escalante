@@ -9,7 +9,7 @@ O sistema evoluiu de um MVP focado apenas na geração de escalas para uma aplic
 ### Tecnologias Utilizadas
 
 * **Backend:** Java 21, Spring Boot 3.5+, Maven, Apache POI (manipulação de xlsx), Spring Security (JWT).
-* **Banco de Dados:** H2 (desenvolvimento).
+* **Banco de Dados:** H2 (desenvolvimento) e PostgreSQL (produção).
 * **Cache:** Redis 8.4 (para gerenciamento de Blacklist de tokens).
 * **Frontend:** React 19, Vite 7 e Node.js 22+.
 * **Infraestrutura:** Docker e Docker Compose.
@@ -35,7 +35,7 @@ A estrutura do projeto está organizada da seguinte forma:
 * `src/clients/` - Camada de integração com a API.
 
 * `docs/` - Documentação de domínio, diagramas (Draw.io), coleção do Postman e regras de negócio.
-* `docker-compose.yml` - Orquestração dos containers (API, Frontend e Redis).
+* `docker-compose.yml` - Orquestração dos containers (API, Frontend, Banco de Dados e Cache).
 
 ## Features Implementadas
 
@@ -44,8 +44,8 @@ O sistema cobre as seguintes funcionalidades, divididas por contexto:
 **1. Contexto de Segurança**
 
 * **Autenticação JWT:** Login seguro com geração de tokens de acesso.
-* **Logout Seguro:** Invalidação de tokens utilizando Redis (Blacklist).
-* **Gestão de Usuários:** Cadastro de novos usuários, alteração de senha, listagem e remoção.
+* **Logout Seguro:** Invalidação de tokens utilizando Blacklist (Redis).
+* **Gestão de Usuários:** Implementação de persistência (PostgreSQL) para usuários, permitindo operações de cadastro, listagem, atualização e exclusão.
 * **Controle de Perfis:** Atribuição de perfis de acesso (ex: ADMIN, ESCALANTE).
 
 **2. Contexto Escalante (Core)**
@@ -54,7 +54,7 @@ O sistema cobre as seguintes funcionalidades, divididas por contexto:
 * **Importação de Escala Anterior:** Leitura da escala do mês passado para cálculo de folgas e restrições.
 * **Geração Automática de Escala:** Algoritmo que distribui os militares disponíveis nas funções diárias respeitando regras de antiguidade, folgas e restrições de cada função.
 * **Exportação:** Geração de arquivo .xlsx com a escala finalizada pronta para distribuição.
-* **CRUD de Militares:** Implementação de banco de dados para persistência dos militares, permitindo operações de criação, leitura, atualização e exclusão.
+* **Gestão de Militares:** Implementação de persistência (PostgreSQL) para militares, permitindo operações de cadastro, listagem, atualização e exclusão.
 
 ## Endpoints API
 
@@ -173,6 +173,9 @@ JWT_EXPIRATION=tempo_de_expiracao_jwt_em_ms
 USUARIO_INICIAL_USERNAME=email_do_usuario_inicial
 REDIS_PASSWORD=sua_senha_redis
 REDIS_HOST=host_redis
+DB_HOST=host_banco_de_dados
+DB_NAME=nome_banco_de_dados
+DB_PASS=senha_banco_de_dados
 ```
 
 ### Opção 1: Utilizando Docker (Recomendado)
@@ -192,13 +195,17 @@ Obs: Caso queira acessar diretamente a API você deve adicionar o parâmetro `po
 
 ### Opção 2: Execução Manual (Sem Docker)
 
-**Pré-requisitos:** Java 21, Maven, Node.js 18+ e uma instância do **Redis** rodando localmente.
+**Pré-requisitos:** Java 21, Maven, Node.js 18+, uma instância do **Redis** e do **PostgreSQL** rodando localmente.
 
-#### 1. Redis
+#### 1. PostgreSQL
+
+Inicie um servidor PostgreSQL localmente na porta 5432 e crie um banco de dados conforme as variáveis de ambiente.
+
+#### 2. Redis
 
 Inicie um servidor Redis localmente na porta 6379 com a senha configurada nas variáveis de ambiente.
 
-#### 2. Backend (API)
+#### 3. Backend (API)
 
 1. Navegue até a pasta `apis`.
 2. Configure as variáveis de ambiente no seu terminal.
@@ -208,7 +215,7 @@ mvn spring-boot:run
 ```
 4. A API estará disponível em `http://localhost:8080`.
 
-#### 3. Frontend
+#### 4. Frontend
 
 1. Navegue até a pasta `front`.
 2. Instale as dependências:
