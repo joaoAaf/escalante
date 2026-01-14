@@ -9,6 +9,7 @@ O sistema evoluiu de um MVP focado apenas na geração de escalas para uma aplic
 ### Tecnologias Utilizadas
 
 * **Backend:** Java 21, Spring Boot 3.5+, Maven, Apache POI (manipulação de xlsx), Spring Security (JWT).
+* **Banco de Dados:** H2 (desenvolvimento).
 * **Cache:** Redis 8.4 (para gerenciamento de Blacklist de tokens).
 * **Frontend:** React 19, Vite 7 e Node.js 22+.
 * **Infraestrutura:** Docker e Docker Compose.
