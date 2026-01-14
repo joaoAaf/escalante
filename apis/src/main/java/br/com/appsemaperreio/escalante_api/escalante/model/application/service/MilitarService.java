@@ -40,7 +40,11 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
         if (militarRepository.existsByAntiguidadeIn(antiguidades)) {
             var antiguidadesOrdenadas = antiguidades.stream().sorted().toList();
             for (var antiguidade : antiguidadesOrdenadas) {
-                militarRepository.increaseAntiguidadeFrom(antiguidade);
+                var militaresAntDesc =
+                        militarRepository.findByAntiguidadeGreaterThanEqualOrderByAntiguidadeDesc(antiguidade);
+                for (Militar m : militaresAntDesc) {
+                    m.setAntiguidade(m.getAntiguidade() + 1);
+                }
             }
         }
     }
@@ -103,6 +107,8 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
 
         deslocarAntiguidades(antiguidades);
 
+        militarRepository.flush();
+
         var prontosParaSalvar = new ArrayList<Militar>(veteranos);
 
         if (!novatos.isEmpty()) {
@@ -115,7 +121,7 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
             prontosParaSalvar.addAll(novatos);
         }
 
-        militarMapper.toListMilitarDto(militarRepository.saveAll(prontosParaSalvar));
+        militarRepository.saveAll(prontosParaSalvar);
     }
 
     @Override
@@ -147,9 +153,20 @@ public class MilitarService extends MetodosCompartilhados implements IMilitarSer
         if (militarAtualizado.getAntiguidade() == 0)
             throw new IllegalArgumentException("A antiguidade do militar não pode ser zero.");
 
-        deslocarAntiguidades(List.of(militarAtualizado.getAntiguidade()));
+        if (militarExistente.getAntiguidade().equals(militarAtualizado.getAntiguidade())) {
+            militarRepository.save(militarAtualizado);
+            return;
+        }
 
-        militarMapper.toMilitarDto(militarRepository.save(militarAtualizado));
+        if (militarExistente.getAntiguidade() > militarAtualizado.getAntiguidade()) {
+            militarExistente.setAntiguidade(militarRepository.maxAntiguidade() + 1);
+            militarRepository.flush();
+        }
+
+        deslocarAntiguidades(List.of(militarAtualizado.getAntiguidade()));
+        militarRepository.flush();
+
+        militarRepository.save(militarAtualizado);
     }
 
     @Transactional
