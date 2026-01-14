@@ -5,7 +5,7 @@ on:
         branches:
             - main
         paths:
-            - "apis/**"
+            - "front/**"
             - ".github/workflows/build-escalante-front.yml"
 
 jobs:
