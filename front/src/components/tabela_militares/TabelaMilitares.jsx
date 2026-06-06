@@ -8,6 +8,7 @@ import AtualizacaoMilitar from "../atualizacao_form/AtualizacaoMilitar.jsx";
 export default function TabelaMilitares({militaresTabela, tabela, setTabela, removerMilitar, atualizarMilitar}) {
 
     const camposMilitar = {
+        escalavel: 'ESCALÁVEL',
         antiguidade: 'ANTIGUIDADE',
         matricula: 'MATRÍCULA',
         patente: 'POST./GRAD.',
@@ -68,7 +69,7 @@ export default function TabelaMilitares({militaresTabela, tabela, setTabela, rem
             })
         ) : (
             <tr>
-                <td colSpan="8">Nenhum militar encontrado. Importe ou cadastre os militares</td>
+                <td colSpan="9">Nenhum militar encontrado. Importe ou cadastre os militares</td>
             </tr>
         )
     }
@@ -77,6 +78,7 @@ export default function TabelaMilitares({militaresTabela, tabela, setTabela, rem
         const m = {...militar, nascimento: formatarData(militar.nascimento)}
         return Object.keys(camposMilitar).map((campo) => {
             if (campo === 'cov') return <td key={campo}>{checkboxCov(militar)}</td>
+            if (campo === 'escalavel') return <td key={campo}>{checkboxEscalavel(militar)}</td>
             return <td key={campo}>{m[campo] ?? "-"}</td>
         })
     }
@@ -94,6 +96,23 @@ export default function TabelaMilitares({militaresTabela, tabela, setTabela, rem
         sourceSetTabela(prev => (prev || []).map(militar => {
             if (militar.matricula === matricula)
                 return {...militar, cov: !militar.cov}
+            return militar
+        }))
+    }
+
+    const checkboxEscalavel = militar => (
+        <input
+            type="checkbox"
+            checked={militar.escalavel !== false}
+            onChange={() => alterarEscalavel(militar.matricula)}
+        />
+    )
+
+    const alterarEscalavel = matricula => {
+        if (typeof sourceSetTabela !== 'function') return
+        sourceSetTabela(prev => (prev || []).map(militar => {
+            if (militar.matricula === matricula)
+                return {...militar, escalavel: !(militar.escalavel !== false)}
             return militar
         }))
     }

@@ -63,10 +63,12 @@ export default function FormCriarEscala({servicosAnteriores}) {
             return setFeedback({type: 'info', mensagem: 'Por favor, verifique as datas informadas.'})
         }
 
-        if (!militares || militares.length === 0)
-            return setFeedback({type: 'info', mensagem: 'Não é possível criar a escala sem militares cadastrados.'})
+        const militaresEscalaveis = (militares || []).filter(m => m.escalavel !== false)
 
-        if (militares.length > 100)
+        if (militaresEscalaveis.length === 0)
+            return setFeedback({type: 'info', mensagem: 'Não é possível criar a escala sem militares escaláveis.'})
+
+        if (militaresEscalaveis.length > 100)
             return setFeedback({type: 'info', mensagem: 'O número de militares não pode ser maior que 100.'})
 
         if (servicosAnteriores?.length > 210)
@@ -80,7 +82,7 @@ export default function FormCriarEscala({servicosAnteriores}) {
             dataInicio,
             dataFim,
             diasServico,
-            militares,
+            militares: militaresEscalaveis,
             servicosAnteriores: servicosAnteriores || []
         }
 
