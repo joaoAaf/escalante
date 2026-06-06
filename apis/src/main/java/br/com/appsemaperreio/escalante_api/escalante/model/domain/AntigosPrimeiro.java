@@ -30,17 +30,15 @@ public abstract class AntigosPrimeiro extends ServicoOperacional {
     }
 
     private Optional<Militar> filtrarMilitarAptoNuncaEscalado(List<Militar> militares) {
-        return militares.stream()
-                .sorted(Comparator.comparingInt(Militar::getAntiguidade))
-                .findFirst();
+        return militares.stream().min(Comparator.comparingInt(Militar::getAntiguidade));
     }
 
     private Optional<Militar> filtrarMilitarAptoJaEscalado(List<Militar> militares) {
-        return verificarFolgaMilitar(
-                militares.stream()
-                        .sorted(Comparator.comparing(Militar::dataUltimoServico)
-                                .thenComparing(Comparator.comparingInt(Militar::getAntiguidade)))
-                        .findFirst());
+        return militares.stream()
+                .sorted(Comparator.comparing(Militar::dataUltimoServico)
+                        .thenComparing(Comparator.comparingInt(Militar::getAntiguidade)))
+                .filter(militar -> verificarFolgaMilitar(Optional.of(militar)).isPresent())
+                .findFirst();
     }
 
 }

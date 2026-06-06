@@ -48,18 +48,16 @@ public abstract class ModernosPrimeiro extends ServicoOperacional {
 
     private Optional<Militar> filtrarMilitarAptoNuncaEscalado(List<Militar> militares, Patente patente) {
         return militares.stream()
-                .filter(militar -> militar.getPatente().equals(patente))
-                .sorted(Comparator.comparingInt(Militar::getAntiguidade).reversed())
-                .findFirst();
+                .filter(militar -> militar.getPatente().equals(patente)).max(Comparator.comparingInt(Militar::getAntiguidade));
     }
 
     private Optional<Militar> filtrarMilitarAptoJaEscalado(List<Militar> militares, Patente patente) {
-        return verificarFolgaMilitar(
-                militares.stream()
-                        .filter(militar -> militar.getPatente().equals(patente))
-                        .sorted(Comparator.comparing(Militar::dataUltimoServico)
-                                .thenComparing(Comparator.comparingInt(Militar::getAntiguidade).reversed()))
-                        .findFirst());
+        return militares.stream()
+                .filter(militar -> militar.getPatente().equals(patente))
+                .sorted(Comparator.comparing(Militar::dataUltimoServico)
+                        .thenComparing(Comparator.comparingInt(Militar::getAntiguidade).reversed()))
+                .filter(militar -> verificarFolgaMilitar(Optional.of(militar)).isPresent())
+                .findFirst();
     }
 
 }
