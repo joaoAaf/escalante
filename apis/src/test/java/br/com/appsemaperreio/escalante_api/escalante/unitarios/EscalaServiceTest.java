@@ -1,102 +1,203 @@
 package br.com.appsemaperreio.escalante_api.escalante.unitarios;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import br.com.appsemaperreio.escalante_api.escalante.model.application.mappers.MilitarMapper;
+import br.com.appsemaperreio.escalante_api.escalante.model.application.mappers.ServicoOperacionalMapper;
+import br.com.appsemaperreio.escalante_api.escalante.model.application.service.EscalaService;
+import br.com.appsemaperreio.escalante_api.escalante.model.domain.Funcao;
+import br.com.appsemaperreio.escalante_api.escalante.model.domain.Militar;
+import br.com.appsemaperreio.escalante_api.escalante.model.domain.ServicoOperacional;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.DadosEscalaRequest;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.MilitarDto;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoOperacionalDto;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.lang.reflect.Field;
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+import java.util.Optional;
 
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.*;
 
-import br.com.appsemaperreio.escalante_api.escalante.model.domain.DadosEscala;
-import br.com.appsemaperreio.escalante_api.escalante.model.domain.Escala;
-import br.com.appsemaperreio.escalante_api.escalante.model.domain.Funcao;
-import br.com.appsemaperreio.escalante_api.escalante.model.domain.ServicoOperacional;
-
+@SuppressWarnings("unchecked")
+@ExtendWith(MockitoExtension.class)
 class EscalaServiceTest {
+
+    @Mock
+    private MilitarMapper militarMapper;
+
+    @Mock
+    private ServicoOperacionalMapper servicoOperacionalMapper;
+
+    @InjectMocks
+    private EscalaService service;
 
     @BeforeEach
     void limparEstadoEstatico() throws Exception {
         Field campo = ServicoOperacional.class.getDeclaredField("covFiscal");
         campo.setAccessible(true);
-        campo.set(null, java.util.Optional.empty());
+        campo.set(null, Optional.empty());
+        lenient().when(servicoOperacionalMapper.toListServicoOperacionalDto(any()))
+                .thenAnswer(inv -> inv.getArgument(0));
     }
 
     @Test
-    void deveEscalarTodosOsDiasComPeloMenos5Militares() {
-        var militares = Fixture.criarMilitares();
-        var servicosAnteriores = Fixture.criarServicosAnteriores(militares);
-        militares.forEach(m -> m.ultimosServicosConsecutivos(servicosAnteriores));
+    void quandoServicosAnterioresSaoNulos_naoChamaUltimosServicosConsecutivos() {
+        var militares = spyAll(Fixture.criarMilitares());
+        when(militarMapper.toListMilitar(any())).thenReturn(militares);
 
-        var dadosEscala = new DadosEscala(
-                LocalDate.of(2026, 6, 2),
-                LocalDate.of(2026, 6, 30),
-                2);
-        var escala = new Escala(dadosEscala);
-        escala.preencherEscala(militares);
+        service.criarEscalaAutomatica(requestValido(militares, null));
 
-        var servicosPorDia = servicosPorDia(escala);
-
-        for (var entry : servicosPorDia.entrySet()) {
-            var data = entry.getKey();
-            var servicos = entry.getValue();
-            assertTrue(servicos.size() >= 5,
-                    "Dia " + data + " possui apenas " + servicos.size() + " serviços escalados");
-        }
+        for (var m : militares)
+            verify(m, never()).ultimosServicosConsecutivos(any());
     }
 
     @Test
-    void quandoCovEhFiscal_deveEscalarDoisOperadoresDeLinha() {
-        var militares = Fixture.criarMilitares();
-        var servicosAnteriores = Fixture.criarServicosAnteriores(militares);
-        militares.forEach(m -> m.ultimosServicosConsecutivos(servicosAnteriores));
+    void quandoServicosAnterioresVazios_naoChamaUltimosServicosConsecutivos() {
+        var militares = spyAll(Fixture.criarMilitares());
+        when(militarMapper.toListMilitar(any())).thenReturn(militares);
 
-        var dadosEscala = new DadosEscala(
+        service.criarEscalaAutomatica(requestValido(militares, List.of()));
+
+        for (var m : militares)
+            verify(m, never()).ultimosServicosConsecutivos(any());
+    }
+
+    @Test
+    void quandoServicoAnteriorPossuiMatriculaInexistente_eDescartado() {
+        var militares = spyAll(Fixture.criarMilitares());
+        when(militarMapper.toListMilitar(any())).thenReturn(militares);
+
+        var request = requestValido(militares, List.of(
+                criarServicoDto("99999999", Funcao.COV, LocalDate.of(2026, 5, 30))
+        ));
+        service.criarEscalaAutomatica(request);
+
+        for (var m : militares)
+            verify(m, never()).ultimosServicosConsecutivos(any());
+    }
+
+    @Test
+    void quandoServicoAnteriorPossuiMatriculaValida_chamaMetodoComServicoAtribuidoAoMilitarCorreto() {
+        var militares = spyAll(Fixture.criarMilitares());
+        when(militarMapper.toListMilitar(any())).thenReturn(militares);
+
+        var militarAlvo = localizar(militares, "89010001");
+        var dataServico = LocalDate.of(2026, 5, 30);
+        var funcao = Funcao.FISCAL_DE_DIA;
+
+        var request = requestValido(militares, List.of(
+                criarServicoDto("89010001", funcao, dataServico)
+        ));
+        service.criarEscalaAutomatica(request);
+
+        var captor = ArgumentCaptor.forClass(List.class);
+        verify(militarAlvo).ultimosServicosConsecutivos(captor.capture());
+
+        var lista = (List<ServicoOperacional>) captor.getValue();
+        assertEquals(1, lista.size());
+        var servico = lista.getFirst();
+        assertEquals(militarAlvo, servico.getMilitar());
+        assertEquals(dataServico, servico.getDataServico());
+        assertEquals(funcao, servico.getFuncao());
+    }
+
+    @Test
+    void misturaMatriculasValidasEInvalidas_listaPassadaContemSomenteAsValidas() {
+        var militares = spyAll(Fixture.criarMilitares());
+        when(militarMapper.toListMilitar(any())).thenReturn(militares);
+
+        var m1 = localizar(militares, "89010001");
+        var m2 = localizar(militares, "89010002");
+        var data = LocalDate.of(2026, 5, 30);
+
+        var request = requestValido(militares, List.of(
+                criarServicoDto("89010001", Funcao.FISCAL_DE_DIA, data),
+                criarServicoDto("99999999", Funcao.COV, data),
+                criarServicoDto("89010002", Funcao.COV, data)
+        ));
+        service.criarEscalaAutomatica(request);
+
+        var captorM1 = ArgumentCaptor.forClass(List.class);
+        verify(m1).ultimosServicosConsecutivos(captorM1.capture());
+        var captorM2 = ArgumentCaptor.forClass(List.class);
+        verify(m2).ultimosServicosConsecutivos(captorM2.capture());
+
+        var listaM1 = (List<ServicoOperacional>) captorM1.getValue();
+        var listaM2 = (List<ServicoOperacional>) captorM2.getValue();
+        assertEquals(2, listaM1.size());
+        assertEquals(2, listaM2.size());
+        assertEquals(m1, listaM1.get(0).getMilitar());
+        assertEquals(m2, listaM1.get(1).getMilitar());
+    }
+
+    @Test
+    void funcaoDoServicoAnteriorEMapeadaPeloNome() {
+        var militares = spyAll(Fixture.criarMilitares());
+        when(militarMapper.toListMilitar(any())).thenReturn(militares);
+
+        var militarAlvo = localizar(militares, "89010003");
+
+        var request = requestValido(militares, List.of(
+                criarServicoDto("89010003", Funcao.OPERADOR_DE_LINHA, LocalDate.of(2026, 5, 29))
+        ));
+        service.criarEscalaAutomatica(request);
+
+        var captor = ArgumentCaptor.forClass(List.class);
+        verify(militarAlvo).ultimosServicosConsecutivos(captor.capture());
+        var servico = ((List<ServicoOperacional>) captor.getValue()).getFirst();
+        assertEquals(Funcao.OPERADOR_DE_LINHA, servico.getFuncao());
+    }
+
+    private List<Militar> spyAll(List<Militar> militares) {
+        return militares.stream().map(m -> (Militar) spy(m)).toList();
+    }
+
+    private Militar localizar(List<Militar> militares, String matricula) {
+        return militares.stream()
+                .filter(m -> m.getMatricula().equals(matricula))
+                .findFirst()
+                .orElseThrow(() -> new IllegalStateException("Militar " + matricula + " ausente na fixture"));
+    }
+
+    private DadosEscalaRequest requestValido(List<Militar> militares, List<ServicoOperacionalDto> servicosAnteriores) {
+        return new DadosEscalaRequest(
                 LocalDate.of(2026, 6, 2),
-                LocalDate.of(2026, 6, 30),
-                2);
-        var escala = new Escala(dadosEscala);
-        escala.preencherEscala(militares);
-
-        var servicos = escala.getServicosEscala();
-        var datasComCovIgualFiscal = datasEmQueCovEhFiscal(servicos);
-
-        assertTrue(!datasComCovIgualFiscal.isEmpty(),
-                "Esperava ao menos um dia em que COV seja o mesmo militar do Fiscal de Dia");
-
-        for (var data : datasComCovIgualFiscal) {
-            var operadoresNaData = servicos.stream()
-                    .filter(s -> s.getDataServico().equals(data)
-                            && s.getFuncao() == Funcao.OPERADOR_DE_LINHA)
-                    .count();
-            assertTrue(operadoresNaData >= 2,
-                    "No dia " + data + " (COV=Fiscal) esperava ao menos 2 Operadores de Linha, encontrados: "
-                            + operadoresNaData);
-        }
+                LocalDate.of(2026, 6, 5),
+                2,
+                militares.stream().map(this::toDto).toList(),
+                servicosAnteriores
+        );
     }
 
-    private Map<LocalDate, List<ServicoOperacional>> servicosPorDia(Escala escala) {
-        return escala.getServicosEscala().stream()
-                .collect(java.util.stream.Collectors.groupingBy(ServicoOperacional::getDataServico));
+    private MilitarDto toDto(Militar m) {
+        return new MilitarDto(
+                m.getAntiguidade(),
+                m.getMatricula(),
+                m.getPatente().getNome(),
+                m.getNomePaz(),
+                m.getNascimento(),
+                m.getFolgaEspecial(),
+                m.getCov()
+        );
     }
 
-    private List<LocalDate> datasEmQueCovEhFiscal(List<ServicoOperacional> servicos) {
-        var datas = new ArrayList<LocalDate>();
-        for (var data : servicos.stream().map(ServicoOperacional::getDataServico).distinct().sorted().toList()) {
-            var cov = servicos.stream()
-                    .filter(s -> s.getDataServico().equals(data) && s.getFuncao() == Funcao.COV)
-                    .findFirst();
-            var fiscal = servicos.stream()
-                    .filter(s -> s.getDataServico().equals(data) && s.getFuncao() == Funcao.FISCAL_DE_DIA)
-                    .findFirst();
-            if (cov.isPresent() && fiscal.isPresent()
-                    && cov.get().getMilitar().equals(fiscal.get().getMilitar())) {
-                datas.add(data);
-            }
-        }
-        return datas;
+    private ServicoOperacionalDto criarServicoDto(String matricula, Funcao funcao, LocalDate data) {
+        return new ServicoOperacionalDto(
+                data,
+                matricula,
+                "NOME DE TESTE",
+                "Patente",
+                1,
+                funcao.getNome(),
+                3
+        );
     }
 }
