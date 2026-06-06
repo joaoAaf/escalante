@@ -1,29 +1,29 @@
 package br.com.appsemaperreio.escalante_api.escalante.model.application.service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
-
-import br.com.appsemaperreio.escalante_api.escalante.model.application.IEscalaService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-
 import br.com.appsemaperreio.escalante_api.escalante.adapters.exportador_xlsx.ExportadorXLSXAdapter;
 import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorEscalaXLSXAdapter;
+import br.com.appsemaperreio.escalante_api.escalante.model.application.IEscalaService;
 import br.com.appsemaperreio.escalante_api.escalante.model.application.mappers.MilitarMapper;
 import br.com.appsemaperreio.escalante_api.escalante.model.application.mappers.ServicoOperacionalMapper;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.DadosEscala;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.Funcao;
-import br.com.appsemaperreio.escalante_api.escalante.model.domain.ServicoOperacional;
+import br.com.appsemaperreio.escalante_api.escalante.model.domain.Militar;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.exceptions.ErroLeituraPlanilhaModeloException;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.exceptions.PlanilhaModeloNaoEncontradaException;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.factories.EscalaFactory;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.factories.ServicoOperacionalFactory;
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.DadosEscalaRequest;
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoOperacionalDto;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class EscalaService extends MetodosCompartilhados implements IEscalaService {
@@ -60,23 +60,32 @@ public class EscalaService extends MetodosCompartilhados implements IEscalaServi
     @Override
     public List<ServicoOperacionalDto> criarEscalaAutomatica(DadosEscalaRequest request) {
         request.validarDatas();
+
         var militares = militarMapper.toListMilitar(request.militares());
-        var servicosAnteriores = new ArrayList<ServicoOperacional>();
-        if (request.servicosAnteriores() != null && !request.servicosAnteriores().isEmpty()) {
-            request.servicosAnteriores().forEach(servicoDto -> {
-                var servico = ServicoOperacionalFactory.criarServicoOperacional(Funcao.obterFuncaoPorNome(servicoDto.funcao()), servicoDto.dataServico());
-                var militar = militares.stream()
-                        .filter(m -> m.getMatricula().equals(servicoDto.matricula()))
-                        .findFirst()
-                        .orElseThrow(() -> new NoSuchElementException("Militar não encontrado: " + servicoDto.matricula()));
-                servico.setMilitar(militar);
-                servicosAnteriores.add(servico);
-            });
+        var militaresPorMatricula = militares.stream().collect(Collectors.toMap(Militar::getMatricula, m -> m));
+
+        var servicosAnteriores = Optional.ofNullable(request.servicosAnteriores()).orElse(List.of())
+                .stream()
+                .map(servicoDto -> {
+                    var militar = militaresPorMatricula.get(servicoDto.matricula());
+                    if (militar == null) return null;
+                    var servico = ServicoOperacionalFactory.criarServicoOperacional(
+                            Funcao.obterFuncaoPorNome(servicoDto.funcao()),
+                            servicoDto.dataServico()
+                    );
+                    servico.setMilitar(militar);
+                    return servico;
+                })
+                .filter(Objects::nonNull)
+                .toList();
+
+        if (!servicosAnteriores.isEmpty())
             militares.forEach(militar -> militar.ultimosServicosConsecutivos(servicosAnteriores));
-        }
+
         var dadosEscala = new DadosEscala(request.dataInicio(), request.dataFim(), request.diasServico());
         var escala = EscalaFactory.criarEscala(dadosEscala);
         escala.preencherEscala(militares);
+
         return servicoOperacionalMapper.toListServicoOperacionalDto(escala.getServicosEscala());
     }
 
