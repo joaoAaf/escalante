@@ -1,147 +1,242 @@
-import Styles from './styles.module.css'
-import {useContext} from 'react'
-import GlobalContext from '../../context/GlobalContext'
-import BotaoRemover from '../botao_remover/BotaoRemover'
+import {useState, useMemo, useCallback} from 'react'
 import {ordenarEscala} from '../../utils/ordenacaoEscala'
+import ModalEscala from './ModalEscala'
+import Styles from './styles.module.css'
 
-export default function TabelaEscala({escalaTabela}) {
+const CORES = ['#e3f2fd', '#ffe0b2', '#c8e6c9', '#fff9c4']
+const DIAS_SEMANA = ['SEGUNDA', 'TERCA', 'QUARTA', 'QUINTA', 'SEXTA', 'SABADO', 'DOMINGO']
 
-    const {militares, escala, setEscala} = useContext(GlobalContext)
+const LABEL_FUNCAO = {
+    'Fiscal de Dia': 'OFICIAL/FISCAL DE DIA',
+    'C.O.V.': 'C.O.V – ABT',
+    'Operador de Linha 1': 'OP. LINHA 01/ SOCORR',
+    'Ajudante de Linha': 'AJUD. L 1/SOCORR.',
+    'Operador de Linha 2': 'OP. LINHA 02/ SOCORR',
+    'Permanente': 'PERMANENTE'
+}
 
-    const campos = ["DATA", "MATRÍCULA", "MILITAR ESCALADO", "POST./GRAD.", "ANTIGUIDADE", "FUNÇÃO", "FOLGA"]
+const ORDEM_LINHAS = [
+    'Fiscal de Dia',
+    'C.O.V.',
+    'Operador de Linha 1',
+    'Ajudante de Linha',
+    'Operador de Linha 2',
+    'Permanente'
+]
 
-    const criarCabecalho = () => (
-        <tr>
-            {campos.map(campo => (
-                <th key={campo}>{campo}</th>
-            ))}
-            <th>AÇÃO</th>
-        </tr>
-    )
+function normalize(str) {
+    return String(str ?? '').toLowerCase().trim()
+}
 
-    const listarEscala = () => {
-        if (!militares || militares.length === 0)
-            return (
-                <tr>
-                    <td colSpan="7">
-                        Não há militares disponiveis. Vá para a aba <b>Militares</b> e importe ou cadastre os militares.
-                    </td>
-                </tr>
-            )
-        if (!escalaTabela || escalaTabela.length === 0)
-            return (
-                <tr>
-                    <td colSpan="7">Importe a escala anterior e preencha os dados para criação da escala.</td>
-                </tr>
-            )
+function formatarDataDia(date) {
+    const meses = [
+        'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
+        'julho', 'agosto', 'setembro', 'outubro', 'novembro', 'dezembro'
+    ]
+    return `${date.getDate()}. ${meses[date.getMonth()]} ${date.getFullYear()}`
+}
 
-        const grupos = separarGruposPorData(escalaTabela)
+function montarGradeSemanal(escalaOrdenada) {
+    if (!escalaOrdenada || escalaOrdenada.length === 0) return []
 
-        return escalaTabela.length > 0 ? (
-            escalaTabela.map((servico) => {
-                const source = escala ?? escalaTabela
-                const id = servico?.id
+    const mapa = new Map()
 
-                const grupo = grupos.get(servico?.dataServico ?? "") ?? 0
-                const estiloGrupo = grupo % 2 === 0 ? Styles.grupoPar : Styles.grupoImpar
-                const key = id ? `s-${id}` : `s-${servico?.dataServico}-${servico?.matricula}`
-                return (
-                    <tr key={key} className={estiloGrupo}>
-                        {listarServicos(servico, id)}
-                        <td>
-                            <BotaoRemover
-                                id={id}
-                                idKey={'id'}
-                                tabela={source}
-                                setTabela={setEscala}
-                                campos={campos}
-                            />
-                        </td>
-                    </tr>
-                )
+    escalaOrdenada.forEach(servico => {
+        if (!servico?.dataServico) return
+        const date = new Date(servico.dataServico + 'T00:00:00')
+        let diaSemana = date.getDay()
+        diaSemana = diaSemana === 0 ? 6 : diaSemana - 1
+
+        const inicioSemana = new Date(date)
+        const dia = inicioSemana.getDay()
+        const diff = dia === 0 ? -6 : 1 - dia
+        inicioSemana.setDate(inicioSemana.getDate() + diff)
+        const chaveSemana = inicioSemana.toISOString().split('T')[0]
+
+        if (!mapa.has(chaveSemana)) {
+            mapa.set(chaveSemana, {
+                inicio: new Date(inicioSemana),
+                servicos: {}
             })
+        }
 
-        ) : (
-            <tr>
-                <td colSpan="7">Nenhum serviço encontrado. Tente criar uma nova escala.</td>
-            </tr>
+        const semana = mapa.get(chaveSemana)
+        const funcao = servico.funcao === 'Operador de Linha' ? 'Operador de Linha 1' : servico.funcao
+
+        if (funcao === 'Operador de Linha 1') {
+            if (!semana.servicos['Operador de Linha 1']) {
+                semana.servicos['Operador de Linha 1'] = Array(7).fill(null)
+            }
+            if (semana.servicos['Operador de Linha 1'][diaSemana] !== null) {
+                if (!semana.servicos['Operador de Linha 2']) {
+                    semana.servicos['Operador de Linha 2'] = Array(7).fill(null)
+                }
+                semana.servicos['Operador de Linha 2'][diaSemana] = servico
+            } else {
+                semana.servicos['Operador de Linha 1'][diaSemana] = servico
+            }
+        } else {
+            if (!semana.servicos[funcao]) {
+                semana.servicos[funcao] = Array(7).fill(null)
+            }
+            semana.servicos[funcao][diaSemana] = servico
+        }
+    })
+
+    const semanas = []
+    for (const [chave, dados] of mapa) {
+        semanas.push({
+            chave,
+            inicio: dados.inicio,
+            servicos: dados.servicos
+        })
+    }
+
+    return semanas.sort((a, b) => a.inicio - b.inicio)
+}
+
+export default function TabelaEscala({escalaTabela, busca}) {
+    const [modalServico, setModalServico] = useState(null)
+
+    const gradeSemanal = useMemo(() => {
+        const escala = escalaTabela || []
+        const escalaOrdenada = ordenarEscala(escala)
+        return montarGradeSemanal(escalaOrdenada)
+    }, [escalaTabela])
+
+    const queryBusca = useMemo(() => {
+        if (!busca || !busca.consulta) return null
+        return {
+            campo: busca.campo,
+            termo: normalize(busca.consulta)
+        }
+    }, [busca])
+
+    const isDestacado = useCallback((servico, funcao) => {
+        if (!queryBusca) return true
+        const {campo, termo} = queryBusca
+
+        if (campo === 'militar' && servico) {
+            return normalize(servico.nomePaz).includes(termo) ||
+                   normalize(servico.patente).includes(termo)
+        }
+        if (campo === 'funcao' && funcao) {
+            return normalize(funcao).includes(termo)
+        }
+        if (campo === 'data' && termo && servico) {
+            return normalize(servico.dataServico).includes(termo)
+        }
+        if (campo === 'matricula' && servico) {
+            return normalize(servico.matricula).includes(termo)
+        }
+        return true
+    }, [queryBusca])
+
+    const corClassMap = useMemo(() => ({
+        '#e3f2fd': Styles['bg-blue'],
+        '#ffe0b2': Styles['bg-orange'],
+        '#c8e6c9': Styles['bg-green'],
+        '#fff9c4': Styles['bg-yellow'],
+        '#eeeeee': Styles['bg-grey']
+    }), [])
+
+    const gradeComCores = useMemo(() => {
+        if (!gradeSemanal.length) return []
+        const primeiroDia = gradeSemanal[0].inicio
+        const msPorDia = 86400000
+
+        return gradeSemanal.map(semana => ({
+            ...semana,
+            coresPorDia: Array.from({length: 7}, (_, diaIdx) => {
+                const date = new Date(semana.inicio)
+                date.setDate(date.getDate() + diaIdx)
+                const diffDias = Math.round((date - primeiroDia) / msPorDia)
+                const corIdx = Math.floor((diffDias + 1) / 2) % 4
+                return CORES[corIdx]
+            })
+        }))
+    }, [gradeSemanal])
+
+    if (!escalaTabela || escalaTabela.length === 0) {
+        return (
+            <div>
+                <p>Nenhum serviço encontrado. Tente criar uma nova escala.</p>
+            </div>
         )
     }
 
-    const separarGruposPorData = escala => {
-        const mapaGrupo = new Map()
-        let grupo = 0
-        escala.forEach(servico => {
-            const dataServico = servico?.dataServico ?? ""
-            if (!mapaGrupo.has(dataServico)) mapaGrupo.set(dataServico, grupo++)
-        })
-        return mapaGrupo
-    }
-
-    const listarServicos = (servico, id) => {
-        return Object.keys(servico).map(campo => {
-            if (campo === 'id') return null
-            switch (campo) {
-                case 'dataServico':
-                    return (
-                        <td key={campo}>
-                            <input
-                                type="date"
-                                value={servico?.dataServico ?? ""}
-                                onChange={e => alterarData(id, e.target.value)}
-                            />
-                        </td>
-                    )
-                case 'funcao':
-                    return (
-                        <td key={campo}>
-                            <select
-                                value={servico?.funcao ?? ""}
-                                onChange={e => alterarFuncao(id, e.target.value)}
-                            >
-                                <option>Fiscal de Dia</option>
-                                <option>C.O.V.</option>
-                                <option>Operador de Linha</option>
-                                <option>Ajudante de Linha</option>
-                                <option>Permanente</option>
-                            </select>
-                        </td>
-                    )
-                default:
-                    return (
-                        <td key={campo}>{servico[campo] ?? "-"}</td>
-                    )
-            }
-        })
-    }
-
-    const alterarData = (id, novaData) => setEscala(
-        escala => {
-            if (id == null) return escala
-            const novaEscala = escala.map((servico) => servico.id === id ? {
-                ...servico,
-                dataServico: novaData
-            } : servico)
-            return ordenarEscala(novaEscala)
-        }
-    )
-
-    const alterarFuncao = (id, novaFuncao) => setEscala(
-        escala => {
-            if (id == null) return escala
-            const novaEscala = escala.map((servico) => servico.id === id ? {...servico, funcao: novaFuncao} : servico)
-            return ordenarEscala(novaEscala)
-        }
-    )
-
     return (
-        <table className={Styles.table}>
-            <thead>
-            {criarCabecalho()}
-            </thead>
-            <tbody>
-            {listarEscala()}
-            </tbody>
-        </table>
+        <>
+            {gradeComCores.map(semana => (
+                <table key={semana.chave} className={Styles['weekly-table']}>
+                    <thead>
+                        <tr>
+                            <th></th>
+                            {Array.from({length: 7}, (_, diaIdx) => {
+                                const date = new Date(semana.inicio)
+                                date.setDate(date.getDate() + diaIdx)
+                                return (
+                                    <th key={diaIdx} className={Styles['date-header']}>
+                                        {DIAS_SEMANA[diaIdx]}
+                                        <br />
+                                        {formatarDataDia(date)}
+                                    </th>
+                                )
+                            })}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {ORDEM_LINHAS.map(funcao => {
+                            const label = LABEL_FUNCAO[funcao] || funcao
+                            const servicosPorDia = semana.servicos[funcao] || Array(7).fill(null)
+                            return (
+                                <tr key={funcao}>
+                                    <td className={Styles['label-col']}>{label}</td>
+                                    {servicosPorDia.map((servico, diaIdx) => {
+                                        const cor = servico ? (semana.coresPorDia[diaIdx] || '#eeeeee') : '#eeeeee'
+                                        const destacado = isDestacado(servico, funcao)
+                                        const celulaDimmed = queryBusca && !destacado
+
+                                        return (
+                                            <td
+                                                key={diaIdx}
+                                                className={corClassMap[cor] || ''}
+                                                style={celulaDimmed ? {opacity: 0.3} : undefined}
+                                            >
+                                                {servico ? (
+                                                    <span
+                                                        className={Styles['celula-militar']}
+                                                        onClick={() => setModalServico({...servico, funcao})}
+                                                    >
+                                                        {`${servico.patente || ''} ${servico.nomePaz || ''}`.trim()}
+                                                    </span>
+                                                ) : (
+                                                    <span
+                                                        className={Styles['celula-vazia']}
+                                                        onClick={() => {
+                                                            const date = new Date(semana.inicio)
+                                                            date.setDate(date.getDate() + diaIdx)
+                                                            const dataStr = date.toISOString().split('T')[0]
+                                                            setModalServico({dataServico: dataStr, funcao})
+                                                        }}
+                                                    >
+                                                        ---------------
+                                                    </span>
+                                                )}
+                                            </td>
+                                        )
+                                    })}
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
+            ))}
+            <ModalEscala
+                abrir={modalServico !== null}
+                fechar={() => setModalServico(null)}
+                servico={modalServico}
+            />
+        </>
     )
 }

@@ -29,7 +29,7 @@ const prioridadeFuncao = funcao => {
 const ordemFuncoes = [
     'Fiscal de Dia',
     'C.O.V.',
-    'Operador de Linha',
+    'Operador de Linha 1',
     'Ajudante de Linha',
     'Permanente'
 ]
