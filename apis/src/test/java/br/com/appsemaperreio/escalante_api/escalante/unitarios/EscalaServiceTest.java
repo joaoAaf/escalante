@@ -50,7 +50,7 @@ class EscalaServiceTest {
 
     @Test
     void quandoServicosAnterioresSaoNulos_naoChamaUltimosServicosConsecutivos() {
-        var militares = spyAll(Fixture.criarMilitares());
+        var militares = spyAll(MockDadosEscala.criarMilitares());
         when(militarMapper.toListMilitar(any())).thenReturn(militares);
 
         service.criarEscalaAutomatica(requestValido(militares, null));
@@ -61,7 +61,7 @@ class EscalaServiceTest {
 
     @Test
     void quandoServicosAnterioresVazios_naoChamaUltimosServicosConsecutivos() {
-        var militares = spyAll(Fixture.criarMilitares());
+        var militares = spyAll(MockDadosEscala.criarMilitares());
         when(militarMapper.toListMilitar(any())).thenReturn(militares);
 
         service.criarEscalaAutomatica(requestValido(militares, List.of()));
@@ -72,7 +72,7 @@ class EscalaServiceTest {
 
     @Test
     void quandoServicoAnteriorPossuiMatriculaInexistente_eDescartado() {
-        var militares = spyAll(Fixture.criarMilitares());
+        var militares = spyAll(MockDadosEscala.criarMilitares());
         when(militarMapper.toListMilitar(any())).thenReturn(militares);
 
         var request = requestValido(militares, List.of(
@@ -86,7 +86,7 @@ class EscalaServiceTest {
 
     @Test
     void quandoServicoAnteriorPossuiMatriculaValida_chamaMetodoComServicoAtribuidoAoMilitarCorreto() {
-        var militares = spyAll(Fixture.criarMilitares());
+        var militares = spyAll(MockDadosEscala.criarMilitares());
         when(militarMapper.toListMilitar(any())).thenReturn(militares);
 
         var militarAlvo = localizar(militares, "89010001");
@@ -111,7 +111,7 @@ class EscalaServiceTest {
 
     @Test
     void misturaMatriculasValidasEInvalidas_listaPassadaContemSomenteAsValidas() {
-        var militares = spyAll(Fixture.criarMilitares());
+        var militares = spyAll(MockDadosEscala.criarMilitares());
         when(militarMapper.toListMilitar(any())).thenReturn(militares);
 
         var m1 = localizar(militares, "89010001");
@@ -140,7 +140,7 @@ class EscalaServiceTest {
 
     @Test
     void funcaoDoServicoAnteriorEMapeadaPeloNome() {
-        var militares = spyAll(Fixture.criarMilitares());
+        var militares = spyAll(MockDadosEscala.criarMilitares());
         when(militarMapper.toListMilitar(any())).thenReturn(militares);
 
         var militarAlvo = localizar(militares, "89010003");
