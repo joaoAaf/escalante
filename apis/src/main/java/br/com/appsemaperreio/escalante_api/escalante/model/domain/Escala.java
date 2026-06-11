@@ -1,26 +1,23 @@
 package br.com.appsemaperreio.escalante_api.escalante.model.domain;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
-
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.factories.ServicoOperacionalFactory;
+
+import java.util.*;
 
 public class Escala {
 
-    private DadosEscala dadosEscala;
-    private List<ServicoOperacional> servicosEscala = new ArrayList<ServicoOperacional>();
+    private final DadosEscala dadosEscala;
+    private final List<ServicoOperacional> servicosEscala = new ArrayList<ServicoOperacional>();
 
     public Escala(DadosEscala dadosEscala) {
         this.dadosEscala = dadosEscala;
     }
 
     public void preencherEscala(List<Militar> militares) {
+        ServicoOperacional.covFiscal = Optional.empty();
         var dataAtual = this.dadosEscala.dataInicio();
         var funcoes = Arrays.stream(Funcao.values()).toList();
-        while (dataAtual.compareTo(this.dadosEscala.dataFim()) <= 0) {
+        while (!dataAtual.isAfter(this.dadosEscala.dataFim())) {
             for (var funcao : funcoes)
                 buscarMilitarApto(militares, ServicoOperacionalFactory.criarServicoOperacional(funcao, dataAtual));
             dataAtual = dataAtual.plusDays(this.dadosEscala.diasServico());
