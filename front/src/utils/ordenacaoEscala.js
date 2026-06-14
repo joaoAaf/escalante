@@ -14,9 +14,7 @@ export const ordenarEscala = escala => {
         if (prioridadeFuncaoA !== prioridadeFuncaoB)
             return prioridadeFuncaoA - prioridadeFuncaoB
 
-        const antiguidadeServicoA = Number(servicoA?.antiguidade ?? 0)
-        const antiguidadeServicoB = Number(servicoB?.antiguidade ?? 0)
-        return antiguidadeServicoA - antiguidadeServicoB
+        return 0
     })
     return escalaOrdenada
 }

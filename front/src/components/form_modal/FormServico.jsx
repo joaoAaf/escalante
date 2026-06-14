@@ -27,9 +27,7 @@ export default function FormServico({servico, setServico, fechar, acao}) {
                 setServico(prev => ({
                     ...prev,
                     nomePaz: militar.nomePaz,
-                    patente: mapPatentes[militar.patente],
-                    antiguidade: militar.antiguidade,
-                    folga: militar.folgaEspecial !== 0 ? militar.folgaEspecial : ''
+                    patente: mapPatentes[militar.patente]
                 }))
             })
             .catch(error => {
@@ -115,23 +113,6 @@ export default function FormServico({servico, setServico, fechar, acao}) {
                 <option>Soldado</option>
             </select>
 
-            <label>Antiguidade:</label>
-            <input
-                type="number"
-                placeholder="Ex: 1"
-                value={servico.antiguidade}
-                onChange={e => {
-                    e.target.setCustomValidity("")
-                    setServico(prev => ({...prev, antiguidade: e.target.value}))
-                }}
-                required
-                min="1"
-                max="999"
-                step="1"
-                title="A antiguidade deve ser um número inteiro positivo."
-                onInvalid={e => e.target.setCustomValidity("Por favor, digite uma antiguidade válida.")}
-            />
-
             <label>Função:</label>
             <select
                 name="funcao"
@@ -150,23 +131,6 @@ export default function FormServico({servico, setServico, fechar, acao}) {
                 <option>Ajudante de Linha</option>
                 <option>Permanente</option>
             </select>
-
-            <label>Folga:</label>
-            <input
-                type="number"
-                placeholder="Ex: 3"
-                value={servico.folga}
-                onChange={e => {
-                    e.target.setCustomValidity("")
-                    setServico(prev => ({...prev, folga: e.target.value}))
-                }}
-                required
-                min="1"
-                max="30"
-                step="1"
-                title="A folga deve ser um número inteiro positivo."
-                onInvalid={e => e.target.setCustomValidity("Por favor, digite uma folga válida.")}
-            />
 
             <BotoesModal typeConfirmar="submit" cancelar={fechar}/>
         </form>

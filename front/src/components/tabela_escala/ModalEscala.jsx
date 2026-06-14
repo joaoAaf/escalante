@@ -62,9 +62,7 @@ export default function ModalEscala({abrir, fechar, servico}) {
                 funcao,
                 matricula: militar.matricula,
                 nomePaz: militar.nomePaz,
-                patente: militar.patente,
-                antiguidade: militar.antiguidade,
-                folga: militar.folgaEspecial
+                patente: militar.patente
             }]))
             fechar()
         } else {
@@ -89,9 +87,7 @@ export default function ModalEscala({abrir, fechar, servico}) {
                             ...(militar ? {
                                 matricula: militar.matricula,
                                 nomePaz: militar.nomePaz,
-                                patente: militar.patente,
-                                antiguidade: militar.antiguidade,
-                                folga: militar.folgaEspecial
+                                patente: militar.patente
                             } : {})
                         }
                     }

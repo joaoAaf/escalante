@@ -14,9 +14,7 @@ export default function CadastroServico({abrir, fechar}) {
         matricula: '',
         nomePaz: '',
         patente: '',
-        antiguidade: '',
-        funcao: '',
-        folga: ''
+        funcao: ''
     }
 
     const [servico, setServico] = useState(servicoModelo)
