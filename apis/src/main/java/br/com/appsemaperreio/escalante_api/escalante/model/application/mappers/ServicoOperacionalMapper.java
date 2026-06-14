@@ -14,7 +14,6 @@ public interface ServicoOperacionalMapper {
     @Mapping(target = "matricula", source = "militar.matricula")
     @Mapping(target = "nomePaz", source = "militar.nomePaz")
     @Mapping(target = "patente", source = "militar.patente.nome")
-    @Mapping(target = "antiguidade", source = "militar.antiguidade")
     @Mapping(target = "funcao", source = "funcao.nome")
     ServicoOperacionalDto toServicoOperacionalDto(ServicoOperacional servicoOperacional);
 

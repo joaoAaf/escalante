@@ -13,6 +13,7 @@ import br.com.appsemaperreio.escalante_api.escalante.model.domain.exceptions.Pla
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.factories.EscalaFactory;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.factories.ServicoOperacionalFactory;
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.DadosEscalaRequest;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoAnteriorDto;
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoOperacionalDto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -52,7 +53,7 @@ public class EscalaService extends MetodosCompartilhados implements IEscalaServi
     }
 
     @Override
-    public List<ServicoOperacionalDto> importarEscalaXLSX(MultipartFile planilhaEscala) {
+    public List<ServicoAnteriorDto> importarEscalaXLSX(MultipartFile planilhaEscala) {
         validarPlanilha(planilhaEscala);
         return importadorXLSX.importarEscalaXLSX(planilhaEscala);
     }
