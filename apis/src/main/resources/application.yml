@@ -6,11 +6,6 @@ spring:
       - ${PROFILE_ACTIVE}
   jpa:
     open-in-view: false
-  data:
-    redis:
-      host: ${REDIS_HOST}
-      password: ${REDIS_PASSWORD}
-      timeout: 5s
 logging:
   level:
     org:
