@@ -8,7 +8,7 @@ import br.com.appsemaperreio.escalante_api.escalante.model.domain.Militar;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.ServicoOperacional;
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.DadosEscalaRequest;
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.MilitarDto;
-import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoAnteriorDto;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -167,7 +167,7 @@ class EscalaServiceTest {
                 .orElseThrow(() -> new IllegalStateException("Militar " + matricula + " ausente na fixture"));
     }
 
-    private DadosEscalaRequest requestValido(List<Militar> militares, List<ServicoOperacionalDto> servicosAnteriores) {
+    private DadosEscalaRequest requestValido(List<Militar> militares, List<ServicoAnteriorDto> servicosAnteriores) {
         return new DadosEscalaRequest(
                 LocalDate.of(2026, 6, 2),
                 LocalDate.of(2026, 6, 5),
@@ -189,15 +189,11 @@ class EscalaServiceTest {
         );
     }
 
-    private ServicoOperacionalDto criarServicoDto(String matricula, Funcao funcao, LocalDate data) {
-        return new ServicoOperacionalDto(
+    private ServicoAnteriorDto criarServicoDto(String matricula, Funcao funcao, LocalDate data) {
+        return new ServicoAnteriorDto(
                 data,
                 matricula,
-                "NOME DE TESTE",
-                "Patente",
-                1,
-                funcao.getNome(),
-                3
+                funcao.getNome()
         );
     }
 }

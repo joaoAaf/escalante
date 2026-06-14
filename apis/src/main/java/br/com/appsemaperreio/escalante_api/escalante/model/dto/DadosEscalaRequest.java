@@ -22,7 +22,7 @@ public record DadosEscalaRequest(
         @Size(max = 100, message = "A lista de militares não pode conter mais de 100 militares.")
         List<@Valid MilitarDto> militares,
         @Size(max = 210, message = "A lista de serviços anteriores não pode conter mais de 210 serviços.")
-        List<@Valid ServicoOperacionalDto> servicosAnteriores
+        List<@Valid ServicoAnteriorDto> servicosAnteriores
     ) {
 
         public void validarDatas() {
