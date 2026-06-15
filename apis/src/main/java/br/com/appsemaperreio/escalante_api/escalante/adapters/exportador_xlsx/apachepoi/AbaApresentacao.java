@@ -114,7 +114,7 @@ public class AbaApresentacao {
                         .filter(s -> s.funcao().equals(funcao.getNome()) && s.dataServico().equals(dataServico)).toList();
                 if (!servico.isEmpty()) {
                     Function<Integer, Patente> obterPatente = indice -> Arrays.stream(Patente.values())
-                            .filter(p -> p.getNome().equals(servico.get(indice).patente()))
+                            .filter(p -> p.name().equals(servico.get(indice).patente()))
                             .findFirst().orElseThrow();
                     var militarEscalado = obterPatente.apply(0).name() + " "
                             + servico.get(0).nomePaz();
