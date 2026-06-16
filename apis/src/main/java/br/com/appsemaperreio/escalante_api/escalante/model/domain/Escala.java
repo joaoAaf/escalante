@@ -31,8 +31,7 @@ public class Escala {
         var militarEscalado = servicoOperacional.buscarMilitar(militares);
         escalarMilitar(servicoOperacional, militarEscalado);
         if (servicoOperacional.covEhFiscal() && servicoOperacional instanceof AjudanteLinha) {
-            buscarMilitarApto(militares, ServicoOperacionalFactory.criarServicoOperacional(Funcao.OPERADOR_DE_LINHA,
-                    servicoOperacional.getDataServico()));
+            buscarMilitarApto(militares, new OperadorLinha(servicoOperacional.getDataServico(), 2));
         }
     }
 

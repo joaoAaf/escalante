@@ -15,6 +15,7 @@ public record ServicoOperacionalDto(
         @NotBlank(message = "A patente do militar não pode estar em branco.")
         String patente,
         @NotBlank(message = "A função do serviço não pode estar em branco.")
-        String funcao) {
+        String funcao,
+        Integer linha) {
 
 }
