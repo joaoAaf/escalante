@@ -24,6 +24,11 @@ const ORDEM_LINHAS = [
     'Permanente'
 ]
 
+const LINHA_POR_CHAVE = {
+    'Operador de Linha 1': 1,
+    'Operador de Linha 2': 2
+}
+
 function normalize(str) {
     return String(str ?? '').toLowerCase().trim()
 }
@@ -61,26 +66,13 @@ function montarGradeSemanal(escalaOrdenada) {
         }
 
         const semana = mapa.get(chaveSemana)
-        const funcao = servico.funcao === 'Operador de Linha' ? 'Operador de Linha 1' : servico.funcao
+        const chaveLinha = obterChaveLinha(servico)
+        if (!chaveLinha) return
 
-        if (funcao === 'Operador de Linha 1') {
-            if (!semana.servicos['Operador de Linha 1']) {
-                semana.servicos['Operador de Linha 1'] = Array(7).fill(null)
-            }
-            if (semana.servicos['Operador de Linha 1'][diaSemana] !== null) {
-                if (!semana.servicos['Operador de Linha 2']) {
-                    semana.servicos['Operador de Linha 2'] = Array(7).fill(null)
-                }
-                semana.servicos['Operador de Linha 2'][diaSemana] = servico
-            } else {
-                semana.servicos['Operador de Linha 1'][diaSemana] = servico
-            }
-        } else {
-            if (!semana.servicos[funcao]) {
-                semana.servicos[funcao] = Array(7).fill(null)
-            }
-            semana.servicos[funcao][diaSemana] = servico
+        if (!semana.servicos[chaveLinha]) {
+            semana.servicos[chaveLinha] = Array(7).fill(null)
         }
+        semana.servicos[chaveLinha][diaSemana] = servico
     })
 
     const semanas = []
@@ -93,6 +85,14 @@ function montarGradeSemanal(escalaOrdenada) {
     }
 
     return semanas.sort((a, b) => a.inicio - b.inicio)
+}
+
+function obterChaveLinha(servico) {
+    if (servico.funcao === 'Operador de Linha') {
+        if (servico.linha === 2) return 'Operador de Linha 2'
+        return 'Operador de Linha 1'
+    }
+    return servico.funcao
 }
 
 export default function TabelaEscala({escalaTabela, busca}) {
@@ -189,6 +189,7 @@ export default function TabelaEscala({escalaTabela, busca}) {
                         {ORDEM_LINHAS.map(funcao => {
                             const label = LABEL_FUNCAO[funcao] || funcao
                             const servicosPorDia = semana.servicos[funcao] || Array(7).fill(null)
+                            const linha = LINHA_POR_CHAVE[funcao] ?? null
                             return (
                                 <tr key={funcao}>
                                     <td className={Styles['label-col']}>{label}</td>
@@ -206,7 +207,7 @@ export default function TabelaEscala({escalaTabela, busca}) {
                                                 {servico ? (
                                                     <span
                                                         className={Styles['celula-militar']}
-                                                        onClick={() => setModalServico({...servico, funcao})}
+                                                        onClick={() => setModalServico({...servico, funcao, linha})}
                                                     >
                                                         {`${servico.patente || ''} ${servico.nomePaz || ''}`.trim()}
                                                     </span>
@@ -217,7 +218,7 @@ export default function TabelaEscala({escalaTabela, busca}) {
                                                             const date = new Date(semana.inicio)
                                                             date.setDate(date.getDate() + diaIdx)
                                                             const dataStr = date.toISOString().split('T')[0]
-                                                            setModalServico({dataServico: dataStr, funcao})
+                                                            setModalServico({dataServico: dataStr, funcao, linha})
                                                         }}
                                                     >
                                                         ---------------

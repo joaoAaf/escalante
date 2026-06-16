@@ -9,18 +9,28 @@ export const ordenarEscala = escala => {
         if (dataServicoA && !dataServicoB) return -1
         if (!dataServicoA && dataServicoB) return 1
 
-        const prioridadeFuncaoA = prioridadeFuncao(servicoA?.funcao)
-        const prioridadeFuncaoB = prioridadeFuncao(servicoB?.funcao)
+        const prioridadeFuncaoA = prioridadeFuncao(servicoA)
+        const prioridadeFuncaoB = prioridadeFuncao(servicoB)
         if (prioridadeFuncaoA !== prioridadeFuncaoB)
             return prioridadeFuncaoA - prioridadeFuncaoB
+
+        if (servicoA?.funcao === 'Operador de Linha' && servicoB?.funcao === 'Operador de Linha') {
+            const linhaA = servicoA.linha ?? 1
+            const linhaB = servicoB.linha ?? 1
+            return linhaA - linhaB
+        }
 
         return 0
     })
     return escalaOrdenada
 }
 
-const prioridadeFuncao = funcao => {
-    const prioridade = ordemFuncoes.indexOf(funcao)
+const prioridadeFuncao = servico => {
+    const funcao = servico?.funcao
+    const chave = funcao === 'Operador de Linha'
+        ? (servico?.linha === 2 ? 'Operador de Linha 2' : 'Operador de Linha 1')
+        : funcao
+    const prioridade = ordemFuncoes.indexOf(chave)
     return prioridade === -1 ? ordemFuncoes.length : prioridade
 }
 
@@ -29,5 +39,6 @@ const ordemFuncoes = [
     'C.O.V.',
     'Operador de Linha 1',
     'Ajudante de Linha',
+    'Operador de Linha 2',
     'Permanente'
 ]

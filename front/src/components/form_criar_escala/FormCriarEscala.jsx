@@ -22,6 +22,18 @@ export default function FormCriarEscala({servicosAnteriores}) {
         }
     }, [])
 
+    function normalizarLinhasOperadorLinha(escala) {
+        const contadores = new Map()
+        return (escala || []).map(servico => {
+            if (servico?.funcao !== 'Operador de Linha')
+                return {...servico, linha: servico?.linha ?? null}
+            const chave = servico.dataServico
+            const proximaLinha = (contadores.get(chave) || 0) + 1
+            contadores.set(chave, proximaLinha)
+            return {...servico, linha: servico.linha ?? proximaLinha}
+        })
+    }
+
     const criarAbortController = () => {
         abortControllerRef.current?.abort()
         const controller = new AbortController()
@@ -89,7 +101,8 @@ export default function FormCriarEscala({servicosAnteriores}) {
         EscalaClient.criarEscalaAutomatica(dadosEscala, token, controller.signal)
             .then(escala => {
                 const escalaResponse = (escala || [])
-                const escalaComIds = inserirIds(escalaResponse)
+                const escalaNormalizada = normalizarLinhasOperadorLinha(escalaResponse)
+                const escalaComIds = inserirIds(escalaNormalizada)
                 setEscala(escalaComIds)
                 setFeedback({type: 'success', mensagem: 'Escala criada com sucesso.'})
             })

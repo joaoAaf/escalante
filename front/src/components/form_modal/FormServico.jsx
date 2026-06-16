@@ -4,6 +4,18 @@ import GlobalContext from "../../context/GlobalContext.jsx";
 import {useContext, useRef} from "react";
 import MilitarClient from "../../clients/MilitarClient.js";
 
+const FUNCOES = [
+    'Fiscal de Dia',
+    'C.O.V.',
+    'Operador de Linha 1',
+    'Ajudante de Linha',
+    'Operador de Linha 2',
+    'Permanente'
+]
+
+const FUNCAO_OPERADOR_LINHA_1 = 'Operador de Linha 1'
+const FUNCAO_OPERADOR_LINHA_2 = 'Operador de Linha 2'
+
 export default function FormServico({servico, setServico, fechar, acao}) {
 
     const {token, setFeedback} = useContext(GlobalContext)
@@ -42,6 +54,8 @@ export default function FormServico({servico, setServico, fechar, acao}) {
 
     const converterMaiusculas = nome => nome.toUpperCase()
     const removerEspacosExtras = nome => nome.trim().replace(/\s+/g, ' ')
+
+    const isOperadorLinha = servico.funcao === FUNCAO_OPERADOR_LINHA_1 || servico.funcao === FUNCAO_OPERADOR_LINHA_2
 
     return (
         <form onSubmit={acao} className={Styles.form} noValidate>
@@ -119,18 +133,41 @@ export default function FormServico({servico, setServico, fechar, acao}) {
                 value={servico.funcao}
                 onChange={e => {
                     e.target.setCustomValidity("")
-                    setServico(prev => ({...prev, funcao: e.target.value}))
+                    setServico(prev => {
+                        const novaFuncao = e.target.value
+                        const isOperador = novaFuncao === FUNCAO_OPERADOR_LINHA_1 || novaFuncao === FUNCAO_OPERADOR_LINHA_2
+                        return {
+                            ...prev,
+                            funcao: novaFuncao,
+                            linha: isOperador ? (prev.linha || 1) : null
+                        }
+                    })
                 }}
                 required
                 onInvalid={e => e.target.setCustomValidity("Por favor, selecione uma função.")}
             >
                 <option value="" disabled>Selecione a Função</option>
-                <option>Fiscal de Dia</option>
-                <option>C.O.V.</option>
-                <option>Operador de Linha</option>
-                <option>Ajudante de Linha</option>
-                <option>Permanente</option>
+                {FUNCOES.map(f => (
+                    <option key={f} value={f}>{f}</option>
+                ))}
             </select>
+
+            {isOperadorLinha && (
+                <>
+                    <label>Linha:</label>
+                    <select
+                        name="linha"
+                        value={servico.linha ?? 1}
+                        onChange={e => {
+                            e.target.setCustomValidity("")
+                            setServico(prev => ({...prev, linha: Number(e.target.value)}))
+                        }}
+                    >
+                        <option value={1}>Linha 1</option>
+                        <option value={2}>Linha 2</option>
+                    </select>
+                </>
+            )}
 
             <BotoesModal typeConfirmar="submit" cancelar={fechar}/>
         </form>

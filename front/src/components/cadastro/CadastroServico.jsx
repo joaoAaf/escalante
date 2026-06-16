@@ -5,6 +5,16 @@ import {obterProximoId} from '../../utils/geradorIds'
 import Modal from '../modal/Modal'
 import FormServico from "../form_modal/FormServico.jsx";
 
+function normalizarFuncao(servico) {
+    if (servico.funcao === 'Operador de Linha 1' || servico.funcao === 'Operador de Linha 2')
+        return {
+            ...servico,
+            funcao: 'Operador de Linha',
+            linha: servico.funcao === 'Operador de Linha 2' ? 2 : (servico.linha || 1)
+        }
+    return {...servico, linha: null}
+}
+
 export default function CadastroServico({abrir, fechar}) {
 
     const {escala, setEscala, setFeedback} = useContext(GlobalContext)
@@ -14,7 +24,8 @@ export default function CadastroServico({abrir, fechar}) {
         matricula: '',
         nomePaz: '',
         patente: '',
-        funcao: ''
+        funcao: '',
+        linha: null
     }
 
     const [servico, setServico] = useState(servicoModelo)
@@ -32,8 +43,8 @@ export default function CadastroServico({abrir, fechar}) {
             }
         }
 
-        const servicoComId = {...servico, id: obterProximoId(escala)}
-        let novaEscala = [...(escala || []), servicoComId]
+        const servicoNormalizado = normalizarFuncao({...servico, id: obterProximoId(escala)})
+        let novaEscala = [...(escala || []), servicoNormalizado]
         novaEscala = ordenarEscala(novaEscala)
         setEscala(novaEscala)
         setServico(servicoModelo)
