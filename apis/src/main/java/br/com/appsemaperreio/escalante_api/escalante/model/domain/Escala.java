@@ -3,6 +3,7 @@ package br.com.appsemaperreio.escalante_api.escalante.model.domain;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.factories.ServicoOperacionalFactory;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class Escala {
 
@@ -25,6 +26,7 @@ public class Escala {
         this.servicosEscala.sort(Comparator.comparing(ServicoOperacional::getDataServico)
                 .thenComparing(ServicoOperacional::getFuncao, Comparator.comparingInt(Funcao::getOrdemExibicao))
                 .thenComparing(ServicoOperacional::getMilitar, Comparator.comparingInt(Militar::getAntiguidade)));
+        escolherOperadoresLinha2();
     }
 
     private void buscarMilitarApto(List<Militar> militares, ServicoOperacional servicoOperacional) {
@@ -47,6 +49,18 @@ public class Escala {
         this.servicosEscala.add(servicoOperacional);
         for (int diaServico = 2; diaServico <= this.dadosEscala.diasServico(); diaServico++) {
             this.servicosEscala.add(servicoOperacional.cloneDataSeguinte(servicoOperacional, militarEscalado));
+        }
+    }
+
+    private void escolherOperadoresLinha2() {
+        var olPorData = this.servicosEscala.stream()
+                .filter(servico -> servico.getFuncao() == Funcao.OPERADOR_DE_LINHA)
+                .collect(Collectors.groupingBy(ServicoOperacional::getDataServico));
+        for (var operadores : olPorData.values()) {
+            if (operadores.size() == 2) operadores.stream()
+                    .max(Comparator.comparing(ServicoOperacional::getMilitar,
+                            Comparator.comparingInt(Militar::getAntiguidade)))
+                    .ifPresent(op -> ((OperadorLinha) op).setLinha(2));
         }
     }
 
