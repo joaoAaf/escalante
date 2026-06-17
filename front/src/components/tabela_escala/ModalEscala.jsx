@@ -22,9 +22,9 @@ function normalizarParaExibicao(f, l) {
     return f || ''
 }
 
-function normalizarParaPersistencia(funcao, linha) {
+function normalizarParaPersistencia(funcao) {
     if (funcao === 'Operador de Linha 1' || funcao === 'Operador de Linha 2')
-        return {funcao: FUNCAO_OPERADOR_LINHA, linha: linha === 2 ? 2 : 1}
+        return {funcao: FUNCAO_OPERADOR_LINHA, linha: funcao === 'Operador de Linha 2' ? 2 : 1}
     return {funcao, linha: null}
 }
 
@@ -32,11 +32,9 @@ export default function ModalEscala({abrir, fechar, servico}) {
     const {militares, setMilitares, setEscala, token} = useContext(GlobalContext)
     const [data, setData] = useState('')
     const [funcao, setFuncao] = useState('')
-    const [linha, setLinha] = useState(1)
     const [militarMatricula, setMilitarMatricula] = useState('')
 
     const isNovo = servico && !servico.id
-    const isOperadorLinha = funcao === 'Operador de Linha 1' || funcao === 'Operador de Linha 2'
 
     useEffect(() => {
         if (abrir && (!militares || militares.length === 0) && token) {
@@ -55,11 +53,9 @@ export default function ModalEscala({abrir, fechar, servico}) {
             setFuncao(normalizarParaExibicao(servico.funcao, servico.linha))
             if (isNovo) {
                 setMilitarMatricula('')
-                setLinha(1)
             } else {
                 const militar = militares?.find(m => m.matricula === servico.matricula)
                 setMilitarMatricula(militar?.matricula ?? '')
-                setLinha(servico.funcao === FUNCAO_OPERADOR_LINHA ? (servico.linha || 1) : 1)
             }
         }
     }, [abrir, servico, isNovo, militares])
@@ -70,7 +66,7 @@ export default function ModalEscala({abrir, fechar, servico}) {
             const militar = militares.find(m => m.matricula === militarMatricula)
             if (!militar) return
             const novoId = Date.now()
-            const {funcao: funcaoNormalizada, linha: linhaNormalizada} = normalizarParaPersistencia(funcao, linha)
+            const {funcao: funcaoNormalizada, linha: linhaNormalizada} = normalizarParaPersistencia(funcao)
             setEscala(escala => ordenarEscala([...escala, {
                 id: novoId,
                 dataServico: data,
@@ -84,7 +80,7 @@ export default function ModalEscala({abrir, fechar, servico}) {
         } else {
             if (!servico?.id) return
             const militar = militares.find(m => m.matricula === militarMatricula)
-            const {funcao: novaFuncao, linha: novaLinha} = normalizarParaPersistencia(funcao, linha)
+            const {funcao: novaFuncao, linha: novaLinha} = normalizarParaPersistencia(funcao)
             const novaData = data || servico.dataServico
 
             setEscala(escala => {
@@ -170,19 +166,6 @@ export default function ModalEscala({abrir, fechar, servico}) {
                         ))}
                     </select>
                 </div>
-                {isOperadorLinha && (
-                    <div>
-                        <label style={{display: 'block', marginBottom: '4px', fontWeight: 'bold'}}>Linha:</label>
-                        <select
-                            value={linha}
-                            onChange={e => setLinha(Number(e.target.value))}
-                            style={{width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px'}}
-                        >
-                            <option value={1}>Linha 1</option>
-                            <option value={2}>Linha 2</option>
-                        </select>
-                    </div>
-                )}
                 <BotoesModal
                     typeConfirmar="button"
                     confirmar={handleSalvar}

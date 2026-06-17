@@ -10,7 +10,7 @@ function normalizarFuncao(servico) {
         return {
             ...servico,
             funcao: 'Operador de Linha',
-            linha: servico.funcao === 'Operador de Linha 2' ? 2 : (servico.linha || 1)
+            linha: servico.funcao === 'Operador de Linha 2' ? 2 : 1
         }
     return {...servico, linha: null}
 }
@@ -24,8 +24,7 @@ export default function CadastroServico({abrir, fechar}) {
         matricula: '',
         nomePaz: '',
         patente: '',
-        funcao: '',
-        linha: null
+        funcao: ''
     }
 
     const [servico, setServico] = useState(servicoModelo)
