@@ -2,12 +2,10 @@ import {useContext, useEffect, useRef, useState} from 'react'
 import GlobalContext from '../../context/GlobalContext'
 import EscalaClient from '../../clients/EscalaClient'
 import Acoes from "./Acoes.jsx";
-import CadastroServico from "../cadastro/CadastroServico.jsx";
 
 export default function AcoesEscala() {
 
     const {token, escala, setFeedback} = useContext(GlobalContext)
-    const [abrirCadastro, setAbrirCadastro] = useState(false)
 
     const [exportandoEscala, setExportandoEscala] = useState(false)
 
@@ -66,17 +64,13 @@ export default function AcoesEscala() {
     }
 
     return (
-        <>
-            <Acoes titulo="Ações para Tabela da Escala">
-                <button onClick={() => setAbrirCadastro(true)}>Adicionar Serviço</button>
-                <button
-                    onClick={() => exportarEscalaXLSX(escala)}
-                    disabled={exportandoEscala}
-                >
-                    {exportandoEscala ? "Exportando..." : "Exportar Escala"}
-                </button>
-            </Acoes>
-            <CadastroServico abrir={abrirCadastro} fechar={() => setAbrirCadastro(false)}/>
-        </>
+        <Acoes titulo="Ações para Tabela da Escala">
+            <button
+                onClick={() => exportarEscalaXLSX(escala)}
+                disabled={exportandoEscala}
+            >
+                {exportandoEscala ? "Exportando..." : "Exportar Escala"}
+            </button>
+        </Acoes>
     )
 }

@@ -1,6 +1,7 @@
 import {useState, useContext, useEffect} from 'react'
 import GlobalContext from '../../context/GlobalContext'
 import {ordenarEscala} from '../../utils/ordenacaoEscala'
+import {obterProximoId} from '../../utils/geradorIds'
 import MilitarClient from '../../clients/MilitarClient'
 import Modal from '../modal/Modal'
 import BotoesModal from '../modal/BotoesModal'
@@ -65,17 +66,19 @@ export default function ModalEscala({abrir, fechar, servico}) {
             if (!militarMatricula || !data || !funcao) return
             const militar = militares.find(m => m.matricula === militarMatricula)
             if (!militar) return
-            const novoId = Date.now()
             const {funcao: funcaoNormalizada, linha: linhaNormalizada} = normalizarParaPersistencia(funcao)
-            setEscala(escala => ordenarEscala([...escala, {
-                id: novoId,
-                dataServico: data,
-                funcao: funcaoNormalizada,
-                linha: linhaNormalizada,
-                matricula: militar.matricula,
-                nomePaz: militar.nomePaz,
-                patente: militar.patente
-            }]))
+            setEscala(escalaAtual => {
+                const novoId = obterProximoId(escalaAtual)
+                return ordenarEscala([...escalaAtual, {
+                    id: novoId,
+                    dataServico: data,
+                    funcao: funcaoNormalizada,
+                    linha: linhaNormalizada,
+                    matricula: militar.matricula,
+                    nomePaz: militar.nomePaz,
+                    patente: militar.patente
+                }])
+            })
             fechar()
         } else {
             if (!servico?.id) return
