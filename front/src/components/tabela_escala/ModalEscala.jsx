@@ -171,24 +171,9 @@ export default function ModalEscala({abrir, fechar, servico}) {
                     confirmar={handleSalvar}
                     cancelar={fechar}
                     textoConfirmar="Salvar"
+                    isNovo={!isNovo}
+                    handleRemover={handleRemover}
                 />
-                {!isNovo && (
-                    <button
-                        onClick={handleRemover}
-                        style={{
-                            padding: '8px 20px',
-                            backgroundColor: '#ef5c41',
-                            color: 'white',
-                            border: 'none',
-                            borderRadius: '4px',
-                            cursor: 'pointer',
-                            fontWeight: 'bold',
-                            alignSelf: 'flex-start'
-                        }}
-                    >
-                        Remover Serviço
-                    </button>
-                )}
             </div>
         </Modal>
     )

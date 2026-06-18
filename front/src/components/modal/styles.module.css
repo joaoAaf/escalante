@@ -108,3 +108,16 @@
 .cancelar:hover {
     background-color: #e0e0e0;
 }
+
+.remover {
+    background: 'none',
+    border: 'none',
+    cursor: 'pointer',
+    padding: '4px',
+    alignSelf: 'flex-start'
+}
+
+.remover img {
+    width: '32px',
+    height: '32px'
+}

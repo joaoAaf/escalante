@@ -1,10 +1,13 @@
 import Styles from './styles.module.css'
+import Delete from '../botao_remover/assets/delete.png'
 
 export default function BotoesModal({
                                         typeConfirmar = 'button',
                                         confirmar,
                                         cancelar,
                                         textoConfirmar = "Confirmar",
+                                        isNovo = false,
+                                        handleRemover,
                                         carregando = false
                                     }) {
 
@@ -15,6 +18,13 @@ export default function BotoesModal({
 
     return (
         <footer className={Styles.botoesModal}>
+                {isNovo && (
+                    <button
+                        onClick={handleRemover}
+                    >
+                        <img src={Delete} alt="Remover" />
+                    </button>
+                )}
             <button
                 className={Styles.confirmar}
                 type={typeConfirmar}
