@@ -21,6 +21,7 @@ export default function BotoesModal({
                 {isNovo && (
                     <button
                         onClick={handleRemover}
+                        className={Styles.remover}
                     >
                         <img src={Delete} alt="Remover" />
                     </button>
