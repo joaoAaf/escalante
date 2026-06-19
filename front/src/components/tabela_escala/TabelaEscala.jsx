@@ -142,19 +142,29 @@ export default function TabelaEscala({escalaTabela, busca}) {
 
     const gradeComCores = useMemo(() => {
         if (!gradeSemanal.length) return []
-        const primeiroDia = gradeSemanal[0].inicio
-        const msPorDia = 86400000
 
-        return gradeSemanal.map(semana => ({
-            ...semana,
-            coresPorDia: Array.from({length: 7}, (_, diaIdx) => {
-                const date = new Date(semana.inicio)
-                date.setDate(date.getDate() + diaIdx)
-                const diffDias = Math.round((date - primeiroDia) / msPorDia)
-                const corIdx = Math.floor((diffDias + 1) / 2) % 4
-                return CORES[corIdx]
-            })
-        }))
+        return gradeSemanal.map(semana => {
+            let primeiroDiaServico = 0
+            for (let i = 0; i < 7; i++) {
+                const temServico = ORDEM_LINHAS.some(funcao =>
+                    semana.servicos[funcao]?.[i] != null
+                )
+                if (temServico) {
+                    primeiroDiaServico = i
+                    break
+                }
+            }
+
+            return {
+                ...semana,
+                coresPorDia: Array.from({length: 7}, (_, diaIdx) => {
+                    if (diaIdx < primeiroDiaServico) return '#eeeeee'
+                    const diffDias = diaIdx - primeiroDiaServico
+                    const corIdx = Math.floor(diffDias / 2) % 4
+                    return CORES[corIdx]
+                })
+            }
+        })
     }, [gradeSemanal])
 
     if (!escalaTabela || escalaTabela.length === 0) {
