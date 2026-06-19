@@ -29,13 +29,18 @@ export default function AcoesEscala() {
         if (!escala || escala.length === 0)
             return setFeedback({type: 'info', mensagem: 'Não há escala disponível para exportação.'})
 
-        if (escala.length > 210)
+        const escalaParaExportar = escala.filter(servico => servico?.matricula)
+
+        if (escalaParaExportar.length === 0)
+            return setFeedback({type: 'info', mensagem: 'Não há serviços com militares escalados para exportação.'})
+
+        if (escalaParaExportar.length > 210)
             return setFeedback({type: 'info', mensagem: 'A escala não pode conter mais que 210 serviços.'})
 
         const controller = criarAbortController()
 
         setExportandoEscala(true)
-        EscalaClient.exportarEscalaXLSX(escala, token, controller.signal)
+        EscalaClient.exportarEscalaXLSX(escalaParaExportar, token, controller.signal)
             .then(arrayBuffer => {
                 if (arrayBuffer) {
                     const blob = new Blob([arrayBuffer],

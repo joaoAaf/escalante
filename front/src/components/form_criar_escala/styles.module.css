@@ -39,6 +39,11 @@
     min-width: 200px;
 }
 
+.criar_escala input[type="checkbox"] {
+    min-width: 30px;
+    cursor: pointer;
+}
+
 .criar_escala button {
     padding: 8px 20px;
     background-color: #ef5c41;

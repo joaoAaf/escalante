@@ -33,6 +33,10 @@ function normalize(str) {
     return String(str ?? '').toLowerCase().trim()
 }
 
+function temMilitarEscalado(servico) {
+    return servico && servico.matricula
+}
+
 function formatarDataDia(date) {
     const meses = [
         'janeiro', 'fevereiro', 'março', 'abril', 'maio', 'junho',
@@ -147,7 +151,7 @@ export default function TabelaEscala({escalaTabela, busca}) {
             let primeiroDiaServico = 0
             for (let i = 0; i < 7; i++) {
                 const temServico = ORDEM_LINHAS.some(funcao =>
-                    semana.servicos[funcao]?.[i] != null
+                    temMilitarEscalado(semana.servicos[funcao]?.[i])
                 )
                 if (temServico) {
                     primeiroDiaServico = i
@@ -204,7 +208,7 @@ export default function TabelaEscala({escalaTabela, busca}) {
                                 <tr key={funcao}>
                                     <td className={Styles['label-col']}>{label}</td>
                                     {servicosPorDia.map((servico, diaIdx) => {
-                                        const cor = servico ? (semana.coresPorDia[diaIdx] || '#eeeeee') : '#eeeeee'
+                                        const cor = temMilitarEscalado(servico) ? (semana.coresPorDia[diaIdx] || '#eeeeee') : '#eeeeee'
                                         const destacado = isDestacado(servico, funcao)
                                         const celulaDimmed = queryBusca && !destacado
 
@@ -214,7 +218,7 @@ export default function TabelaEscala({escalaTabela, busca}) {
                                                 className={corClassMap[cor] || ''}
                                                 style={celulaDimmed ? {opacity: 0.3} : undefined}
                                             >
-                                                {servico ? (
+                                                {temMilitarEscalado(servico) ? (
                                                     <span
                                                         className={Styles['celula-militar']}
                                                         onClick={() => setModalServico({...servico, funcao, linha})}
