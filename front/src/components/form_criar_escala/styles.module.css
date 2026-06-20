@@ -80,6 +80,6 @@
 
 .mensagem_sucesso {
     margin-bottom: 15px;
-    color: green;
+    color: green !important;
     font-size: 0.9em;
 }

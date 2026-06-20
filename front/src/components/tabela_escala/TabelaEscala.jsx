@@ -215,8 +215,7 @@ export default function TabelaEscala({escalaTabela, busca}) {
                                         return (
                                             <td
                                                 key={diaIdx}
-                                                className={corClassMap[cor] || ''}
-                                                className={celulaDimmed ? Styles.celula_dimmed : ''}
+                                                className={`${corClassMap[cor] || ''} ${celulaDimmed ? Styles.celula_dimmed : ''}`.trim()}
                                             >
                                                 {temMilitarEscalado(servico) ? (
                                                     <span
