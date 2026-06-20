@@ -1,6 +1,6 @@
 import {useState, useMemo, useCallback} from 'react'
 import {ordenarEscala} from '../../utils/ordenacaoEscala'
-import ModalEscala from './ModalEscala'
+import ModalServico from './modal_servico/ModalServico'
 import Styles from './styles.module.css'
 
 const CORES = ['#e3f2fd', '#ffe0b2', '#c8e6c9', '#fff9c4']
@@ -216,7 +216,7 @@ export default function TabelaEscala({escalaTabela, busca}) {
                                             <td
                                                 key={diaIdx}
                                                 className={corClassMap[cor] || ''}
-                                                style={celulaDimmed ? {opacity: 0.3} : undefined}
+                                                className={celulaDimmed ? Styles.celula_dimmed : ''}
                                             >
                                                 {temMilitarEscalado(servico) ? (
                                                     <span
@@ -247,7 +247,7 @@ export default function TabelaEscala({escalaTabela, busca}) {
                     </tbody>
                 </table>
             ))}
-            <ModalEscala
+            <ModalServico
                 abrir={modalServico !== null}
                 fechar={() => setModalServico(null)}
                 servico={modalServico}

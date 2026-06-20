@@ -1,10 +1,11 @@
 import {useState, useContext, useEffect} from 'react'
-import GlobalContext from '../../context/GlobalContext'
-import {ordenarEscala} from '../../utils/ordenacaoEscala'
-import {obterProximoId} from '../../utils/geradorIds'
-import MilitarClient from '../../clients/MilitarClient'
-import Modal from '../modal/Modal'
-import BotoesModal from '../modal/BotoesModal'
+import GlobalContext from '../../../context/GlobalContext'
+import {ordenarEscala} from '../../../utils/ordenacaoEscala'
+import {obterProximoId} from '../../../utils/geradorIds'
+import MilitarClient from '../../../clients/MilitarClient'
+import Modal from '../../modal/Modal'
+import BotoesModal from '../../modal/BotoesModal'
+import Styles from './styles.module.css'
 
 const FUNCOES = [
     'Fiscal de Dia',
@@ -29,7 +30,7 @@ function normalizarParaPersistencia(funcao) {
     return {funcao, linha: null}
 }
 
-export default function ModalEscala({abrir, fechar, servico}) {
+export default function ModalServico({abrir, fechar, servico}) {
     const {militares, setMilitares, setEscala, token} = useContext(GlobalContext)
     const [data, setData] = useState('')
     const [funcao, setFuncao] = useState('')
@@ -132,13 +133,13 @@ export default function ModalEscala({abrir, fechar, servico}) {
 
     return (
         <Modal abrir={abrir} fechar={fechar} titulo={isNovo ? 'Novo Serviço' : 'Editar Serviço'}>
-            <div style={{display: 'flex', flexDirection: 'column', gap: '16px'}}>
-                <div>
-                    <label style={{display: 'block', marginBottom: '4px', fontWeight: 'bold'}}>Militar:</label>
+            <div className={Styles.modal_container}>
+                <div className={Styles.form_group}>
+                    <label className={Styles.label}>Militar:</label>
                     <select
+                        className={Styles.input_field}
                         value={militarMatricula}
                         onChange={e => setMilitarMatricula(e.target.value)}
-                        style={{width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px'}}
                     >
                         <option value="">Selecione um militar...</option>
                         {militares?.map(m => (
@@ -148,21 +149,21 @@ export default function ModalEscala({abrir, fechar, servico}) {
                         ))}
                     </select>
                 </div>
-                <div>
-                    <label style={{display: 'block', marginBottom: '4px', fontWeight: 'bold'}}>Data:</label>
+                <div className={Styles.form_group}>
+                    <label className={Styles.label}>Data:</label>
                     <input
+                        className={Styles.input_field}
                         type="date"
                         value={data}
                         onChange={e => setData(e.target.value)}
-                        style={{width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px'}}
                     />
                 </div>
-                <div>
-                    <label style={{display: 'block', marginBottom: '4px', fontWeight: 'bold'}}>Função:</label>
+                <div className={Styles.form_group}>
+                    <label className={Styles.label}>Função:</label>
                     <select
+                        className={Styles.input_field}
                         value={funcao}
                         onChange={e => setFuncao(e.target.value)}
-                        style={{width: '100%', padding: '8px', border: '1px solid #ccc', borderRadius: '4px'}}
                     >
                         {FUNCOES.map(f => (
                             <option key={f} value={f}>{f}</option>

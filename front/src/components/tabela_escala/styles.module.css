@@ -58,3 +58,7 @@
 .weekly-table .celula-vazia:hover {
     text-decoration: underline;
 }
+
+.celula_dimmed {
+    opacity: 0.3;
+}

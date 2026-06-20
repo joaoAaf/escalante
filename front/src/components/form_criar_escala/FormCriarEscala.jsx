@@ -162,7 +162,7 @@ export default function FormCriarEscala({servicosAnteriores}) {
         <div className={Styles.criar_escala}>
             <h3>Dados para Criação da Escala</h3>
             {servicosAnteriores?.length > 0 && (
-                <div style={{marginBottom: '15px', color: 'green', fontSize: '0.9em'}}>
+                <div className={Styles.mensagem_sucesso}>
                     ✓ Escala anterior carregada: {servicosAnteriores.length} serviços importados.
                 </div>
             )}
