@@ -28,7 +28,6 @@ class ImportadorXLSXTest {
 
     @Test
     public void deveImportarMilitaresXLSXQuandoPlanilhaPresenteEValida() throws Exception {
-        // Dados
         final int QUANTIDADE_MILITARES_ESCALAVEIS = 25;
         final String MATRICULA_MILITAR_FOLGA_ESPECIAL = "REG00011";
         final int FOLGA_ESPECIAL = 7;
@@ -40,13 +39,10 @@ class ImportadorXLSXTest {
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 inputStream);
 
-
-        // Quando
         var militaresEscalaveis = importadorMilitaresXLSXAdapter.importarMilitaresXLSX(multipartFile);
         var militarFolgaEspecial = militaresEscalaveis.stream()
                 .filter(militar -> militar.matricula().equals(MATRICULA_MILITAR_FOLGA_ESPECIAL)).findFirst();
 
-        // Então
         assertEquals(QUANTIDADE_MILITARES_ESCALAVEIS, militaresEscalaveis.size());
         assertTrue(militarFolgaEspecial.isPresent());
         assertEquals(FOLGA_ESPECIAL, militarFolgaEspecial.get().folgaEspecial());
@@ -54,7 +50,6 @@ class ImportadorXLSXTest {
 
     @Test
     public void deveImportarEscalaXLSXQuandoPlanilhaPresenteEValida() throws Exception {
-        // Dados
         final int QUANTIDADE_SERVICOS_OPERACIONAIS = 171;
         final LocalDate DATA_19_01_2026 = LocalDate.of(2026, 1, 19);
         final String MATRICULA_MILITAR_COV_19_01_2026 = "REG00008";
@@ -66,14 +61,12 @@ class ImportadorXLSXTest {
                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                 inputStream);
 
-        // Quando
         var servicosOperacionais = importadorEscalaXLSXAdapter.importarEscalaXLSX(multipartFile);
         var servicoCov19012026 = servicosOperacionais.stream()
                 .filter(servico -> servico.dataServico().isEqual(DATA_19_01_2026) &&
                         servico.funcao().equals(Funcao.COV.getNome()))
                 .findFirst();
 
-        // Então
         assertEquals(QUANTIDADE_SERVICOS_OPERACIONAIS, servicosOperacionais.size());
         assertTrue(servicoCov19012026.isPresent());
         assertEquals(MATRICULA_MILITAR_COV_19_01_2026, servicoCov19012026.get().matricula());

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 public class OperadorLinha extends ModernosPrimeiro {
 
     private final int FOLGA_OPERADOR_LINHA = 3;
+    private int linha = 1;
 
     public OperadorLinha(LocalDate dataServico) {
         super(dataServico, Funcao.OPERADOR_DE_LINHA);
@@ -24,4 +25,11 @@ public class OperadorLinha extends ModernosPrimeiro {
         return proximoServico;
     }
 
+    public int getLinha() {
+        return linha;
+    }
+
+    public void setLinha(int linha) {
+        this.linha = linha;
+    }
 }

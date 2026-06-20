@@ -1,25 +1,64 @@
-.table {
+.weekly-table {
     width: 100%;
     border-collapse: collapse;
-    background: white;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
-    border-radius: 6px;
+    margin-bottom: 20px;
 }
 
-.table th, td {
-    padding: 12px 16px;
+.weekly-table th,
+.weekly-table td {
+    border: 1px solid #999;
+    padding: 6px 4px;
     text-align: center;
-    border-bottom: 1px solid #eee;
+    vertical-align: middle;
+    font-size: 12px;
 }
 
-.table th {
-    background-color: #f2f2f2;
+.weekly-table th {
+    background-color: #424242;
+    color: white;
     font-weight: bold;
 }
 
-.grupoPar td {
-    background-color: #f6f9ff;
+.weekly-table .date-header {
+    background-color: #757575;
+    color: white;
+    font-weight: bold;
 }
-.grupoImpar td {
-    background-color: #ffffff;
+
+.weekly-table .label-col {
+    background-color: #f5f5f5;
+    font-weight: bold;
+    text-align: left;
+    padding-left: 10px;
+    width: 180px;
+    white-space: nowrap;
+}
+
+.weekly-table .bg-blue { background-color: #e3f2fd; }
+.weekly-table .bg-orange { background-color: #ffe0b2; }
+.weekly-table .bg-green { background-color: #c8e6c9; }
+.weekly-table .bg-yellow { background-color: #fff9c4; }
+.weekly-table .bg-grey { background-color: #eeeeee; }
+
+.weekly-table .celula-militar {
+    display: block;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+.weekly-table .celula-militar:hover {
+    text-decoration: underline;
+}
+
+.weekly-table .celula-vazia {
+    display: block;
+    cursor: pointer;
+}
+
+.weekly-table .celula-vazia:hover {
+    text-decoration: underline;
+}
+
+.celula_dimmed {
+    opacity: 0.3;
 }

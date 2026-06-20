@@ -5,13 +5,14 @@ import java.util.List;
 import org.springframework.web.multipart.MultipartFile;
 
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.DadosEscalaRequest;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoAnteriorDto;
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoOperacionalDto;
 
 public interface IEscalaService {
 
     byte[] obterPlanilhaModeloEscala();
     
-    List<ServicoOperacionalDto> importarEscalaXLSX(MultipartFile planilhaEscala);
+    List<ServicoAnteriorDto> importarEscalaXLSX(MultipartFile planilhaEscala);
     
     List<ServicoOperacionalDto> criarEscalaAutomatica(DadosEscalaRequest request);
     

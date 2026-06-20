@@ -8,7 +8,7 @@ public enum Patente {
     CB("Cabo"),
     SD("Soldado");
 
-    private String nome;
+    private final String nome;
 
     private Patente(String nome) {
         this.nome = nome;

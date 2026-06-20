@@ -17,6 +17,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.com.appsemaperreio.escalante_api.escalante.model.application.IEscalaService;
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.DadosEscalaRequest;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoAnteriorDto;
 import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoOperacionalDto;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
@@ -39,10 +40,10 @@ public class EscalaController {
         .contentType(MediaType
             .parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
         .body(planilhaModelo);
-    }
+}
 
     @PostMapping("/importar/xlsx")
-    public ResponseEntity<?> importarEscalaXLSX(
+    public ResponseEntity<List<ServicoAnteriorDto>> importarEscalaXLSX(
             @RequestParam @NotNull(message = "O arquivo de escala não pode ser nulo.") MultipartFile escala) {
         return ResponseEntity.ok(escalaUseCases.importarEscalaXLSX(escala));
     }
@@ -66,6 +67,6 @@ public class EscalaController {
         .contentType(MediaType
             .parseMediaType("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"))
         .body(escalaXLSX);
-    }
+}
 
 }

@@ -36,24 +36,18 @@ public class AbaConferencia {
         int indiceColuna = 0;
         var celula = new Celula(this.linha, estilo);
         celula.incluirNaCelula(celula.criarCelula(indiceColuna++), "Data");
-        celula.incluirNaCelula(celula.criarCelula(indiceColuna++), "Matricula");
-        celula.incluirNaCelula(celula.criarCelula(indiceColuna++), "Militar Escalado");
-        celula.incluirNaCelula(celula.criarCelula(indiceColuna++), "Posto/ Graduação");
-        celula.incluirNaCelula(celula.criarCelula(indiceColuna++), "Antiguidade");
         celula.incluirNaCelula(celula.criarCelula(indiceColuna++), "Função");
-        celula.incluirNaCelula(celula.criarCelula(indiceColuna++), "Folga");
+        celula.incluirNaCelula(celula.criarCelula(indiceColuna++), "Matrícula");
+        celula.incluirNaCelula(celula.criarCelula(indiceColuna), "Militar Escalado");
     }
 
     private void criarLinhasAbaConferencia(XSSFCellStyle estilo, ServicoOperacionalDto servico) {
         int indiceColuna = 0;
         var celula = new Celula(this.linha, estilo);
         celula.incluirNaCelula(celula.criarCelula(indiceColuna++), servico.dataServico());
-        celula.incluirNaCelula(celula.criarCelula(indiceColuna++), servico.matricula());
-        celula.incluirNaCelula(celula.criarCelula(indiceColuna++), servico.nomePaz());
-        celula.incluirNaCelula(celula.criarCelula(indiceColuna++), servico.patente());
-        celula.incluirNaCelula(celula.criarCelula(indiceColuna++), servico.antiguidade());
         celula.incluirNaCelula(celula.criarCelula(indiceColuna++), servico.funcao());
-        celula.incluirNaCelula(celula.criarCelula(indiceColuna), servico.folga());
+        celula.incluirNaCelula(celula.criarCelula(indiceColuna++), servico.matricula());
+        celula.incluirNaCelula(celula.criarCelula(indiceColuna), servico.nomePaz());
     }
 
 }

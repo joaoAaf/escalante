@@ -2,12 +2,10 @@ import {useContext, useEffect, useRef, useState} from 'react'
 import GlobalContext from '../../context/GlobalContext'
 import EscalaClient from '../../clients/EscalaClient'
 import Acoes from "./Acoes.jsx";
-import CadastroServico from "../cadastro/CadastroServico.jsx";
 
 export default function AcoesEscala() {
 
     const {token, escala, setFeedback} = useContext(GlobalContext)
-    const [abrirCadastro, setAbrirCadastro] = useState(false)
 
     const [exportandoEscala, setExportandoEscala] = useState(false)
 
@@ -31,13 +29,18 @@ export default function AcoesEscala() {
         if (!escala || escala.length === 0)
             return setFeedback({type: 'info', mensagem: 'Não há escala disponível para exportação.'})
 
-        if (escala.length > 210)
+        const escalaParaExportar = escala.filter(servico => servico?.matricula)
+
+        if (escalaParaExportar.length === 0)
+            return setFeedback({type: 'info', mensagem: 'Não há serviços com militares escalados para exportação.'})
+
+        if (escalaParaExportar.length > 210)
             return setFeedback({type: 'info', mensagem: 'A escala não pode conter mais que 210 serviços.'})
 
         const controller = criarAbortController()
 
         setExportandoEscala(true)
-        EscalaClient.exportarEscalaXLSX(escala, token, controller.signal)
+        EscalaClient.exportarEscalaXLSX(escalaParaExportar, token, controller.signal)
             .then(arrayBuffer => {
                 if (arrayBuffer) {
                     const blob = new Blob([arrayBuffer],
@@ -66,17 +69,13 @@ export default function AcoesEscala() {
     }
 
     return (
-        <>
-            <Acoes titulo="Ações para Tabela da Escala">
-                <button onClick={() => setAbrirCadastro(true)}>Adicionar Serviço</button>
-                <button
-                    onClick={() => exportarEscalaXLSX(escala)}
-                    disabled={exportandoEscala}
-                >
-                    {exportandoEscala ? "Exportando..." : "Exportar Escala"}
-                </button>
-            </Acoes>
-            <CadastroServico abrir={abrirCadastro} fechar={() => setAbrirCadastro(false)}/>
-        </>
+        <Acoes titulo="Ações para Tabela da Escala">
+            <button
+                onClick={() => exportarEscalaXLSX(escala)}
+                disabled={exportandoEscala}
+            >
+                {exportandoEscala ? "Exportando..." : "Exportar Escala"}
+            </button>
+        </Acoes>
     )
 }

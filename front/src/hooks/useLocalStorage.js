@@ -14,7 +14,7 @@ const localStorageDisponivel = () => {
 
 const LOCAL_STORAGE_DISPONIVEL = localStorageDisponivel()
 
-export const useLocalStorage = chave => {
+export const useLocalStorage = (chave, migrar) => {
 
     const [dados, setDados] = useState(() => {
         if (!LOCAL_STORAGE_DISPONIVEL) {
@@ -22,7 +22,8 @@ export const useLocalStorage = chave => {
         }
         try {
             const dadosSalvos = localStorage.getItem(chave)
-            return dadosSalvos ? JSON.parse(dadosSalvos) : null
+            const parsed = dadosSalvos ? JSON.parse(dadosSalvos) : null
+            return typeof migrar === 'function' ? migrar(parsed) : parsed
         } catch (error) {
             console.error("Erro ao carregar dados do localStorage:", error)
             return null

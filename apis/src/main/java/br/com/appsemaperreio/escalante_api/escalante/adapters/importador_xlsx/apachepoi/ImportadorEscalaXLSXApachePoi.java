@@ -11,15 +11,15 @@ import org.springframework.web.multipart.MultipartFile;
 
 import br.com.appsemaperreio.escalante_api.escalante.adapters.importador_xlsx.ImportadorEscalaXLSXAdapter;
 import br.com.appsemaperreio.escalante_api.escalante.model.domain.exceptions.ErroProcessamentoPlanilhaException;
-import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoOperacionalDto;
+import br.com.appsemaperreio.escalante_api.escalante.model.dto.ServicoAnteriorDto;
 
 @Component
 public class ImportadorEscalaXLSXApachePoi extends ImportadorBaseXLSX implements ImportadorEscalaXLSXAdapter {
 
     @Override
-    public List<ServicoOperacionalDto> importarEscalaXLSX(MultipartFile planilha) {
+    public List<ServicoAnteriorDto> importarEscalaXLSX(MultipartFile planilha) {
 
-        List<ServicoOperacionalDto> escala = new ArrayList<>();
+        List<ServicoAnteriorDto> escala = new ArrayList<>();
 
         try {
             var workbook = WorkbookFactory.create(planilha.getInputStream());
@@ -39,21 +39,13 @@ public class ImportadorEscalaXLSXApachePoi extends ImportadorBaseXLSX implements
 
                 try {
                     var dataServico = LocalDate.parse(validarCelulas(row.getCell(0)));
-                    var matricula = validarCelulas(row.getCell(1));
-                    var nomePaz = validarCelulas(row.getCell(2));
-                    var patente = validarCelulas(row.getCell(3));
-                    var antiguidade = Integer.valueOf(validarCelulas(row.getCell(4)));
-                    var funcao = validarCelulas(row.getCell(5));
-                    var folga = Integer.valueOf(validarCelulas(row.getCell(6)));
+                    var funcao = validarCelulas(row.getCell(1));
+                    var matricula = validarCelulas(row.getCell(2));
 
-                    var servico = new ServicoOperacionalDto(
+                    var servico = new ServicoAnteriorDto(
                             dataServico,
                             matricula,
-                            nomePaz,
-                            patente,
-                            antiguidade,
-                            funcao,
-                            folga);
+                            funcao);
 
                     escala.add(servico);
 

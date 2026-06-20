@@ -12,9 +12,9 @@ public enum Funcao {
     AJUDANTE_DE_LINHA("Ajudante de Linha", 4, Arrays.asList(Patente.SD, Patente.CB, Patente.SGT)),
     OPERADOR_DE_LINHA("Operador de Linha", 3, Arrays.asList(Patente.CB, Patente.SGT, Patente.SUBTEN, Patente.SD));
 
-    private String nome;
-    private int ordemExibicao;
-    private List<Patente> patentes;
+    private final String nome;
+    private final int ordemExibicao;
+    private final List<Patente> patentes;
 
     private Funcao(String nome, int ordemExibicao, List<Patente> patentes) {
         this.nome = nome;

@@ -11,6 +11,7 @@ export default function FormCriarEscala({servicosAnteriores}) {
     const [dataInicio, setDataInicio] = useState('')
     const [dataFim, setDataFim] = useState('')
     const [diasServico, setDiasServico] = useState(2)
+    const [escalaVazia, setEscalaVazia] = useState(false)
     const [carregandoEscala, setCarregandoEscala] = useState(false)
 
     const abortControllerRef = useRef(null)
@@ -21,6 +22,50 @@ export default function FormCriarEscala({servicosAnteriores}) {
                 abortControllerRef.current.abort()
         }
     }, [])
+
+    function normalizarLinhasOperadorLinha(escala) {
+        const contadores = new Map()
+        return (escala || []).map(servico => {
+            if (servico?.funcao !== 'Operador de Linha')
+                return {...servico, linha: servico?.linha ?? null}
+            const chave = servico.dataServico
+            const proximaLinha = (contadores.get(chave) || 0) + 1
+            contadores.set(chave, proximaLinha)
+            return {...servico, linha: servico.linha ?? proximaLinha}
+        })
+    }
+
+    function gerarEscalaVazia(dataInicio, dataFim) {
+        const funcoes = [
+            { funcao: 'Fiscal de Dia', linha: null },
+            { funcao: 'C.O.V.', linha: null },
+            { funcao: 'Operador de Linha', linha: 1 },
+            { funcao: 'Ajudante de Linha', linha: null },
+            { funcao: 'Operador de Linha', linha: 2 },
+            { funcao: 'Permanente', linha: null }
+        ]
+
+        const escala = []
+        const inicio = new Date(dataInicio + 'T00:00:00')
+        const fim = new Date(dataFim + 'T00:00:00')
+
+        for (let data = new Date(inicio); data <= fim; data.setDate(data.getDate() + 1)) {
+            const dataServico = data.toISOString().split('T')[0]
+
+            for (const { funcao, linha } of funcoes) {
+                escala.push({
+                    dataServico,
+                    funcao,
+                    linha,
+                    matricula: '',
+                    nomePaz: '',
+                    patente: ''
+                })
+            }
+        }
+
+        return escala
+    }
 
     const criarAbortController = () => {
         abortControllerRef.current?.abort()
@@ -63,6 +108,13 @@ export default function FormCriarEscala({servicosAnteriores}) {
             return setFeedback({type: 'info', mensagem: 'Por favor, verifique as datas informadas.'})
         }
 
+        if (escalaVazia) {
+            const escalaVaziaArray = gerarEscalaVazia(dataInicio, dataFim)
+            setEscala(escalaVaziaArray)
+            setFeedback({type: 'success', mensagem: 'Escala vazia criada com sucesso.'})
+            return
+        }
+
         const militaresEscalaveis = (militares || []).filter(m => m.escalavel !== false)
 
         if (militaresEscalaveis.length === 0)
@@ -89,7 +141,8 @@ export default function FormCriarEscala({servicosAnteriores}) {
         EscalaClient.criarEscalaAutomatica(dadosEscala, token, controller.signal)
             .then(escala => {
                 const escalaResponse = (escala || [])
-                const escalaComIds = inserirIds(escalaResponse)
+                const escalaNormalizada = normalizarLinhasOperadorLinha(escalaResponse)
+                const escalaComIds = inserirIds(escalaNormalizada)
                 setEscala(escalaComIds)
                 setFeedback({type: 'success', mensagem: 'Escala criada com sucesso.'})
             })
@@ -109,7 +162,7 @@ export default function FormCriarEscala({servicosAnteriores}) {
         <div className={Styles.criar_escala}>
             <h3>Dados para Criação da Escala</h3>
             {servicosAnteriores?.length > 0 && (
-                <div style={{marginBottom: '15px', color: 'green', fontSize: '0.9em'}}>
+                <div className={Styles.mensagem_sucesso}>
                     ✓ Escala anterior carregada: {servicosAnteriores.length} serviços importados.
                 </div>
             )}
@@ -151,6 +204,7 @@ export default function FormCriarEscala({servicosAnteriores}) {
                             e.target.setCustomValidity("")
                             setDiasServico(e.target.value)
                         }}
+                        disabled={escalaVazia}
                         required
                         min="1"
                         max="12"
@@ -159,6 +213,18 @@ export default function FormCriarEscala({servicosAnteriores}) {
                         onInvalid={e => e.target.setCustomValidity("Por favor, digite uma quantidade válida de dias de serviço.")}
                     />
                 </div>
+
+                <div>
+                    <label>
+                        <input
+                            type="checkbox"
+                            checked={escalaVazia}
+                            onChange={e => setEscalaVazia(e.target.checked)}
+                        />
+                        Escala Vazia
+                    </label>
+                </div>
+
                 <div>
                     <button
                         type="submit"

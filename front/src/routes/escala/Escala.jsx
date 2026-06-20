@@ -1,5 +1,5 @@
 import Styles from './styles.module.css'
-import {useCallback, useContext, useEffect, useState} from 'react'
+import {useContext, useState} from 'react'
 import GlobalContext from '../../context/GlobalContext'
 import BarraPesquisa from '../../components/barra_pesquisa/BarraPesquisa'
 import TabelaEscala from '../../components/tabela_escala/TabelaEscala'
@@ -13,7 +13,6 @@ export default function Escala() {
     const {escala} = useContext(GlobalContext)
 
     const [servicosAnteriores, setServicosAnteriores] = useState([])
-    const [escalaFiltrada, setEscalaFiltrada] = useState(null)
     const [ultimaPesquisa, setUltimaPesquisa] = useState(null)
 
     const camposPesquisa = [
@@ -26,66 +25,19 @@ export default function Escala() {
             options: [
                 'Fiscal de Dia',
                 'C.O.V.',
-                'Operador de Linha',
+                'Operador de Linha 1',
                 'Ajudante de Linha',
                 'Permanente'
             ]
         }
     ]
 
-    const normalize = v => String(v ?? '').toLowerCase()
-
-    const gerenciarPesquisa = useCallback(({campo, consulta}) => {
+    const gerenciarPesquisa = ({campo, consulta}) => {
         setUltimaPesquisa(pesquisa => {
             if (pesquisa && pesquisa.campo === campo && pesquisa.consulta === consulta) return pesquisa
             return {campo, consulta}
         })
-        const q = String(consulta ?? '').trim().toLowerCase()
-
-        if (!escala) return
-
-        if (campo === 'data') {
-            if (!q) {
-                setEscalaFiltrada(escala)
-                return
-            }
-            const resultadosData = escala.filter(servico => {
-                return (servico.dataServico === q)
-            })
-            setEscalaFiltrada(resultadosData)
-            return
-        }
-
-        if (!q) {
-            setEscalaFiltrada(escala)
-            return
-        }
-
-        const resultados = escala.filter(servico => {
-            switch (campo) {
-                case 'matricula':
-                    return normalize(servico.matricula ?? '').includes(q)
-                case 'militar':
-                    return normalize(servico.nomePaz ?? '').includes(q)
-                case 'funcao':
-                    return normalize(servico.funcao ?? '').includes(q)
-                default:
-                    return false
-            }
-        })
-
-        setEscalaFiltrada(resultados)
-    }, [escala, setEscalaFiltrada])
-
-    useEffect(() => {
-        if (!ultimaPesquisa) {
-            setEscalaFiltrada(escala)
-            return
-        }
-        gerenciarPesquisa(ultimaPesquisa)
-    }, [escala, gerenciarPesquisa, ultimaPesquisa])
-
-    const escalaTabela = escalaFiltrada ?? escala
+    }
 
     return (
         <div className={Styles.main}>
@@ -106,7 +58,7 @@ export default function Escala() {
                 placeholder="Pesquisar na escala..."
                 pesquisar={gerenciarPesquisa}
             />
-            <TabelaEscala escalaTabela={escalaTabela}/>
+            <TabelaEscala escalaTabela={escala} busca={ultimaPesquisa}/>
         </div>
     )
 }
